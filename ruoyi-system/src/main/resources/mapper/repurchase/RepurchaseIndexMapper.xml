@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.repurchase.mapper.RepurchaseIndexMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.repurchase.domain.MemberConsumptionTrack">
+        <result column="id" jdbcType="BIGINT" property="id" />
+        <result column="task_no" jdbcType="VARCHAR" property="taskNo" />
+        <result column="order_date" jdbcType="VARCHAR" property="orderDate" />
+        <result column="store_name" jdbcType="VARCHAR" property="storeName" />
+        <result column="member_name" jdbcType="VARCHAR" property="memberName" />
+        <result column="actual_fee" jdbcType="DECIMAL" property="actualFee" />
+        <result column="total" jdbcType="INTEGER" property="total" />
+        <result column="note" jdbcType="VARCHAR" property="note" />
+        <result column="should_fee" jdbcType="DECIMAL" property="shouldFee" />
+        <result column="commission" jdbcType="DECIMAL" property="commission" />
+        <result column="promoters" jdbcType="VARCHAR" property="promoters" />
+        <result column="registrant" jdbcType="VARCHAR" property="registrant" />
+    </resultMap>
+
+    <sql id="dataQuery">
+        id,order_date,store_name,member_name,promoters
+    </sql>
+    <insert id="insertConsumption" parameterType="com.ruoyi.repurchase.domain.MemberConsumptionTrack" useGeneratedKeys="true" keyProperty="id">
+        insert into member_consumption_track(
+        <if test="id != null and id != 0">id,</if>
+        <if test="taskNo != null and taskNo != ''">task_no,</if>
+        <if test="orderDate != null and orderDate != ''">order_date,</if>
+        <if test="storeName != null and storeName != ''">store_name,</if>
+        <if test="memberName != null and memberName != ''">member_name,</if>
+        <if test="actualFee != null and actualFee != 0">actual_fee,</if>
+        <if test="total != null and total != 0">total,</if>
+        <if test="note != null and note != ''">note,</if>
+        <if test="shouldFee != null and shouldFee != 0">should_fee,</if>
+        <if test="commission != null and commission != 0">commission,</if>
+        <if test="promoters != null and promoters != ''">promoters,</if>
+        <if test="registrant != null and registrant != ''">registrant,</if>
+        operation_time
+        )values(
+        <if test="id != null and id != 0">#{id},</if>
+        <if test="taskNo != null and taskNo != ''">#{taskNo},</if>
+        <if test="orderDate != null and orderDate != ''">#{orderDate},</if>
+        <if test="storeName != null and storeName != ''">#{storeName},</if>
+        <if test="memberName != null and memberName != ''">#{memberName},</if>
+        <if test="actualFee != null and actualFee != 0">#{actualFee},</if>
+        <if test="total != null and total != 0">#{total},</if>
+        <if test="note != null and note != ''">#{note},</if>
+        <if test="shouldFee != null and shouldFee != 0">#{shouldFee},</if>
+        <if test="commission != null and commission != 0">#{commission},</if>
+        <if test="promoters != null and promoters != ''">#{promoters},</if>
+        <if test="registrant != null and registrant != ''">#{registrant},</if>
+        sysdate()
+        )
+    </insert>
+    <update id="updateConsumption" parameterType="com.ruoyi.repurchase.domain.MemberConsumptionTrack">
+        update member_consumption_track
+        <set>
+            <if test="id != null and id != 0">id = #{id},</if>
+            <if test="taskNo != null and taskNo != ''">task_no = #{taskNo},</if>
+            <if test="orderDate != null and orderDate != ''">order_date = #{orderDate},</if>
+            <if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
+            <if test="memberName != null and memberName != ''">member_name = #{memberName},</if>
+            <if test="actualFee != null and actualFee != 0">actual_fee = #{actualFee},</if>
+            <if test="total != null and total != 0">total = #{total},</if>
+            <if test="note != null and note != ''">note = #{note},</if>
+            <if test="shouldFee != null and shouldFee != 0">should_fee = #{shouldFee},</if>
+            <if test="commission != null and commission != 0">commission = #{commission},</if>
+            <if test="promoters != null and promoters != ''">promoters = #{promoters},</if>
+            <if test="registrant != null and registrant != ''">registrant = #{registrant},</if>
+            operation_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="queryList" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="dataQuery"/>
+        from member_consumption_track
+        <where>
+            <if test="memberName!=null and memberName!=''">
+                and member_name like concat('%',#{memberName},'%')
+            </if >
+            <if test="startDate!=null and startDate!=''">
+                and order_date &gt;=  #{startDate}
+            </if >
+            <if test="endDate!=null and endDate!=''">
+                and order_date &lt;=  #{endDate}
+            </if >
+            <if test="storeName!=null and storeName!=''">
+                and store_name like concat('%',#{storeName},'%')
+            </if >
+        </where>
+    </select>
+    <select id="selectConsumption" resultType="com.ruoyi.repurchase.domain.MemberConsumptionTrack">
+        select * from member_consumption_track
+        <where>
+            <if test="orderDate != null and orderDate != ''">order_date = #{orderDate}</if>
+            <if test="storeName != null and storeName != ''">and store_name = #{storeName}</if>
+            <if test="memberName != null and memberName != ''">and member_name = #{memberName}</if>
+            <if test="actualFee != null and actualFee != 0">and actual_fee = #{actualFee}</if>
+            <if test="total != null and total != 0">and total = #{total}</if>
+            <if test="note != null and note != ''">and note = #{note}</if>
+            <if test="shouldFee != null and shouldFee != 0">and should_fee = #{shouldFee}</if>
+            <if test="commission != null and commission != 0">and commission = #{commission}</if>
+            <if test="promoters != null and promoters != ''">and promoters = #{promoters}</if>
+            <if test="registrant != null and registrant != ''">and registrant = #{registrant}</if>
+        </where>
+    </select>
+</mapper>

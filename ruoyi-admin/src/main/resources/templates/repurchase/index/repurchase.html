@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('复购')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								会员名：<input type="text" name="memberName"/>
+							</li>
+							<li class="select-time">
+								<label>起止日期： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="scopeDate[0]"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="scopeDate[1]"/>
+							</li>
+							<li>
+								店铺名称：<input type="text" name="storeName"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-info" onclick="$.table.importExcel()" shiro:hasPermission="repurchase:index:import">
+					<i class="fa fa-upload"></i> 导入
+				</a>
+		        <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="repurchase:index:list">
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+	        
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var editFlag = [[${@permission.hasPermi('system:role:edit')}]];
+		var removeFlag = [[${@permission.hasPermi('system:role:remove')}]];
+		var prefix = ctx + "repurchase/index";
+		
+
+		$(function() {
+		    var options = {
+		        url: prefix + "/list",
+		        exportUrl: prefix + "/export",
+				importUrl: prefix + "/importData",
+		        modalName: "复购",
+				sortName: "order_date",
+				sortOrder: "desc",
+		        columns: [
+				{
+					title: '序号',
+					formatter: function (value, row, index) {
+						var pageSize=$('#bootstrap-table').bootstrapTable('getOptions').pageSize;
+						var pageNumber=$('#bootstrap-table').bootstrapTable('getOptions').pageNumber;
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				},
+		        {
+		            field: 'id',
+		            title: '主键',
+					visible: false
+		        },
+		        {
+		            field: 'orderDate',
+		            title: '日期',
+		            sortable: true
+		        },
+		        {
+		            field: 'promoters',
+		            title: '地推人员',
+		            sortable: true
+		        },
+		        {
+		            field: 'storeName',
+		            title: '店铺名称',
+		            sortable: true
+		        },
+				{
+					field: 'memberName',
+					title: '淘宝会员名',
+					sortable: true
+				}]
+		    };
+		    $.table.init(options);
+		});
+
+	</script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+	<form enctype="multipart/form-data" class="mt20 mb10">
+		<div class="col-xs-offset-1">
+			<input type="file" id="file" name="file"/>
+			<div class="mt10 pt5">
+				<input type="checkbox" id="updateSupport" name="updateSupport" title="如果复购数据已经存在，更新这条数据。"> 是否更新已经存在的复购数据
+				&nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+			</div>
+			<font color="red" class="pull-left mt10">
+				提示：仅允许导入“xls”或“xlsx”格式文件！
+			</font>
+		</div>
+	</form>
+</script>
+</html>
