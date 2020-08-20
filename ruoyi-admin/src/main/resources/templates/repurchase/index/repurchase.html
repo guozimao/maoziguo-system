@@ -35,7 +35,7 @@
 				<a class="btn btn-info" onclick="$.table.importExcel()" shiro:hasPermission="repurchase:index:import">
 					<i class="fa fa-upload"></i> 导入
 				</a>
-		        <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="repurchase:index:list">
+		        <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="repurchase:index:export">
 		            <i class="fa fa-download"></i> 导出
 		        </a>
 	        </div>
@@ -57,6 +57,7 @@
 		        url: prefix + "/list",
 		        exportUrl: prefix + "/export",
 				importUrl: prefix + "/importData",
+				importTemplateUrl: prefix + "/importTemplate",
 		        modalName: "复购",
 				sortName: "order_date",
 				sortOrder: "desc",

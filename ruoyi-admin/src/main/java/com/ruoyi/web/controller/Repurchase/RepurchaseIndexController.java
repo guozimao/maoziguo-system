@@ -70,4 +70,23 @@ public class RepurchaseIndexController extends BaseController {
         return AjaxResult.success(message);
     }
 
+    @GetMapping("/importTemplate")
+    @ResponseBody
+    public AjaxResult importTemplate()
+    {
+        ExcelUtil<MemberConsumptionTrack> util = new ExcelUtil<MemberConsumptionTrack>(MemberConsumptionTrack.class);
+        return util.importTemplateExcel("复购数据");
+    }
+
+    @Log(title = "复购管理", businessType = BusinessType.EXPORT)
+    @RequiresPermissions("repurchase:index:export")
+    @PostMapping("/export")
+    @ResponseBody
+    public AjaxResult export(MemberConsumptionTrackRequest memberConsumptionTrackReq)
+    {
+        List<MemberConsumptionTrack> list = repurchaseIndexService.selectList(memberConsumptionTrackReq);
+        ExcelUtil<MemberConsumptionTrack> util = new ExcelUtil<MemberConsumptionTrack>(MemberConsumptionTrack.class);
+        return util.exportExcel(list, "复购数据");
+    }
+
 }
