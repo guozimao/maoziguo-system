@@ -13,18 +13,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="delFlag"    column="del_flag"    />
     </resultMap>
 
+    <resultMap type="SalesManRespDto" id="SalesManRespDtoResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="commission"    column="commission"    />
+        <result property="receivingLimit"    column="receiving_limit"    />
+        <result property="associationStatus"    column="association_status"    />
+        <result property="userName"    column="user_name"    />
+        <result property="loginName"    column="login_name"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
     <sql id="selectDtSalesmanVo">
         select id, user_id, commission, receiving_limit, association_status, del_flag from dt_salesman
     </sql>
 
-    <select id="selectDtSalesmanList" parameterType="DtSalesman" resultMap="DtSalesmanResult">
-        <include refid="selectDtSalesmanVo"/>
+    <select id="selectDtSalesmanList" parameterType="SalesManRespDto" resultMap="SalesManRespDtoResult">
+        SELECT b.user_id,login_name,user_name,status,create_time,id,commission,receiving_limit,association_status from(
+            select user_id,login_name,user_name,status,create_time from sys_user
+            <where>
+                del_flag = '0'
+                and user_type = '02'
+                and dept_id = #{depId}
+                and user_id != #{leaderId}
+            </where>
+        )b join dt_salesman ds on ds.user_id = b.user_id
         <where>
-            del_flag = '2'
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="commission != null "> and commission = #{commission}</if>
-            <if test="receivingLimit != null "> and receiving_limit = #{receivingLimit}</if>
-            <if test="associationStatus != null  and associationStatus != ''"> and association_status = #{associationStatus}</if>
+            <if test="salesMan.loginName != null and salesMan.loginName != ''"> and login_name = #{salesMan.loginName}</if>
+            <if test="salesMan.userName != null and salesMan.userName != ''"> and user_name = #{salesMan.userName}</if>
+            <if test="salesMan.associationStatus != null  and salesMan.associationStatus != ''"> and association_Status = #{salesMan.associationStatus}</if>
         </where>
     </select>
     

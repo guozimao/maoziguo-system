@@ -2,6 +2,8 @@ package com.ruoyi.businessteam.service;
 
 import java.util.List;
 import com.ruoyi.businessteam.domain.DtSalesman;
+import com.ruoyi.businessteam.domain.dto.request.SalesManReqDto;
+import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
 
 /**
  * 业务人员信息Service接口
@@ -21,11 +23,12 @@ public interface IDtSalesmanService
 
     /**
      * 查询业务人员信息列表
-     * 
-     * @param dtSalesman 业务人员信息
+     * @param salesManReqDto 业务人员信息
+     * @param leaderId 部门负责人id
+     * @param depId 部门id
      * @return 业务人员信息集合
      */
-    public List<DtSalesman> selectDtSalesmanList(DtSalesman dtSalesman);
+    public List<SalesManRespDto> selectDtSalesmanList(SalesManReqDto salesManReqDto, Long leaderId, Long depId);
 
     /**
      * 新增业务人员信息

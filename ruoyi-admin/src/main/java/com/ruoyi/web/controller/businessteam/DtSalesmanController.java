@@ -1,6 +1,12 @@
 package com.ruoyi.web.controller.businessteam;
 
 import java.util.List;
+
+import com.ruoyi.businessteam.domain.dto.request.SalesManReqDto;
+import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,11 +53,23 @@ public class DtSalesmanController extends BaseController
     @RequiresPermissions("businessteam:salesman:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(DtSalesman dtSalesman)
+    public TableDataInfo list(SalesManReqDto salesManReqDto)
     {
         startPage();
-        List<DtSalesman> list = dtSalesmanService.selectDtSalesmanList(dtSalesman);
+        SysUser user = ShiroUtils.getSysUser();
+        hasNoPermission(user);
+        List<SalesManRespDto> list = dtSalesmanService.selectDtSalesmanList(salesManReqDto,user.getDept().getLeaderId(),user.getDeptId());
         return getDataTable(list);
+    }
+
+    private void hasNoPermission(SysUser user) {
+        if(StringUtils.isNull(user.getDept())){
+            error("本用户还没设置团队");
+        }else if(StringUtils.isNull(user.getDept().getLeaderId())){
+            error("团队里还没有设置负责人");
+        }else if(!user.getUserId().equals(user.getDept().getLeaderId())){
+            error("对不起，没权限，您不是团队里的负责人");
+        }
     }
 
     /**
@@ -63,9 +81,10 @@ public class DtSalesmanController extends BaseController
     @ResponseBody
     public AjaxResult export(DtSalesman dtSalesman)
     {
-        List<DtSalesman> list = dtSalesmanService.selectDtSalesmanList(dtSalesman);
+       /* List<DtSalesman> list = dtSalesmanService.selectDtSalesmanList(dtSalesman);
         ExcelUtil<DtSalesman> util = new ExcelUtil<DtSalesman>(DtSalesman.class);
-        return util.exportExcel(list, "salesman");
+        return util.exportExcel(list, "salesman");*/
+        return null;
     }
 
     /**

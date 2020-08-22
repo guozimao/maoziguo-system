@@ -1,6 +1,9 @@
 package com.ruoyi.businessteam.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.businessteam.domain.dto.request.SalesManReqDto;
+import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
@@ -35,13 +38,16 @@ public class DtSalesmanServiceImpl implements IDtSalesmanService
     /**
      * 查询业务人员信息列表
      * 
-     * @param dtSalesman 业务人员信息
+     * @param salesManReqDto 业务人员信息
+     * @param leaderId 部门负责人id
+     * @param depId 部门id
      * @return 业务人员信息
      */
     @Override
-    public List<DtSalesman> selectDtSalesmanList(DtSalesman dtSalesman)
+    public List<SalesManRespDto> selectDtSalesmanList(SalesManReqDto salesManReqDto, Long leaderId, Long depId)
     {
-        return dtSalesmanMapper.selectDtSalesmanList(dtSalesman);
+
+        return dtSalesmanMapper.selectDtSalesmanList(salesManReqDto,leaderId,depId);
     }
 
     /**
