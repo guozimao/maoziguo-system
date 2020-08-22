@@ -168,7 +168,7 @@ public class SysUser extends BaseEntity
         this.loginName = loginName;
     }
 
-    @Size(min = 0, max = 30, message = "用户昵称长度不能超过30个字符")
+    @Size(min = 1, max = 30, message = "用户昵称长度不能超过30个字符")
     public String getUserName()
     {
         return userName;
@@ -201,6 +201,7 @@ public class SysUser extends BaseEntity
         this.email = email;
     }
 
+    @Pattern(regexp = "^(13[0-9]{9})|(18[0-9]{9})|(14[0-9]{9})|(17[0-9]{9})|(15[0-9]{9})$", message = "手机号码格式不正确")
     @Size(min = 0, max = 11, message = "手机号码长度不能超过11个字符")
     public String getPhonenumber()
     {

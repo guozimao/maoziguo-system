@@ -35,13 +35,22 @@
     <th:block th:include="include :: footer" />
     <script type="text/javascript">
         var prefix = ctx + "demo/modal";
-        
+
+		var yes = function(index){
+			//当点击‘确定'按钮的时候，获取弹出层返回的值
+			var res = window["layui-layer-iframe" + index].callbackdata();
+			//打印返回的值，看是否有我们想返回的值。
+			console.log(res);
+			//最后关闭弹出层
+			layer.close(index);
+		}
+
         function selectCheckUser(){
         	$.modal.open("选择用户", prefix + "/check");
         }
         
 		function selectRadioUser(){
-			$.modal.open("选择用户", prefix + "/radio");
+			$.modal.open("选择用户", prefix + "/radio",'','',yes);
         }
 		
 		function selectUsersToParent(){

@@ -29,6 +29,9 @@ public class SysDept extends BaseEntity
     /** 显示顺序 */
     private String orderNum;
 
+    /** 负责人id **/
+    private Long leaderId;
+
     /** 负责人 */
     private String leader;
 
@@ -161,6 +164,14 @@ public class SysDept extends BaseEntity
     public void setParentName(String parentName)
     {
         this.parentName = parentName;
+    }
+
+    public Long getLeaderId() {
+        return leaderId;
+    }
+
+    public void setLeaderId(Long leaderId) {
+        this.leaderId = leaderId;
     }
 
     @Override

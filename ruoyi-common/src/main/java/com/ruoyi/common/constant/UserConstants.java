@@ -96,7 +96,8 @@ public class UserConstants
      * 用户类型
      */
     public static final String SYSTEM_USER_TYPE = "00";
-    public static final String REGISTER_USER_TYPE = "01";
+    public static final String MERCHANT_USER_TYPE = "01";
+    public static final String SALEMAN_USER_TYPE = "02";
 
     /**
      * 手机号码格式限制

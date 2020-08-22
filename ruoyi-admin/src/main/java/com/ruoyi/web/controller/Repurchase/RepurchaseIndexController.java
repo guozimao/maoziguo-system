@@ -6,11 +6,9 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.repurchase.domain.MemberConsumptionTrack;
 import com.ruoyi.repurchase.service.IRepurchaseIndexService;
 import com.ruoyi.repurchase.domain.dto.request.MemberConsumptionTrackRequest;
-import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +33,7 @@ public class RepurchaseIndexController extends BaseController {
     @Autowired
     private IRepurchaseIndexService repurchaseIndexService;
 
-    //@RequiresPermissions("repurchase:index:view")
+    @RequiresPermissions("repurchase:index:view")
     @GetMapping()
     public String repurchase()
     {
@@ -70,6 +68,7 @@ public class RepurchaseIndexController extends BaseController {
         return AjaxResult.success(message);
     }
 
+    @RequiresPermissions("repurchase:index:view")
     @GetMapping("/importTemplate")
     @ResponseBody
     public AjaxResult importTemplate()

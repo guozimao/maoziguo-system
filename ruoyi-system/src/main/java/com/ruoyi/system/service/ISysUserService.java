@@ -204,4 +204,29 @@ public interface ISysUserService
      * @return 结果
      */
     public int changeStatus(SysUser user);
+
+    /**
+     * 判断是否有相同邮箱
+     *
+     * @param email 邮箱
+     * @return 结果
+     */
+    public boolean isExistSameEmail(String email);
+
+
+    /**
+     * 校验用户昵称是否唯一
+     *
+     * @param userName 用户信息
+     * @return 结果
+     */
+    public boolean isExistSameUserName(String userName);
+
+    /**
+     * 校验手机号是否唯一
+     *
+     * @param phoneName 手机
+     * @return 结果
+     */
+    public boolean isExistSamePhone(String phoneName);
 }

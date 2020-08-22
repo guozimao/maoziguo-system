@@ -2,6 +2,11 @@ package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.ruoyi.businessteam.domain.DtSalesman;
+import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
+import com.ruoyi.system.domain.*;
+import com.ruoyi.system.mapper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +18,6 @@ import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.security.Md5Utils;
-import com.ruoyi.system.domain.SysPost;
-import com.ruoyi.system.domain.SysRole;
-import com.ruoyi.system.domain.SysUser;
-import com.ruoyi.system.domain.SysUserPost;
-import com.ruoyi.system.domain.SysUserRole;
-import com.ruoyi.system.mapper.SysPostMapper;
-import com.ruoyi.system.mapper.SysRoleMapper;
-import com.ruoyi.system.mapper.SysUserMapper;
-import com.ruoyi.system.mapper.SysUserPostMapper;
-import com.ruoyi.system.mapper.SysUserRoleMapper;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 
@@ -50,6 +45,9 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Autowired
     private SysUserRoleMapper userRoleMapper;
+
+    @Autowired
+    private DtSalesmanMapper dtSalesmanMapper;
 
     @Autowired
     private ISysConfigService configService;
@@ -176,6 +174,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 结果
      */
     @Override
+    @Transactional
     public int deleteUserByIds(String ids) throws BusinessException
     {
         Long[] userIds = Convert.toLongArray(ids);
@@ -183,6 +182,7 @@ public class SysUserServiceImpl implements ISysUserService
         {
             checkUserAllowed(new SysUser(userId));
         }
+        dtSalesmanMapper.deleteDtSalesmanByUserIds(userIds);
         return userMapper.deleteUserByIds(userIds);
     }
 
@@ -212,10 +212,22 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 结果
      */
     @Override
+    @Transactional
     public boolean registerUser(SysUser user)
     {
-        user.setUserType(UserConstants.REGISTER_USER_TYPE);
-        return userMapper.insertUser(user) > 0;
+        user.setCreateBy("customer");
+        if(user.getUserType().equals(UserConstants.SALEMAN_USER_TYPE)){
+            userMapper.insertUser(user);
+            SysUser sysUser = userMapper.selectUserByLoginName(user.getLoginName());
+            if(StringUtils.isNull(sysUser)){
+                return false;
+            }
+            DtSalesman salesman = new DtSalesman();
+            salesman.setUserId(sysUser.getUserId());
+            return dtSalesmanMapper.insertDtSalesman(salesman) > 0;
+        }else {
+            return userMapper.insertUser(user) > 0;
+        }
     }
 
     /**
@@ -516,5 +528,53 @@ public class SysUserServiceImpl implements ISysUserService
     public int changeStatus(SysUser user)
     {
         return userMapper.updateUser(user);
+    }
+
+    /**
+     * 判断是否有相同邮箱
+     *
+     * @param email 邮箱
+     * @return 结果
+     */
+    @Override
+    public boolean isExistSameEmail(String email) {
+        SysUser info = userMapper.checkEmailUnique(email);
+        if (StringUtils.isNotNull(info))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 校验用户昵称是否唯一
+     *
+     * @param userName 用户信息
+     * @return 结果
+     */
+    @Override
+    public boolean isExistSameUserName(String userName) {
+        SysUser info = userMapper.checkUserNameUnique(userName);
+        if (StringUtils.isNotNull(info))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 校验手机号是否唯一
+     *
+     * @param phoneName 手机
+     * @return 结果
+     */
+    @Override
+    public boolean isExistSamePhone(String phoneName) {
+        SysUser info = userMapper.checkPhoneUnique(phoneName);
+        if (StringUtils.isNotNull(info))
+        {
+            return true;
+        }
+        return false;
     }
 }

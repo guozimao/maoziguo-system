@@ -121,4 +121,12 @@ public interface SysUserMapper
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    /**
+     * 校验用户昵称是否唯一
+     *
+     * @param userName 用户昵称
+     * @return 结果
+     */
+    SysUser checkUserNameUnique(String userName);
 }

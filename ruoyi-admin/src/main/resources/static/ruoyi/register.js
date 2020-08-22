@@ -6,6 +6,17 @@ $(function() {
 		$(".imgcode").attr("src", url);
 	});
 });
+$.validator.addMethod("isEmail",function(value,element,params){
+    var checkEmail = /^[a-z0-9]+@([a-z0-9]+\.)+[a-z]{2,4}$/i;
+    return this.optional(element)||(checkEmail.test(value));
+},"*请输入正确的邮箱！");
+
+//手机号码验证
+$.validator.addMethod("isMobile", function(value, element) {
+    var length = value.length;
+    var mobile = /^(13[0-9]{9})|(18[0-9]{9})|(14[0-9]{9})|(17[0-9]{9})|(15[0-9]{9})$/;
+    return this.optional(element) || (length == 11 && mobile.test(value));
+}, "请正确填写手机号码");
 
 $.validator.setDefaults({
     submitHandler: function() {
@@ -15,20 +26,28 @@ $.validator.setDefaults({
 
 function register() {
 	$.modal.loading($("#btnSubmit").data("loading"));
-	var username = $.common.trim($("input[name='username']").val());
+	var loginName = $.common.trim($("input[name='loginName']").val());
     var password = $.common.trim($("input[name='password']").val());
+    var username = $.common.trim($("input[name='username']").val());
+    var phonenumber = $.common.trim($("input[name='phonenumber']").val());
+    var email = $.common.trim($("input[name='email']").val());
     var validateCode = $("input[name='validateCode']").val();
+    var userType = $("input[name='userType']").val();
     $.ajax({
         type: "post",
         url: ctx + "register",
         data: {
-            "loginName": username,
+            "loginName": loginName,
             "password": password,
-            "validateCode": validateCode
+            "userName":username,
+            "phonenumber":phonenumber,
+            "email": email,
+            "validateCode": validateCode,
+            "userType":userType
         },
         success: function(r) {
             if (r.code == 0) {
-            	layer.alert("<font color='red'>恭喜你，您的账号 " + username + " 注册成功！</font>", {
+            	layer.alert("<font color='red'>恭喜你，您的账号 " + loginName + " 注册成功！</font>", {
         	        icon: 1,
         	        title: "系统提示"
         	    },
@@ -55,6 +74,19 @@ function validateRule() {
                 required: true,
                 minlength: 2
             },
+            loginName: {
+                required: true,
+                minlength: 2
+            },
+            phonenumber: {
+                required: true,
+                minlength : 11,
+                isMobile : true
+            },
+            email: {
+                required: true,
+                isEmail : true
+            },
             password: {
                 required: true,
                 minlength: 5
@@ -66,8 +98,21 @@ function validateRule() {
         },
         messages: {
             username: {
-                required: icon + "请输入您的用户名",
+                required: icon + "请输入您的昵称",
                 minlength: icon + "用户名不能小于2个字符"
+            },
+            loginName: {
+                required: icon + "请输入您的账号",
+                minlength: icon + "用户名不能小于2个字符"
+            },
+            phonenumber:{
+                required : icon + "请输入手机号",
+                minlength : icon + "不能小于11个字符",
+                isMobile : icon + "请正确填写手机号码"
+            },
+            email:{
+                required: icon + "请输入邮箱",
+                isEmail: icon + "请填写正确的邮箱"
             },
             password: {
             	required: icon + "请输入您的密码",

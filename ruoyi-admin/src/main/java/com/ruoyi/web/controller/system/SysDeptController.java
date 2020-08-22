@@ -1,6 +1,10 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +40,9 @@ public class SysDeptController extends BaseController
 
     @Autowired
     private ISysDeptService deptService;
+
+    @Autowired
+    private ISysUserService userService;
 
     @RequiresPermissions("system:dept:view")
     @GetMapping()
@@ -199,5 +206,38 @@ public class SysDeptController extends BaseController
     {
         List<Ztree> ztrees = deptService.roleDeptTreeData(role);
         return ztrees;
+    }
+
+    /**
+     * 查询数据
+     */
+    @PostMapping("/userPopup")
+    @ResponseBody
+    public TableDataInfo userPopup(SysUser user)
+    {
+        startPage();
+        List<SysUser> list = userService.selectUserList(user);
+        return getDataTable(list);
+    }
+
+    /**
+     * 用戶弹窗
+     */
+    @GetMapping("/userPopup")
+    public String userPopup()
+    {
+        return prefix + "/userPopup";
+    }
+
+    /**
+     * 查询用戶数据
+     */
+    @PostMapping("/userList")
+    @ResponseBody
+    public TableDataInfo userList(SysUser user)
+    {
+        startPage();
+        List<SysUser> list = userService.selectUserList(user);
+        return getDataTable(list);
     }
 }

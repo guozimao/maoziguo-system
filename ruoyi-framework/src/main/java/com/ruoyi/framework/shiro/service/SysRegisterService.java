@@ -33,33 +33,27 @@ public class SysRegisterService
      */
     public String register(SysUser user)
     {
-        String msg = "", username = user.getLoginName(), password = user.getPassword();
+        String msg = "", loginName = user.getLoginName();
+        String userName = user.getUserName(),email = user.getEmail(),phonenumber = user.getPhonenumber();
 
         if (!StringUtils.isEmpty(ServletUtils.getRequest().getAttribute(ShiroConstants.CURRENT_CAPTCHA)))
         {
             msg = "验证码错误";
         }
-        else if (StringUtils.isEmpty(username))
+        else if (UserConstants.USER_NAME_NOT_UNIQUE.equals(userService.checkLoginNameUnique(loginName)))
         {
-            msg = "用户名不能为空";
+            msg = "保存用户'" + loginName + "'失败，注册账号已存在";
         }
-        else if (StringUtils.isEmpty(password))
+        else if(userService.isExistSameEmail(email))
         {
-            msg = "用户密码不能为空";
+            msg = "保存用户'" + loginName + "'失败，邮箱已被注册";
         }
-        else if (password.length() < UserConstants.PASSWORD_MIN_LENGTH
-                || password.length() > UserConstants.PASSWORD_MAX_LENGTH)
+        else if(userService.isExistSamePhone(phonenumber))
         {
-            msg = "密码长度必须在5到20个字符之间";
+            msg = "保存用户'" + loginName + "'失败，手机号已被注册";
         }
-        else if (username.length() < UserConstants.USERNAME_MIN_LENGTH
-                || username.length() > UserConstants.USERNAME_MAX_LENGTH)
-        {
-            msg = "账户长度必须在2到20个字符之间";
-        }
-        else if (UserConstants.USER_NAME_NOT_UNIQUE.equals(userService.checkLoginNameUnique(username)))
-        {
-            msg = "保存用户'" + username + "'失败，注册账号已存在";
+        else if(userService.isExistSameUserName(userName)){
+            msg = "保存用户'" + loginName + "'失败，昵称已被注册";
         }
         else
         {
@@ -72,7 +66,7 @@ public class SysRegisterService
             }
             else
             {
-                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.REGISTER, MessageUtils.message("user.register.success")));
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.REGISTER, MessageUtils.message("user.register.success")));
             }
         }
         return msg;
