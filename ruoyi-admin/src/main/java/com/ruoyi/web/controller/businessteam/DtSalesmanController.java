@@ -6,6 +6,7 @@ import com.ruoyi.businessteam.domain.dto.request.SalesManReqDto;
 import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.promoters.application.service.ITeamAssociationApplicationService;
 import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class DtSalesmanController extends BaseController
 
     @Autowired
     private IDtSalesmanService dtSalesmanService;
+
+    @Autowired
+    private ITeamAssociationApplicationService teamAssociationApplicationService;
 
     @RequiresPermissions("system:salesman:view")
     @GetMapping()
@@ -159,6 +163,20 @@ public class DtSalesmanController extends BaseController
     @ResponseBody
     public AjaxResult checkVail4Id(Long id)
     {
+        return checkAssociationValid(id,true);
+    }
+
+    /**
+     * 申请关联
+     */
+    @GetMapping("/applicationAssociation")
+    @ResponseBody
+    public AjaxResult applicationAssociation(Long id)
+    {
+        return checkAssociationValid(id,false);
+    }
+
+    private AjaxResult checkAssociationValid(Long id,boolean isOnlyVaild){
         SysUser sysUser = ShiroUtils.getSysUser();
         if(StringUtils.isNull(sysUser.getDeptId())) {
             return error("当前账号没有设置团队，是无法成功申请关联");
@@ -170,10 +188,18 @@ public class DtSalesmanController extends BaseController
             return error("不存在该业务员，是无法成功申请关联");
         }else if(dtSalesmanService.hasNoNormalStatus(id)){
             return error("该业务员已被停用，是无法成功申请关联");
-        } else if(dtSalesmanService.hasAssociationWithTeam(id,sysUser.getDeptId())){
-            return error("该业务员已经是其它团队的，是无法成功申请关联");
-        }else{
-            return success("该业务员可以申请关联");
+        }else if(dtSalesmanService.hasAssociationWithTeam(id,sysUser.getDeptId())){
+            return error("该业务员已经是有归属团队的，是无法成功申请关联");
+        }else if(teamAssociationApplicationService.hasApplicationVaildedRecord(id,sysUser.getUserId(),sysUser.getDeptId())){
+            return error("您已经申请了，无需重复申请");
+        }
+        else{
+            if(isOnlyVaild){
+                return success("该业务员可以申请关联");
+            }else {
+                return toAjax(teamAssociationApplicationService.addApplication(id,sysUser.getUserId(),sysUser.getDeptId(),sysUser.getLoginName()));
+            }
+
         }
     }
 }

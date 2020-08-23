@@ -8,6 +8,7 @@ import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.promoters.application.mapper.TeamAssociationApplicationMapper;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.apache.commons.beanutils.BeanUtils;
@@ -34,6 +35,8 @@ public class DtSalesmanServiceImpl implements IDtSalesmanService
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private TeamAssociationApplicationMapper teamAssociationApplicationMapper;
     /**
      * 查询业务人员信息
      * 
@@ -146,9 +149,13 @@ public class DtSalesmanServiceImpl implements IDtSalesmanService
     }
 
     @Override
+    @Transactional
     public int deleteDtSalesmanDeptByIds(String ids) {
-        Long[] StrArray = Convert.toLongArray(ids);
-        List<Long> userIds = dtSalesmanMapper.selectUserIdsByIds(StrArray);
+        Long[] longArray = Convert.toLongArray(ids);
+        for(Long id :longArray){
+            dtSalesmanMapper.updateDtSalesmanWithStatus(id,"1");
+        }
+        List<Long> userIds = dtSalesmanMapper.selectUserIdsByIds(longArray);
         return sysUserMapper.updateDeptI2NulldByIds(userIds);
     }
 

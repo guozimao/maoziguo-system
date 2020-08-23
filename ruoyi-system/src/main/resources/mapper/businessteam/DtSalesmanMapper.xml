@@ -93,6 +93,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+    <update id="updateDtSalesmanWithStatus">
+        update dt_salesman
+        <trim prefix="SET" suffixOverrides=",">
+            association_status = #{associationStatus}
+        </trim>
+        where id = #{id}
+    </update>
 
     <delete id="deleteDtSalesmanById" parameterType="Long">
         delete from dt_salesman where id = #{id}

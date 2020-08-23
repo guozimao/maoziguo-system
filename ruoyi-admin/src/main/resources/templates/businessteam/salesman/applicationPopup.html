@@ -11,23 +11,24 @@
                 &nbsp;	<a class="btn btn-primary btn-rounded btn-sm" onclick="searchVailResult()"><i class="fa fa-search"></i>查询</a>
             </div>
             <font color="red" class="pull-left mt10">
-                提示：申请关联后，需要对方确认【同意关联】，双方才能关联成功。查看关联码，请点击控制台。
+                提示：申请关联后，需要对方确认【同意关联】，双方才能关联成功。查看业务员编码，请点击首页。
             </font>
         </div>
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var callback = function () {
-            console.log("come");
+        var callback = function (result) {
+            parent.layer.alert(result.msg);
         }
         function submitHandler() {
-            console.log("123435345")
+            var id = $("input[name='userId']").val();
+            $.operate.submit("/businessteam/salesman/applicationAssociation","get","json",'id='+id,callback);
             var index = parent.layer.getFrameIndex(window.name);
             parent.layer.close(index);
         }
         function searchVailResult() {
             var id = $("input[name='userId']").val();
-            $.operate.submit("/businessteam/salesman/checkVail4Id","get","json",'id='+id,callback);
+            $.operate.submit("/businessteam/salesman/checkVail4Id","get","json",'id='+id);
         }
     </script>
 </body>

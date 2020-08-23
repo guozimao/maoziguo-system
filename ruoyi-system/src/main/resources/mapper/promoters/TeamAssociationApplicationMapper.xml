@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.promoters.application.mapper.TeamAssociationApplicationMapper">
+    
+    <resultMap type="TeamAssociationApplication" id="TeamAssociationApplicationResult">
+        <result property="id"    column="id"    />
+        <result property="applicantId"    column="applicant_id"    />
+        <result property="approverId"    column="dept_id"    />
+        <result property="deptId"    column="approver_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTeamAssociationApplicationVo">
+        select id, applicant_id, approver_id,dept_id, create_by, create_time, update_by, update_time, remark from team_association_application
+    </sql>
+
+    <select id="selectTeamAssociationApplicationList" parameterType="TeamAssociationApplication" resultMap="TeamAssociationApplicationResult">
+        <include refid="selectTeamAssociationApplicationVo"/>
+        <where>  
+            <if test="applicantId != null "> and applicant_id = #{applicantId}</if>
+            <if test="approverId != null "> and approver_id = #{approverId}</if>
+        </where>
+    </select>
+    
+    <select id="selectTeamAssociationApplicationById" parameterType="Long" resultMap="TeamAssociationApplicationResult">
+        <include refid="selectTeamAssociationApplicationVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectTeamAssociationApplicationByThreeParam"
+            parameterType="Long" resultMap="TeamAssociationApplicationResult">
+        <include refid="selectTeamAssociationApplicationVo"/>
+        where approver_id = #{id}
+             and applicant_id = #{userId}
+             and dept_id = #{deptId}
+    </select>
+
+    <insert id="insertTeamAssociationApplication" parameterType="TeamAssociationApplication" useGeneratedKeys="true" keyProperty="id">
+        insert into team_association_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applicantId != null">applicant_id,</if>
+            <if test="approverId != null">approver_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createBy != null">create_by,</if>
+            create_time
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applicantId != null">#{applicantId},</if>
+            <if test="approverId != null">#{approverId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            sysdate(),
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeamAssociationApplication" parameterType="TeamAssociationApplication">
+        update team_association_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applicantId != null">applicant_id = #{applicantId},</if>
+            <if test="approverId != null">approver_id = #{approverId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate(),
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeamAssociationApplicationById" parameterType="Long">
+        delete from team_association_application where id = #{id}
+    </delete>
+
+    <delete id="deleteTeamAssociationApplicationByIds" parameterType="String">
+        delete from team_association_application where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

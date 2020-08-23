@@ -82,4 +82,7 @@ public interface DtSalesmanMapper
     List<Long> selectUserIdsByIds(Long[] strArray);
 
     DtSalesman selectDtSalesmanWithNoDeleteById(Long id);
+
+    int updateDtSalesmanWithStatus(@Param("id") Long id,
+                                   @Param("associationStatus") String s);
 }
