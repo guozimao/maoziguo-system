@@ -1,15 +1,23 @@
 package com.ruoyi.businessteam.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.ruoyi.businessteam.domain.dto.request.SalesManReqDto;
 import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
+import com.ruoyi.common.constant.UserConstants;
+import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.system.mapper.SysUserMapper;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
 import com.ruoyi.businessteam.domain.DtSalesman;
 import com.ruoyi.businessteam.service.IDtSalesmanService;
 import com.ruoyi.common.core.text.Convert;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 业务人员信息Service业务层处理
@@ -22,6 +30,9 @@ public class DtSalesmanServiceImpl implements IDtSalesmanService
 {
     @Autowired
     private DtSalesmanMapper dtSalesmanMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     /**
      * 查询业务人员信息
@@ -96,5 +107,92 @@ public class DtSalesmanServiceImpl implements IDtSalesmanService
     public int deleteDtSalesmanById(Long id)
     {
         return dtSalesmanMapper.deleteDtSalesmanById(id);
+    }
+
+    /**
+     * 查询业务人员详情
+     *
+     * @param id 业务人员信息ID
+     * @return 结果
+     */
+    @Override
+    public SalesManRespDto selectSalesManReqDtoById(Long id) {
+        DtSalesman dtSalesman = dtSalesmanMapper.selectDtSalesmanById(id);
+        SysUser sysUser = sysUserMapper.selectUserById(dtSalesman.getUserId());
+        return formatSalesMapReqDto(dtSalesman,sysUser);
+    }
+
+    @Override
+    @Transactional
+    public int updateDtSalesmanReq(SalesManReqDto salesManReqDto) {
+        SysUser user = new SysUser();
+        DtSalesman salesman = new DtSalesman();
+        if(isExistSameUserName(salesManReqDto.getUserName())
+                && isNonUpdateSameOne(salesManReqDto.getUserName(),salesManReqDto.getUserId())){
+            throw new BusinessException(salesManReqDto.getUserName() + " 已被注册");
+        }
+        try {
+            BeanUtils.copyProperties(user,salesManReqDto);
+            BeanUtils.copyProperties(salesman,salesManReqDto);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        if(sysUserMapper.updateUser(user) < 1){
+            throw new BusinessException("沒有任何更新");
+        }
+        return dtSalesmanMapper.updateDtSalesman(salesman);
+    }
+
+    @Override
+    public int deleteDtSalesmanDeptByIds(String ids) {
+        Long[] StrArray = Convert.toLongArray(ids);
+        List<Long> userIds = dtSalesmanMapper.selectUserIdsByIds(StrArray);
+        return sysUserMapper.updateDeptI2NulldByIds(userIds);
+    }
+
+    @Override
+    public boolean hasNoSalesMan(Long id) {
+        DtSalesman dtSalesman = dtSalesmanMapper.selectDtSalesmanWithNoDeleteById(id);
+        return !StringUtils.isNotNull(dtSalesman);
+    }
+
+    @Override
+    public boolean hasNoNormalStatus(Long id) {
+        DtSalesman dtSalesman = dtSalesmanMapper.selectDtSalesmanWithNoDeleteById(id);
+        SysUser sysUser = sysUserMapper.selectUserById(dtSalesman.getUserId());
+        return sysUser.getStatus().equals(UserConstants.USER_DISABLE);
+    }
+
+    @Override
+    public boolean hasAssociationWithTeam(Long id, Long deptId) {
+        DtSalesman dtSalesman = dtSalesmanMapper.selectDtSalesmanWithNoDeleteById(id);
+        SysUser sysUser = sysUserMapper.selectUserById(dtSalesman.getUserId());
+        return StringUtils.isNotNull(sysUser.getDeptId());
+    }
+
+    private boolean isNonUpdateSameOne(String userName, Long userId) {
+        SysUser info = sysUserMapper.selectUserById(userId);
+        return !StringUtils.isNotNull(info)
+                || !info.getUserName().equals(userName);
+    }
+
+    private SalesManRespDto formatSalesMapReqDto(DtSalesman dtSalesman, SysUser sysUser) {
+        SalesManRespDto result = new SalesManRespDto();
+        try {
+            BeanUtils.copyProperties(result,dtSalesman);
+            BeanUtils.copyProperties(result,sysUser);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean isExistSameUserName(String userName) {
+        SysUser info = sysUserMapper.checkUserNameUnique(userName);
+        return StringUtils.isNotNull(info);
     }
 }

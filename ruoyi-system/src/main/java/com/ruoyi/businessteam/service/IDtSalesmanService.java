@@ -61,4 +61,40 @@ public interface IDtSalesmanService
      * @return 结果
      */
     public int deleteDtSalesmanById(Long id);
+
+    /**
+     * 查询业务人员详情
+     *
+     * @param id 业务人员信息ID
+     * @return 结果
+     */
+    SalesManRespDto selectSalesManReqDtoById(Long id);
+
+    int updateDtSalesmanReq(SalesManReqDto salesManReqDto);
+
+    int deleteDtSalesmanDeptByIds(String ids);
+
+    /**
+     * 是否存在该业务员
+     *
+     * @param id 业务人员信息ID
+     * @return 结果
+     */
+    boolean hasNoSalesMan(Long id);
+
+    /**
+     * 是否存在该业务员
+     *
+     * @param id 业务人员信息ID
+     * @return 结果
+     */
+    boolean hasNoNormalStatus(Long id);
+
+    /**
+     * 是否存在该业务员与其它团队绑定在一起
+     *
+     * @param id 业务人员信息ID
+     * @return 结果
+     */
+    boolean hasAssociationWithTeam(Long id, Long deptId);
 }

@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SysUser;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户表 数据层
@@ -129,4 +130,6 @@ public interface SysUserMapper
      * @return 结果
      */
     SysUser checkUserNameUnique(String userName);
+
+    int updateDeptI2NulldByIds(@Param("array") List<Long> userIds);
 }

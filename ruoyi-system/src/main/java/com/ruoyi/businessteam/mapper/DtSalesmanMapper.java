@@ -72,4 +72,14 @@ public interface DtSalesmanMapper
      * @return 结果
      */
     public int deleteDtSalesmanByUserIds(Long[] userIds);
+
+    /**
+     * 根据id批量查询业务人员的所属userId
+     *
+     * @param strArray 需要查询的数据ID
+     * @return 结果
+     */
+    List<Long> selectUserIdsByIds(Long[] strArray);
+
+    DtSalesman selectDtSalesmanWithNoDeleteById(Long id);
 }

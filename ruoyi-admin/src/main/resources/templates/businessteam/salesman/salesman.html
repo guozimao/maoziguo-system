@@ -12,23 +12,17 @@
                         <ul>
                             <li>
                                 <label>账号：</label>
-                                <input type="text" name="userId"/>
+                                <input type="text" name="loginName"/>
                             </li>
                             <li>
                                 <label>昵称：</label>
-                                <input type="text" name="commission"/>
+                                <input type="text" name="userName"/>
                             </li>
                             <li>
-                                <label>状态：</label>
-                                <select name="associationStatus">
-                                    <option value="">所有</option>
-                                    <option value="0">已关联</option>
-                                    <option value="0">未关联</option>
+                                <label>状态：</label><select name="associationStatus" th:with="type=${@dict.getType('sys_association_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
-                            </li>
-                            <li>
-                                <label>创建时间：</label>
-                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="scopeDate[0]"/>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -40,7 +34,7 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="applicationSssociation()" shiro:hasPermission="businessteam:salesman:add">
+                <a class="btn btn-success" onclick="applicationAssociation()" shiro:hasPermission="businessteam:salesman:add">
                     <i class="fa fa-plus"></i> 申请关联
                 </a>
             </div>
@@ -54,6 +48,8 @@
         var editFlag = [[${@permission.hasPermi('businessteam:salesman:edit')}]];
         var removeFlag = [[${@permission.hasPermi('businessteam:salesman:remove')}]];
         var prefix = ctx + "businessteam/salesman";
+        var associationStatusDatas = [[${@dict.getType('sys_association_status')}]];
+        var userStatusDatas = [[${@dict.getType('sys_normal_disable')}]];
 
         $(function() {
             var options = {
@@ -61,25 +57,17 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 modalName: "业务人员信息",
-                columns: [{
-                    title: '序号',
-                    formatter: function (value, row, index) {
-                        var pageSize=$('#bootstrap-table').bootstrapTable('getOptions').pageSize;
-                        var pageNumber=$('#bootstrap-table').bootstrapTable('getOptions').pageNumber;
-                        return pageSize * (pageNumber - 1) + index + 1;
-                    }
-                },
+                columns: [
                 {
                     field: 'id',
-                    title: '业务人员ID',
-                    visible: false
+                    title: '业务员编码'
                 },
                 {
-                    field: 'userId',
+                    field: 'loginName',
                     title: '业务员账号'
                 },
                 {
-                    field: 'commission',
+                    field: 'userName',
                     title: '业务员昵称'
                 },
                 {
@@ -91,8 +79,25 @@
                     title: '佣金'
                 },
                 {
+                    field: 'status',
+                    title: '状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(userStatusDatas, value);
+                    }
+                },
+                {
                     field: 'associationStatus',
-                    title: '关联状态'
+                    title: '关联状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(associationStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
                 },
                 {
                     title: '操作',
@@ -108,8 +113,8 @@
             $.table.init(options);
         });
 
-        var applicationSssociation = function () {
-            console.log("applicationSssociation");
+        var applicationAssociation = function () {
+            $.modal.open("申请关联", prefix + "/application",'400px', '230px');
         };
     </script>
 </body>

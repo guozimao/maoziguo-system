@@ -114,7 +114,7 @@ public class DtSalesmanController extends BaseController
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
-        DtSalesman dtSalesman = dtSalesmanService.selectDtSalesmanById(id);
+        SalesManRespDto dtSalesman = dtSalesmanService.selectSalesManReqDtoById(id);
         mmap.put("dtSalesman", dtSalesman);
         return prefix + "/edit";
     }
@@ -126,9 +126,9 @@ public class DtSalesmanController extends BaseController
     @Log(title = "业务人员信息", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(DtSalesman dtSalesman)
+    public AjaxResult editSave(SalesManReqDto salesManReqDto)
     {
-        return toAjax(dtSalesmanService.updateDtSalesman(dtSalesman));
+        return toAjax(dtSalesmanService.updateDtSalesmanReq(salesManReqDto));
     }
 
     /**
@@ -140,6 +140,40 @@ public class DtSalesmanController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
-        return toAjax(dtSalesmanService.deleteDtSalesmanByIds(ids));
+        return toAjax(dtSalesmanService.deleteDtSalesmanDeptByIds(ids));
+    }
+
+    /**
+     * 申请关联
+     */
+    @GetMapping("/application")
+    public String application()
+    {
+        return prefix + "/applicationPopup";
+    }
+
+    /**
+     * 申请关联
+     */
+    @GetMapping("/checkVail4Id")
+    @ResponseBody
+    public AjaxResult checkVail4Id(Long id)
+    {
+        SysUser sysUser = ShiroUtils.getSysUser();
+        if(StringUtils.isNull(sysUser.getDeptId())) {
+            return error("当前账号没有设置团队，是无法成功申请关联");
+        }else if(StringUtils.isNull(sysUser.getDept().getLeaderId())){
+            return error("当前账号没有设置团队负责人，是无法成功申请关联");
+        }else if(!sysUser.getDept().getLeaderId().equals(sysUser.getUserId())){
+            return error("当前账号不是团队负责人，是无法成功申请关联");
+        }else if(dtSalesmanService.hasNoSalesMan(id)){
+            return error("不存在该业务员，是无法成功申请关联");
+        }else if(dtSalesmanService.hasNoNormalStatus(id)){
+            return error("该业务员已被停用，是无法成功申请关联");
+        } else if(dtSalesmanService.hasAssociationWithTeam(id,sysUser.getDeptId())){
+            return error("该业务员已经是其它团队的，是无法成功申请关联");
+        }else{
+            return success("该业务员可以申请关联");
+        }
     }
 }
