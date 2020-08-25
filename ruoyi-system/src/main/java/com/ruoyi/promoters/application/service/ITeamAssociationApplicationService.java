@@ -2,6 +2,8 @@ package com.ruoyi.promoters.application.service;
 
 import java.util.List;
 import com.ruoyi.promoters.application.domain.TeamAssociationApplication;
+import com.ruoyi.promoters.application.domain.dto.request.ApplicationReqDto;
+import com.ruoyi.promoters.application.domain.dto.response.ApplicationRespDto;
 
 /**
  * 团队关联申请Service接口
@@ -22,10 +24,10 @@ public interface ITeamAssociationApplicationService
     /**
      * 查询团队关联申请列表
      * 
-     * @param teamAssociationApplication 团队关联申请
+     * @param applicationReqDto 团队关联申请
      * @return 团队关联申请集合
      */
-    public List<TeamAssociationApplication> selectTeamAssociationApplicationList(TeamAssociationApplication teamAssociationApplication);
+    public List<ApplicationRespDto> selectTeamAssociationApplicationList(ApplicationReqDto applicationReqDto,Long userId);
 
     /**
      * 新增团队关联申请

@@ -132,4 +132,6 @@ public interface SysUserMapper
     SysUser checkUserNameUnique(String userName);
 
     int updateDeptI2NulldByIds(@Param("array") List<Long> userIds);
+
+    List<SysUser> selectUserListByIds(@Param("array")  List<Long> userIds);
 }

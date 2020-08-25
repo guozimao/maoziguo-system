@@ -114,4 +114,12 @@ public interface SysDeptMapper
      * @return 子部门数
      */
     public int selectNormalChildrenDeptById(Long deptId);
+
+    /**
+     * 根据ID列表查询部门
+     *
+     * @param depts 部门Id列表
+     * @return 部门列表
+     */
+    List<SysDept> selectDeptListByIds(@Param("array") List<Long> depts);
 }

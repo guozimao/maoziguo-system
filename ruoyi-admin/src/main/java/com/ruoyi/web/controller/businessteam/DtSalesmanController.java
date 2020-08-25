@@ -144,7 +144,8 @@ public class DtSalesmanController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
-        return toAjax(dtSalesmanService.deleteDtSalesmanDeptByIds(ids));
+        SysUser sysUser = ShiroUtils.getSysUser();
+        return toAjax(dtSalesmanService.deleteDtSalesmanDeptByIds(ids,sysUser.getUserId(),sysUser.getDeptId()));
     }
 
     /**

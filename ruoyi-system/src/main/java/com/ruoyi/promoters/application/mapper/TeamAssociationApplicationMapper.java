@@ -2,6 +2,8 @@ package com.ruoyi.promoters.application.mapper;
 
 import java.util.List;
 import com.ruoyi.promoters.application.domain.TeamAssociationApplication;
+import com.ruoyi.promoters.application.domain.dto.request.ApplicationReqDto;
+import com.ruoyi.promoters.application.domain.dto.response.ApplicationRespDto;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -60,7 +62,24 @@ public interface TeamAssociationApplicationMapper
      */
     public int deleteTeamAssociationApplicationByIds(String[] ids);
 
+    /**
+     * 通过id,userId,deptId去查询团队关联申请记录
+     *
+     * **/
     TeamAssociationApplication selectTeamAssociationApplicationByThreeParam(@Param("id") Long id,
                                                                             @Param("userId") Long userId,
                                                                             @Param("deptId") Long deptId);
+
+
+    /**
+     * 查询团队关联申请列表
+     *
+     * ***/
+    List<ApplicationRespDto> selectApplicationList(@Param("approverId") Long approverId,
+                                                   @Param("associationStatus") String associationStatus);
+
+    int updateTeamAssociationStatusApplicationByThreeParam(@Param("approverId")Long  approverId,
+                                                           @Param("userId") Long userId,
+                                                           @Param("depId") Long deptId,
+                                                           @Param("associationStatus") String associationStatus);
 }

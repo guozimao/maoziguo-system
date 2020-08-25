@@ -72,7 +72,7 @@ public interface IDtSalesmanService
 
     int updateDtSalesmanReq(SalesManReqDto salesManReqDto);
 
-    int deleteDtSalesmanDeptByIds(String ids);
+    int deleteDtSalesmanDeptByIds(String ids,Long userId,Long DeptId);
 
     /**
      * 是否存在该业务员

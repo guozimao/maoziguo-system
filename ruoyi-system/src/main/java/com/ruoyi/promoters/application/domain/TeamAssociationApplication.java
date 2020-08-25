@@ -28,6 +28,8 @@ public class TeamAssociationApplication extends BaseEntity
 
     private Long DeptId;
 
+    private String associationStatus;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -62,6 +64,14 @@ public class TeamAssociationApplication extends BaseEntity
 
     public void setDeptId(Long deptId) {
         DeptId = deptId;
+    }
+
+    public String getAssociationStatus() {
+        return associationStatus;
+    }
+
+    public void setAssociationStatus(String associationStatus) {
+        this.associationStatus = associationStatus;
     }
 
     @Override

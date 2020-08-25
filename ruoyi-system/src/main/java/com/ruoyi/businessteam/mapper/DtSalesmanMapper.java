@@ -85,4 +85,6 @@ public interface DtSalesmanMapper
 
     int updateDtSalesmanWithStatus(@Param("id") Long id,
                                    @Param("associationStatus") String s);
+
+    DtSalesman selectDtSalesmanByUserId(Long userId);
 }

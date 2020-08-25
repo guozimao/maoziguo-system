@@ -63,6 +63,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
         and del_flag = '0'
     </select>
+    <select id="selectDtSalesmanByUserId" parameterType="Long" resultMap="DtSalesmanResult">
+        <include refid="selectDtSalesmanVo"/>
+        where user_id = #{userId}
+    </select>
 
     <insert id="insertDtSalesman" parameterType="DtSalesman" useGeneratedKeys="true" keyProperty="id">
         insert into dt_salesman

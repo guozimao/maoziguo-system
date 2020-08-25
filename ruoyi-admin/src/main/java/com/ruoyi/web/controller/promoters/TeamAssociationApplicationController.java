@@ -1,6 +1,10 @@
 package com.ruoyi.web.controller.promoters;
 
 import java.util.List;
+
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.promoters.application.domain.dto.request.ApplicationReqDto;
+import com.ruoyi.promoters.application.domain.dto.response.ApplicationRespDto;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,10 +51,10 @@ public class TeamAssociationApplicationController extends BaseController
     @RequiresPermissions("promoters:application:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(TeamAssociationApplication teamAssociationApplication)
+    public TableDataInfo list(ApplicationReqDto applicationReqDto)
     {
         startPage();
-        List<TeamAssociationApplication> list = teamAssociationApplicationService.selectTeamAssociationApplicationList(teamAssociationApplication);
+        List<ApplicationRespDto> list = teamAssociationApplicationService.selectTeamAssociationApplicationList(applicationReqDto,ShiroUtils.getUserId());
         return getDataTable(list);
     }
 
@@ -63,9 +67,10 @@ public class TeamAssociationApplicationController extends BaseController
     @ResponseBody
     public AjaxResult export(TeamAssociationApplication teamAssociationApplication)
     {
-        List<TeamAssociationApplication> list = teamAssociationApplicationService.selectTeamAssociationApplicationList(teamAssociationApplication);
-        ExcelUtil<TeamAssociationApplication> util = new ExcelUtil<TeamAssociationApplication>(TeamAssociationApplication.class);
-        return util.exportExcel(list, "application");
+        //List<TeamAssociationApplication> list = teamAssociationApplicationService.selectTeamAssociationApplicationList(teamAssociationApplication);
+        //ExcelUtil<TeamAssociationApplication> util = new ExcelUtil<TeamAssociationApplication>(TeamAssociationApplication.class);
+        //return util.exportExcel(list, "application");
+        return null;
     }
 
     /**

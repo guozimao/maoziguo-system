@@ -16,6 +16,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
     </resultMap>
 
+    <resultMap type="ApplicationRespDto" id="ApplicationResult">
+        <result property="id"    column="id"    />
+        <result property="applicantName"    column="applicant_id"    />
+        <result property="applicantId"    column="applicant_id"    />
+        <result property="approverName"    column="approver_name"    />
+        <result property="approverId"    column="approver_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="associationStatus"    column="association_status"    />
+    </resultMap>
+
     <sql id="selectTeamAssociationApplicationVo">
         select id, applicant_id, approver_id,dept_id, create_by, create_time, update_by, update_time, remark from team_association_application
     </sql>
@@ -39,6 +49,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              and applicant_id = #{userId}
              and dept_id = #{deptId}
     </select>
+    <select id="selectApplicationList" parameterType="Long" resultMap="ApplicationResult">
+        select id,applicant_id,dept_id,approver_id,association_status from team_association_application
+        <where>
+            approver_id = #{approverId}
+            <if test="associationStatus != null and associationStatus != ''">
+            and association_status = #{associationStatus}
+            </if>
+        </where>
+    </select>
 
     <insert id="insertTeamAssociationApplication" parameterType="TeamAssociationApplication" useGeneratedKeys="true" keyProperty="id">
         insert into team_association_application
@@ -46,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="applicantId != null">applicant_id,</if>
             <if test="approverId != null">approver_id,</if>
             <if test="deptId != null">dept_id,</if>
+            <if test="associationStatus != null">association_status,</if>
             <if test="createBy != null">create_by,</if>
             create_time
             <if test="updateBy != null">update_by,</if>
@@ -56,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="applicantId != null">#{applicantId},</if>
             <if test="approverId != null">#{approverId},</if>
             <if test="deptId != null">#{deptId},</if>
+            <if test="associationStatus != null">#{associationStatus},</if>
             <if test="createBy != null">#{createBy},</if>
             sysdate(),
             <if test="updateBy != null">#{updateBy},</if>
@@ -70,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="applicantId != null">applicant_id = #{applicantId},</if>
             <if test="approverId != null">approver_id = #{approverId},</if>
             <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="associationStatus != null">association_status = #{associationStatus},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
@@ -77,6 +99,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null">remark = #{remark},</if>
         </trim>
         where id = #{id}
+    </update>
+    <update id="updateTeamAssociationStatusApplicationByThreeParam">
+        update team_association_application
+        set
+        association_status = #{associationStatus}
+        <where>
+            applicant_id = #{applicantId}
+            and approver_id = #{approverId}
+            and dept_id = #{deptId}
+        </where>
     </update>
 
     <delete id="deleteTeamAssociationApplicationById" parameterType="Long">
