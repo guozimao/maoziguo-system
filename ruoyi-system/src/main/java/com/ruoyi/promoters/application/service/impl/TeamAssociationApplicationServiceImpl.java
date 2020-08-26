@@ -74,6 +74,8 @@ public class TeamAssociationApplicationServiceImpl implements ITeamAssociationAp
         if(StringUtils.isNull(salesmen)){
             throw new BusinessException("本账号不是业务员");
         }
+        DtSalesman dtSalesman = dtSalesmanMapper.selectDtSalesmanByUserId(userId);
+        TeamAssociationApplication teamAssociationApplication = teamAssociationApplicationMapper.selectTeamAssociationApplicationWithAssociateStatusBySalesManId(dtSalesman.getId());
 
         List<ApplicationRespDto> resultList = teamAssociationApplicationMapper.selectApplicationList(salesmen.getId(), applicationReqDto.getAssociationStatus());
 
@@ -89,6 +91,9 @@ public class TeamAssociationApplicationServiceImpl implements ITeamAssociationAp
             dto.setApplicantName(userIdUserNameMap.get(dto.getApplicantId()));
             dto.setApproverName(userIdUserNameMap.get(salesmen.getUserId()));
             dto.setDeptName(deptIdDeptNameMap.get(dto.getDeptId()));
+            if(StringUtils.isNotNull(teamAssociationApplication)){
+                dto.setHiddenTxt("hidden");
+            }
         }
         return resultList;
     }
@@ -157,9 +162,11 @@ public class TeamAssociationApplicationServiceImpl implements ITeamAssociationAp
         if(StringUtils.isNull(one)){
             return teamAssociationApplicationMapper.insertTeamAssociationApplication(teamAssociationApplication);
         }else {
+            teamAssociationApplication.setId(one.getId());
+            teamAssociationApplication.setCreateBy(null);
+            teamAssociationApplication.setUpdateBy(loginName);
             return teamAssociationApplicationMapper.updateTeamAssociationApplication(teamAssociationApplication);
         }
-
     }
 
     @Override
@@ -172,5 +179,24 @@ public class TeamAssociationApplicationServiceImpl implements ITeamAssociationAp
         //关联状态（1未关联 3不通过）,可以再申请
         return !StringUtils.isNotNull(dtSalesman) ||
                 (!dtSalesman.getAssociationStatus().equals("3") && !dtSalesman.getAssociationStatus().equals("1"));
+    }
+
+    @Override
+    @Transactional
+    public int agree(Long id,Long userId,String loginName) {
+        TeamAssociationApplication teamAssociationApplication = teamAssociationApplicationMapper.selectTeamAssociationApplicationById(id);
+        SysUser sysUser = new SysUser();
+        sysUser.setDeptId(teamAssociationApplication.getDeptId());
+        sysUser.setUserId(userId);
+        sysUser.setUserName(loginName);
+        sysUser.setCreateBy(loginName);
+        sysUserMapper.updateUser(sysUser);
+        DtSalesman dtSalesman = new DtSalesman();
+        dtSalesman.setId(teamAssociationApplication.getApproverId());
+        dtSalesman.setAssociationStatus("0");
+        dtSalesmanMapper.updateDtSalesman(dtSalesman);
+        teamAssociationApplication.setAssociationStatus("0");
+        teamAssociationApplication.setUpdateBy(loginName);
+        return teamAssociationApplicationMapper.updateTeamAssociationApplication(teamAssociationApplication);
     }
 }

@@ -81,15 +81,25 @@
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
+                        var permission = row.hiddenTxt;
+                        // 状态不为“申请中”且历史表中都没有“已关联”的情况下按钮都隐藏
+                        if(row.hiddenTxt == null && row.associationStatus !== "2"){
+                            permission = "hidden";
+                        }
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs '  + '" href="javascript:void(0)" onclick="agree(\'' + row.id + '\')"><i class="fa fa-edit"></i>同意</a> ');
-                        actions.push('<a class="btn btn-danger btn-xs '  + '" href="javascript:void(0)" onclick="refuse(\'' + row.id + '\')"><i class="fa fa-remove"></i>拒绝</a>');
+                        actions.push('<a class="btn btn-success btn-xs ' + permission + '" href="javascript:void(0)" onclick="agree(\'' + row.id + '\')"><i class="fa fa-edit"></i>同意</a> ');
                         return actions.join('');
                     }
                 }]
             };
             $.table.init(options);
         });
+
+        function agree(id) {
+            $.modal.confirm("确定申请吗?", function() {
+                $.operate.submit(prefix + "/agree","post","json",{id:id});
+            });
+        }
     </script>
 </body>
 </html>

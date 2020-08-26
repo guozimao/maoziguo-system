@@ -79,7 +79,9 @@ public interface TeamAssociationApplicationMapper
                                                    @Param("associationStatus") String associationStatus);
 
     int updateTeamAssociationStatusApplicationByThreeParam(@Param("approverId")Long  approverId,
-                                                           @Param("userId") Long userId,
-                                                           @Param("depId") Long deptId,
+                                                           @Param("applicantId") Long userId,
+                                                           @Param("deptId") Long deptId,
                                                            @Param("associationStatus") String associationStatus);
+
+    TeamAssociationApplication selectTeamAssociationApplicationWithAssociateStatusBySalesManId(Long userId);
 }

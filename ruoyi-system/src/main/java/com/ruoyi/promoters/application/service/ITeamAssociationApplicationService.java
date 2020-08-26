@@ -81,4 +81,13 @@ public interface ITeamAssociationApplicationService
      * @return 结果
      */
     boolean hasApplicationVaildedRecord(Long id, Long userId,Long deptId);
+
+    /**
+     * 同意申请
+     *
+     * @param id 申请id
+     * @param userId 用户id
+     * @return 结果
+     */
+    int agree(Long id,Long userId,String loginName);
 }

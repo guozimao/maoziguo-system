@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.promoters.application.domain.dto.request.ApplicationReqDto;
 import com.ruoyi.promoters.application.domain.dto.response.ApplicationRespDto;
+import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -127,5 +128,16 @@ public class TeamAssociationApplicationController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(teamAssociationApplicationService.deleteTeamAssociationApplicationByIds(ids));
+    }
+
+    /**
+     * 同意团队关联申请
+     */
+    @PostMapping( "/agree")
+    @ResponseBody
+    public AjaxResult agree(Long id)
+    {
+        SysUser user = ShiroUtils.getSysUser();
+        return toAjax(teamAssociationApplicationService.agree(id,user.getUserId(),user.getLoginName()));
     }
 }

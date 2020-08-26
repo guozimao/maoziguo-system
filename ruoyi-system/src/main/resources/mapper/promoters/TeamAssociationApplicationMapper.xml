@@ -7,8 +7,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="TeamAssociationApplication" id="TeamAssociationApplicationResult">
         <result property="id"    column="id"    />
         <result property="applicantId"    column="applicant_id"    />
-        <result property="approverId"    column="dept_id"    />
-        <result property="deptId"    column="approver_id"    />
+        <result property="approverId"    column="approver_id"    />
+        <result property="deptId"    column="dept_id"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -18,9 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="ApplicationRespDto" id="ApplicationResult">
         <result property="id"    column="id"    />
-        <result property="applicantName"    column="applicant_id"    />
         <result property="applicantId"    column="applicant_id"    />
-        <result property="approverName"    column="approver_name"    />
         <result property="approverId"    column="approver_id"    />
         <result property="deptId"    column="dept_id"    />
         <result property="associationStatus"    column="association_status"    />
@@ -57,6 +55,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and association_status = #{associationStatus}
             </if>
         </where>
+    </select>
+    <select id="selectTeamAssociationApplicationWithAssociateStatusBySalesManId"
+            parameterType="Long" resultMap="TeamAssociationApplicationResult">
+        <include refid="selectTeamAssociationApplicationVo"/>
+        where approver_id = #{id}
+            and association_status = '0'
     </select>
 
     <insert id="insertTeamAssociationApplication" parameterType="TeamAssociationApplication" useGeneratedKeys="true" keyProperty="id">

@@ -26,6 +26,8 @@ public class ApplicationRespDto {
     /** 关联状态（0已关联 1未关联 2申请中 3不通过） */
     private String associationStatus;
 
+    private String hiddenTxt;
+
     public Long getId() {
         return id;
     }
@@ -88,5 +90,17 @@ public class ApplicationRespDto {
 
     public void setDeptId(Long deptId) {
         this.deptId = deptId;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getHiddenTxt() {
+        return hiddenTxt;
+    }
+
+    public void setHiddenTxt(String hiddenTxt) {
+        this.hiddenTxt = hiddenTxt;
     }
 }

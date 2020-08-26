@@ -22,7 +22,7 @@
         }
         function submitHandler() {
             var id = $("input[name='userId']").val();
-            $.operate.submit("/businessteam/salesman/applicationAssociation","get","json",'id='+id,callback);
+            $.operate.syncSubmit("/businessteam/salesman/applicationAssociation","get","json",'id='+id,callback);
             var index = parent.layer.getFrameIndex(window.name);
             parent.layer.close(index);
         }

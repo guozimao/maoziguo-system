@@ -921,6 +921,26 @@ var table = {
         	    };
         	    $.ajax(config)
             },
+			// 提交数据
+			syncSubmit: function(url, type, dataType, data, callback) {
+				var config = {
+					url: url,
+					type: type,
+					dataType: dataType,
+					data: data,
+					async:false,
+					beforeSend: function () {
+						$.modal.loading("正在处理中，请稍后...");
+					},
+					success: function(result) {
+						if (typeof callback == "function") {
+							callback(result);
+						}
+						$.operate.ajaxSuccess(result);
+					}
+				};
+				$.ajax(config)
+			},
             // post请求传输
             post: function(url, data, callback) {
             	$.operate.submit(url, "post", "json", data, callback);
