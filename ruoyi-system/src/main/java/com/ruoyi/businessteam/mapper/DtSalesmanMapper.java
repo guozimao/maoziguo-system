@@ -87,4 +87,6 @@ public interface DtSalesmanMapper
                                    @Param("associationStatus") String s);
 
     DtSalesman selectDtSalesmanByUserId(Long userId);
+
+    List<DtSalesman> selectDtSalesmanByIds(@Param("array") List<Long> salesmanIds);
 }

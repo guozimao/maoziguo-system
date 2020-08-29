@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('申请关联')" />
+    <th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <div class="col-xs-offset-1">
+            <div class="form-group">
+                <label class="font-noraml">提醒：批量上传文件。这里只支持上传.xls以及.xlsx后缀的excel文件</label>
+                <div class="file-loading">
+                    <input id="fileinput" name="file" type="file" multiple accept=".xls,.xlsx">
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-fileinput-js" />
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            $("#fileinput").fileinput({
+                'theme': 'explorer-fas',
+                'uploadUrl': "/groupcompany/task/upload/insert",
+                overwriteInitial: false,
+                initialPreviewAsData: true,
+                uploadAsync: false,
+                allowedFileExtensions: ['xls', 'xlsx'],
+                enctype: 'multipart/form-data',
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+                maxFileCount: 17
+            }).on('filepreupload', function(event, data, previewId, index) {     //上传中
+                var form = data.form, files = data.files, extra = data.extra,
+                    response = data.response, reader = data.reader;
+                console.log('文件正在上传');
+            }).on("fileuploaded", function (event, data, previewId, index) {    //一个文件上传成功
+                console.log('文件上传成功！'+data.response.id);
+            }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
+                console.log('文件上传失败！'+data.id);
+            }).on('filebatchuploadsuccess', function(event,data,previewId,index) {//同步上传回调
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+                parent.layer.alert(data.response.msg);
+                console.log(parent);
+            })
+            ;
+        });
+        var callback = function (result) {
+            parent.layer.alert(result.msg);
+        }
+        function submitHandler() {
+            var id = $("input[name='userId']").val();
+            $.operate.syncSubmit("/businessteam/salesman/applicationAssociation","get","json",'id='+id,callback);
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        }
+        function searchVailResult() {
+            var id = $("input[name='userId']").val();
+            $.operate.submit("/businessteam/salesman/checkVail4Id","get","json",'id='+id);
+        }
+    </script>
+</body>
+</html>

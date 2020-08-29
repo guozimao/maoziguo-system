@@ -861,6 +861,46 @@ var table = {
             	});
                 layer.full(index);
             },
+			// 弹出层空白页全屏
+			openFullWithBlank: function (title, url,width, height) {
+				//如果是移动端，就使用自适应大小弹窗
+				if ($.common.isMobile()) {
+					width = 'auto';
+					height = 'auto';
+				}
+				if ($.common.isEmpty(title)) {
+					title = false;
+				}
+				if ($.common.isEmpty(url)) {
+					url = "/404.html";
+				}
+				if ($.common.isEmpty(width)) {
+					width = 800;
+				}
+				if ($.common.isEmpty(height)) {
+					height = ($(window).height() - 50);
+				}
+				var index = layer.open({
+					type: 2,
+					area: [width + 'px', height + 'px'],
+					fix: false,
+					//不固定
+					maxmin: true,
+					shade: 0.3,
+					title: title,
+					content: url,
+					// 弹层外区域关闭
+					shadeClose: true,
+					btn: ['关闭'],
+					cancel: function(index) {
+						return true;
+					},
+					end : function() {
+						$.table.refresh();
+					}
+				});
+				layer.full(index);
+			},
             // 选卡页方式打开
             openTab: function (title, url) {
             	createMenuItem(url, title);

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.groupcompany.mapper.DtBusinessTaskMapper">
+    
+    <resultMap type="DtBusinessTask" id="DtBusinessTaskResult">
+        <result property="id"    column="id"    />
+        <result property="groupAllocateTime"    column="group_allocate_time"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="allocateTime"    column="allocate_time"    />
+        <result property="salesmanId"    column="salesman_id"    />
+        <result property="feedbackPictureUrl1"    column="feedback_picture_url1"    />
+        <result property="feedbackPictureUrl2"    column="feedback_picture_url2"    />
+        <result property="feedbackPictureUrl3"    column="feedback_picture_url3"    />
+        <result property="feedbackPictureUrl4"    column="feedback_picture_url4"    />
+        <result property="feedbackPictureUrl5"    column="feedback_picture_url5"    />
+        <result property="completionTime"    column="completion_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <resultMap id="DtBusinessTaskDtBusinessTaskDetailResult" type="DtBusinessTask" extends="DtBusinessTaskResult">
+        <collection property="dtBusinessTaskDetailList" notNullColumn="id" javaType="java.util.List" resultMap="DtBusinessTaskDetailResult" />
+    </resultMap>
+
+    <resultMap type="DtBusinessTaskDetail" id="DtBusinessTaskDetailResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="pictureUrl"    column="picture_url"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="unitPriceRemark"    column="unit_price_remark"    />
+        <result property="specialRemarks"    column="special_remarks"    />
+        <result property="keywork1"    column="keywork1"    />
+        <result property="keywork2"    column="keywork2"    />
+        <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
+        <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
+    </resultMap>
+
+    <resultMap type="DtGroupBusinessTaskRespDto" id="DtGroupBusinessTaskRespDtoResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="groupAllocateTime"    column="group_allocate_time"    />
+        <result property="salesmanId"    column="salesman_id"    />
+        <result property="completionTime"    column="completion_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <resultMap id="DtGroupBusinessTaskRespDtoDetailResult" type="DtGroupBusinessTaskRespDto" extends="DtGroupBusinessTaskRespDtoResult">
+        <collection property="dtGroupBusinessTaskDetailRespDtoList" notNullColumn="id" javaType="java.util.List" resultMap="DtGroupBusinessDetailTaskRespDtoResult" />
+    </resultMap>
+
+    <resultMap type="DtGroupBusinessTaskDetailRespDto" id="DtGroupBusinessDetailTaskRespDtoResult">
+        <result property="taskNo"    column="task_no"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice" column="unit_price" />
+        <result property="promotersModifyUnitPrice" column="promoters_modify_unit_price" />
+        <result property="keyword1"    column="keyword1"    />
+        <result property="keyword2"    column="keyword2"    />
+    </resultMap>
+
+    <sql id="selectDtBusinessTaskVo">
+        select id, group_allocate_time, dept_id, order_status, allocate_time, salesman_id,completion_time, create_time from dt_business_task
+    </sql>
+
+    <select id="selectDtBusinessTaskList" parameterType="DtBusinessTask" resultMap="DtBusinessTaskResult">
+        <include refid="selectDtBusinessTaskVo"/>
+        <where>  
+            <if test="groupAllocateTime != null "> and group_allocate_time = #{groupAllocateTime}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
+            <if test="allocateTime != null "> and allocate_time = #{allocateTime}</if>
+            <if test="salesmanId != null "> and salesman_id = #{salesmanId}</if>
+            <if test="completionTime != null "> and completion_time = #{completionTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectDtBusinessTaskById" parameterType="Long" resultMap="DtBusinessTaskDtBusinessTaskDetailResult">
+        select a.id, a.group_allocate_time, a.dept_id, a.order_status, a.allocate_time, a.salesman_id, a.feedback_picture_url1, a.feedback_picture_url2, a.feedback_picture_url3, a.feedback_picture_url4, a.feedback_picture_url5, a.completion_time, a.create_time,
+            b.id, b.task_id, b.task_no, b.order_date, b.picture_url, b.shop_name, b.unit_price, b.unit_price_remark, b.special_remarks, b.keywork1, b.keywork2, b.promoters_modify_unit_price, b.promoters_unit_price_remark
+        from dt_business_task a
+        left join dt_business_task_detail b on b.task_id = a.id
+        where a.id = #{id}
+    </select>
+    <select id="selectGroupDtBusinessTaskDtoList"
+            parameterType="DtGroupBusinessTaskRespDto" resultMap="DtGroupBusinessTaskRespDtoDetailResult">
+            select b.*,task_no,order_date,shop_name,keyword1,keyword2,unit_price,platform_nickname,promoters_modify_unit_price,group_allocate_time,completion_time
+            from(
+                SELECT id,dept_id,order_status,salesman_id,
+                        completion_time,create_time,platform_nickname,group_allocate_time
+                from dt_business_task
+                <where>
+                    <if test="deptId != null and deptId != ''">dept_id = #{deptId}</if>
+                    <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
+                </where>
+            )b join dt_business_task_detail dbtd on b.id = dbtd.task_id
+            <where>
+                <if test="orderDate != null">order_date =#{orderDate}</if>
+                <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+                <if test="platformNickname != null and platformNickname != ''">and platform_nickname like concat('%', #{platformNickname}, '%')</if>
+            </where>
+            order by id DESC
+    </select>
+    <select id="selectDtBusinessTaskListWithAllocateTimeByIds"
+            parameterType="DtBusinessTask" resultMap="DtBusinessTaskResult">
+        <include refid="selectDtBusinessTaskVo"/>
+        where
+            allocate_time is not null
+            and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="insertDtBusinessTask" parameterType="DtBusinessTask" useGeneratedKeys="true" keyProperty="id">
+        insert into dt_business_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupAllocateTime != null">group_allocate_time,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="orderStatus != null and orderStatus != ''">order_status,</if>
+            <if test="allocateTime != null">allocate_time,</if>
+            <if test="salesmanId != null">salesman_id,</if>
+            <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">feedback_picture_url1,</if>
+            <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">feedback_picture_url2,</if>
+            <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">feedback_picture_url3,</if>
+            <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">feedback_picture_url4,</if>
+            <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">feedback_picture_url5,</if>
+            <if test="completionTime != null">completion_time,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupAllocateTime != null">#{groupAllocateTime},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="orderStatus != null and orderStatus != ''">#{orderStatus},</if>
+            <if test="allocateTime != null">#{allocateTime},</if>
+            <if test="salesmanId != null">#{salesmanId},</if>
+            <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">#{feedbackPictureUrl1},</if>
+            <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">#{feedbackPictureUrl2},</if>
+            <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">#{feedbackPictureUrl3},</if>
+            <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">#{feedbackPictureUrl4},</if>
+            <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">#{feedbackPictureUrl5},</if>
+            <if test="completionTime != null">#{completionTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDtBusinessTask" parameterType="DtBusinessTask">
+        update dt_business_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupAllocateTime != null">group_allocate_time = #{groupAllocateTime},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="orderStatus != null and orderStatus != ''">order_status = #{orderStatus},</if>
+            <if test="allocateTime != null">allocate_time = #{allocateTime},</if>
+            <if test="salesmanId != null">salesman_id = #{salesmanId},</if>
+            <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">feedback_picture_url1 = #{feedbackPictureUrl1},</if>
+            <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">feedback_picture_url2 = #{feedbackPictureUrl2},</if>
+            <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">feedback_picture_url3 = #{feedbackPictureUrl3},</if>
+            <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">feedback_picture_url4 = #{feedbackPictureUrl4},</if>
+            <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">feedback_picture_url5 = #{feedbackPictureUrl5},</if>
+            <if test="completionTime != null">completion_time = #{completionTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDtBusinessTaskById" parameterType="Long">
+        delete from dt_business_task where id = #{id}
+    </delete>
+
+    <delete id="deleteDtBusinessTaskByIds" parameterType="String">
+        delete from dt_business_task where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteDtBusinessTaskDetailByTaskIds" parameterType="String">
+        delete from dt_business_task_detail where task_id in 
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteDtBusinessTaskDetailByTaskId" parameterType="Long">
+        delete from dt_business_task_detail where task_id = #{taskId}
+    </delete>
+
+    <insert id="batchDtBusinessTaskDetail">
+        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url, shop_name, unit_price, unit_price_remark, special_remarks, keywork1, keywork2, promoters_modify_unit_price, promoters_unit_price_remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keywork1}, #{item.keywork2}, #{item.promotersModifyUnitPrice}, #{item.promotersUnitPriceRemark})
+        </foreach>
+    </insert>
+
+</mapper>

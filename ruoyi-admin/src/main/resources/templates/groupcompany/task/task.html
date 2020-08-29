@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('商业任务信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>部门：</label>
+                                <input type="text" placeholder="部门" name="deptName" readonly  onclick="selectDeptTree()"/>
+                                <input type="text" placeholder="部门id" name="deptId" hidden="true"/>
+                            </li>
+                            <li>
+                                <label>会员名：</label>
+                                <input type="text" id="platformNickname" placeholder="会员名" name="platformNickname"/>
+                            </li>
+                            <li>
+                                <label>店铺名：</label>
+                                <input type="text" id="shopName" placeholder="店铺名" name="shopName"/>
+                            </li>
+                            <li>
+                                <label>订单日期：</label>
+                                <input type="text" class="time-input" id="orderDate" placeholder="订单日期" name="orderDate"/>
+                            </li>
+                            <li>
+                                <label>订单状态：</label>
+                                <select name="orderStatus" th:with="type=${@dict.getType('sys_order_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary" onclick="dataImport()">
+                    <i class="fa fa-plus"></i> 导入
+                </a>
+                <a class="btn btn-success single disabled" onclick="batchAssign()">
+                    <i class="fa fa-at"></i> 调配
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-hover">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
+        var prefix = ctx + "groupcompany/task";
+        var selectedIds = '';
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "商业任务信息",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '编号'
+                },
+                {
+                    field: 'deptName',
+                    title: '归属组织'
+                },
+                {
+                    field: 'taskNo',
+                    title: '任务编码',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
+                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
+                                html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].taskNo);
+                            }else{
+                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].taskNo);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
+                    field: 'shopName',
+                    title: '店铺名',
+                    width: '150',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
+                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
+                                html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].shopName);
+                            }else{
+                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].shopName);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
+                    field: 'orderDate',
+                    title: '订单日期',
+                    width: '95',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
+                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
+                                html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].orderDate);
+                            }else{
+                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].orderDate);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
+                    field: 'keyword1',
+                    title: '关键字1',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
+                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
+                                html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword1);
+                            }else{
+                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword1);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
+                    field: 'keyword2',
+                    title: '关键字2',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
+                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
+                                html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword2);
+                            }else{
+                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword2);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
+                    field: 'orderNumber',
+                    title: '订单数'
+                },
+                {
+                    field: 'totalPrincipal',
+                    title: '总本金'
+                },
+                {
+                    field: 'actualTotalPrincipal',
+                    title: '实际总本金'
+                },
+                {
+                    field: 'orderStatus',
+                    title: '订单状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(orderStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'groupAllocateTime',
+                    title: '集团分配时间'
+                },
+                {
+                    field: 'salesmanName',
+                    title: '地推员'
+                },
+                {
+                    field: 'platformNickname',
+                    title: '会员名'
+                },
+                {
+                    field: 'completionTime',
+                    title: '完成时间'
+                },
+                {
+                    field: 'createTime',
+                    title: '生成时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="assign(\'' + row.id + '\')"><i class="fa fa-at"></i>调配</a> ');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="search(\'' + row.id + '\')"><i class="fa fa fa-search"></i>查看</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /* 用户管理-修改-选择部门树 */
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $("input[name='deptId']").val(body.find('#treeId').val());
+                $("input[name='deptName']").val(body.find('#treeName').val());
+                layer.close(index);
+            }
+        }
+
+        function assign(id) {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            selectedIds = id;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doAssignSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doAssignSubmit(index, layero) {
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $.operate.submit('/groupcompany/task/assgin','post','json',{ids:selectedIds,deptId:body.find('#treeId').val()});
+                layer.close(index);
+            }
+        }
+
+        function batchAssign() {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            assign(rows.join());
+        }
+
+        function dataImport() {
+            $.modal.openFullWithBlank("任务导入", prefix + "/importData");
+        }
+    </script>
+</body>
+</html>
