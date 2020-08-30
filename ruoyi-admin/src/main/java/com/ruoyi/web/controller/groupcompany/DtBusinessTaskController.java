@@ -3,12 +3,15 @@ package com.ruoyi.web.controller.groupcompany;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
 import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.repurchase.domain.MemberConsumptionTrack;
+import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -165,6 +168,18 @@ public class DtBusinessTaskController extends BaseController
     {
         ExcelUtil<DtBusinessTaskDetail> util = new ExcelUtil<DtBusinessTaskDetail>(DtBusinessTaskDetail.class);
         return util.importTemplateExcel("任务明细数据");
+    }
+
+    /**
+     * 查看任务信息明细
+     */
+    @GetMapping("/queryDetailPopup/{id}")
+    public String queryDetail(@PathVariable("id") Long id, ModelMap mmap)
+    {
+        DtBusinessTask dtBusinessTask = new DtBusinessTask();
+        dtBusinessTask.setFeedbackPictureUrl1("http://maoziguo.oss-cn-beijing.aliyuncs.com//picture/8506a2b9-4828-4b7a-93fa-c32ae290c624.png?Expires=1914137907&OSSAccessKeyId=LTAI4GDPSzeJWUP2w4UyTVty&Signature=Vqe2XbvJGxN8Boy0q5Ulc%2BLtRzk%3D");
+        mmap.put("dtBusinessTask", dtBusinessTask);
+        return prefix + "/queryDetailPopup";
     }
 
 }

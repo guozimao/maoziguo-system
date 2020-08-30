@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('修改商业任务信息')" />
+    <th:block th:include="include :: header('查看商业任务明细信息')" />
     <th:block th:include="include :: datetimepicker-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-task-edit" th:object="${dtBusinessTask}">
-            <h4 class="form-header h4">商业任务信息信息</h4>
+        <form class="form-horizontal m" id="form-task-detail-query" th:object="${dtBusinessTask}">
+            <h4 class="form-header h4">商业任务明细查询</h4>
             <input name="id" th:field="*{id}" type="hidden">
             <div class="form-group">    
                 <label class="col-sm-3 control-label">集团分配时间：</label>
@@ -51,6 +51,14 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label is-required">反馈图片url1：</label>
                 <div class="col-sm-8">
+                    <ul id="viewer">
+                        <li><img th:data-original="${dtBusinessTask.feedbackPictureUrl1}" th:src="${dtBusinessTask.feedbackPictureUrl1}" alt="图片1"></li>
+                        <li><img th:data-original="${dtBusinessTask.feedbackPictureUrl1}" th:src="${dtBusinessTask.feedbackPictureUrl1}" alt="图片2"></li>
+                        <li><img th:data-original="${dtBusinessTask.feedbackPictureUrl1}" th:src="${dtBusinessTask.feedbackPictureUrl1}" alt="图片3"></li>
+                        <li><img th:data-original="${dtBusinessTask.feedbackPictureUrl1}" th:src="${dtBusinessTask.feedbackPictureUrl1}" alt="图片4"></li>
+                        <li><img th:data-original="${dtBusinessTask.feedbackPictureUrl1}" th:src="${dtBusinessTask.feedbackPictureUrl1}" alt="图片5"></li>
+                        <li><img th:data-original="${dtBusinessTask.feedbackPictureUrl1}" th:src="${dtBusinessTask.feedbackPictureUrl1}" alt="图片6"></li>
+                    </ul>
                     <input name="feedbackPictureUrl1" th:field="*{feedbackPictureUrl1}" class="form-control" type="text" required>
                 </div>
             </div>
@@ -103,13 +111,17 @@
     <th:block th:include="include :: datetimepicker-js" />
     <script th:inline="javascript">
         var prefix = ctx + "groupcompany/task";
-        $("#form-task-edit").validate({
+        $("#form-task-detail-query").validate({
             focusCleanup: true
+        });
+
+        var image = new Viewer(document.getElementById('viewer'),{
+            fullscreen:false
         });
 
         function submitHandler() {
             if ($.validate.form()) {
-                $.operate.save(prefix + "/edit", $('#form-task-edit').serialize());
+                $.operate.save(prefix + "/edit", $('#form-task-detail-query').serialize());
             }
         }
 

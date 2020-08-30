@@ -213,7 +213,7 @@
                     formatter: function(value, row, index) {
                         var actions = [];
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="assign(\'' + row.id + '\')"><i class="fa fa-at"></i>调配</a> ');
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="search(\'' + row.id + '\')"><i class="fa fa fa-search"></i>查看</a>');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="searchDetail(\'' + row.id + '\')"><i class="fa fa fa-search"></i>查看</a>');
                         return actions.join('');
                     }
                 }]
@@ -274,6 +274,10 @@
 
         function dataImport() {
             $.modal.openFullWithBlank("任务导入", prefix + "/importData");
+        }
+
+        function searchDetail(id) {
+            $.modal.openFullWithBlank("任务详情明细", prefix + "/queryDetailPopup/" + id);
         }
     </script>
 </body>
