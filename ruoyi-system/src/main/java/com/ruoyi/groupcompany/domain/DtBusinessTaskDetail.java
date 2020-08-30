@@ -13,7 +13,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author zimao
  * @date 2020-08-27
  */
-public class DtBusinessTaskDetail extends BaseEntity
+public class DtBusinessTaskDetail
 {
     private static final long serialVersionUID = 1L;
 
@@ -21,31 +21,33 @@ public class DtBusinessTaskDetail extends BaseEntity
     private Long id;
 
     /** 任务主表id */
-    @Excel(name = "任务主表id")
     private Long taskId;
 
     /** 任务编码 */
-    @Excel(name = "任务编码")
+    @Excel(name = "任务代码")
     private String taskNo;
 
     /** 订单日期 */
-    @Excel(name = "订单日期", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date orderDate;
 
     /** 图片url */
-    @Excel(name = "图片url")
+    @Excel(name = "主图oss参数")
     private String pictureUrl;
 
     /** 店铺名 */
-    @Excel(name = "店铺名")
+    @Excel(name = "店铺名称（非掌柜名）")
     private String shopName;
+
+    @Excel(name = "链接")
+    private String platformUrl;
 
     /** 单价/元 */
     @Excel(name = "单价/元")
     private BigDecimal unitPrice;
 
     /** 备注 */
-    @Excel(name = "备注")
+    @Excel(name = "单价备注")
     private String unitPriceRemark;
 
     /** 特殊备注 */
@@ -53,19 +55,17 @@ public class DtBusinessTaskDetail extends BaseEntity
     private String specialRemarks;
 
     /** 关键字1 */
-    @Excel(name = "关键字1")
-    private String keywork1;
+    @Excel(name = "关键词1")
+    private String keyword1;
 
     /** 关键字2 */
-    @Excel(name = "关键字2")
-    private String keywork2;
+    @Excel(name = "关键词2")
+    private String keyword2;
 
     /** 地推员修改的单价/元 */
-    @Excel(name = "地推员修改的单价/元")
     private BigDecimal promotersModifyUnitPrice;
 
     /** 地推员备注 */
-    @Excel(name = "地推员备注")
     private String promotersUnitPriceRemark;
 
     public void setId(Long id) 
@@ -149,25 +149,24 @@ public class DtBusinessTaskDetail extends BaseEntity
     {
         return specialRemarks;
     }
-    public void setKeywork1(String keywork1) 
-    {
-        this.keywork1 = keywork1;
+
+    public String getKeyword1() {
+        return keyword1;
     }
 
-    public String getKeywork1() 
-    {
-        return keywork1;
-    }
-    public void setKeywork2(String keywork2) 
-    {
-        this.keywork2 = keywork2;
+    public void setKeyword1(String keyword1) {
+        this.keyword1 = keyword1;
     }
 
-    public String getKeywork2() 
-    {
-        return keywork2;
+    public String getKeyword2() {
+        return keyword2;
     }
-    public void setPromotersModifyUnitPrice(BigDecimal promotersModifyUnitPrice) 
+
+    public void setKeyword2(String keyword2) {
+        this.keyword2 = keyword2;
+    }
+
+    public void setPromotersModifyUnitPrice(BigDecimal promotersModifyUnitPrice)
     {
         this.promotersModifyUnitPrice = promotersModifyUnitPrice;
     }
@@ -186,6 +185,14 @@ public class DtBusinessTaskDetail extends BaseEntity
         return promotersUnitPriceRemark;
     }
 
+    public String getPlatformUrl() {
+        return platformUrl;
+    }
+
+    public void setPlatformUrl(String platformUrl) {
+        this.platformUrl = platformUrl;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -198,8 +205,8 @@ public class DtBusinessTaskDetail extends BaseEntity
             .append("unitPrice", getUnitPrice())
             .append("unitPriceRemark", getUnitPriceRemark())
             .append("specialRemarks", getSpecialRemarks())
-            .append("keywork1", getKeywork1())
-            .append("keywork2", getKeywork2())
+            .append("keywork1", getKeyword1())
+            .append("keywork2", getKeyword2())
             .append("promotersModifyUnitPrice", getPromotersModifyUnitPrice())
             .append("promotersUnitPriceRemark", getPromotersUnitPriceRemark())
             .toString();

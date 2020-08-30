@@ -3,18 +3,19 @@ package com.ruoyi.groupcompany.service.impl;
 import java.math.BigDecimal;
 import java.util.*;
 
-import com.ruoyi.businessteam.domain.DtSalesman;
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
 import com.ruoyi.common.exception.BusinessException;
-import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.system.domain.SysDept;
-import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.mapper.SysDeptMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +36,9 @@ import com.ruoyi.common.core.text.Convert;
  * @date 2020-08-27
  */
 @Service
-public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService 
+public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
 {
+    private static final Logger log = LoggerFactory.getLogger(DtBusinessTaskServiceImpl.class);
     @Autowired
     private DtBusinessTaskMapper dtBusinessTaskMapper;
 
@@ -77,21 +79,32 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
     {
         List<DtGroupBusinessTaskRespDto> resultList = dtBusinessTaskMapper.selectGroupDtBusinessTaskDtoList(dtGroupBusinessTaskReqDto);
 
-        List<Long> deptIds = resultList.stream().map(DtGroupBusinessTaskRespDto::getDeptId).collect(Collectors.toList());
+        doProcessDetail4GroupBusinessTaskRespDto(resultList);
 
-        List<Long> salesmanIds = resultList.stream().map(DtGroupBusinessTaskRespDto::getSalesmanId).collect(Collectors.toList());
+        List<Long> deptIds = resultList.stream().map(DtGroupBusinessTaskRespDto::getDeptId).collect(Collectors.toList());
 
         List<SysDept> depts = deptIds.size() > 0 ? sysDeptMapper.selectDeptListByIds(deptIds) : Collections.emptyList();
 
-        List<DtSalesman> dtSalesmans = salesmanIds.size() > 0 ? dtSalesmanMapper.selectDtSalesmanByIds(salesmanIds) : Collections.emptyList();
-
         Map<Long,String> deptIdAndNameMap = depts.stream().collect(Collectors.toMap(SysDept::getDeptId, SysDept::getDeptName, (key1, key2) -> key2));
 
-        Map<Long,String> salesmanIdAndUserName = getsalesmanIdAndUserName4DtGroupBusinessTaskRespDto(dtSalesmans);
-
-        formatDto4DtGroupBusinessTaskRespDto(resultList,deptIdAndNameMap,salesmanIdAndUserName);
+        formatDto4DtGroupBusinessTaskRespDto(resultList,deptIdAndNameMap);
 
         return resultList;
+    }
+
+    private void doProcessDetail4GroupBusinessTaskRespDto(List<DtGroupBusinessTaskRespDto> resultList) {
+        List<Long> taskIds =  resultList.stream().map(DtGroupBusinessTaskRespDto::getId).collect(Collectors.toList());
+        if(taskIds.size() == 0){
+            return;
+        }
+        List<DtGroupBusinessTaskDetailRespDto> details = dtBusinessTaskMapper.selectGroupBusinessTaskDetailDtoByTaskIds(taskIds);
+        MultiValuedMap<Long,DtGroupBusinessTaskDetailRespDto> taskIdAndDetailListMap = new ArrayListValuedHashMap<>();
+        for(DtGroupBusinessTaskDetailRespDto detail:details){
+            taskIdAndDetailListMap.put(detail.getTaskId(),detail);
+        }
+        for(DtGroupBusinessTaskRespDto dto:resultList){
+            dto.setDtGroupBusinessTaskDetailRespDtoList((List<DtGroupBusinessTaskDetailRespDto>)taskIdAndDetailListMap.get(dto.getId()));
+        }
     }
 
     @Override
@@ -113,12 +126,74 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
         return count;
     }
 
+    @Override
+    @Transactional
+    public String batchInsertTask(List<List<DtBusinessTaskDetail>> list, List<DtBusinessTaskDetail> vaildList) {
+        vaildBusinessTaskDetailList(vaildList);
+        int successNum = 0;
+        int failureNum = 0;
+
+        StringBuilder successMsg = new StringBuilder();
+        StringBuilder failureMsg = new StringBuilder();
+        for (List<DtBusinessTaskDetail> taskDetailList : list)
+        {
+            try
+            {
+                DtBusinessTask dtBusinessTask = new DtBusinessTask();
+                dtBusinessTask.setOrderStatus("1");
+                dtBusinessTaskMapper.insertDtBusinessTask(dtBusinessTask);
+                dtBusinessTaskMapper.batchInsertDtBusinessTaskDetail(dtBusinessTask.getId(),taskDetailList);
+                successNum++;
+                successMsg.append("<br/>" + successNum + "、任务编码：" + dtBusinessTask.getId() +" 产生，导入成功");
+
+            }
+            catch (Exception e)
+            {
+                failureNum++;
+                String msg = "导入失败！";
+                failureMsg.append(msg + e.getMessage());
+                log.error(msg, e);
+            }
+        }
+        if (failureNum > 0)
+        {
+            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确，错误如下：");
+            throw new BusinessException(failureMsg.toString());
+        }
+        else
+        {
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
+        }
+        return successMsg.toString();
+    }
+
+    private void vaildBusinessTaskDetailList(List<DtBusinessTaskDetail> vaildList) {
+        if (StringUtils.isNull(vaildList) || vaildList.size() == 0)
+        {
+            throw new BusinessException("导入的任务数据不能为空！");
+        }
+        StringBuffer vailedMsg = new StringBuffer();
+        for(DtBusinessTaskDetail dtBusinessTaskDetail:vaildList){
+            if(StringUtils.isEmpty(dtBusinessTaskDetail.getTaskNo())){
+                vailedMsg.append("<br/>" + dtBusinessTaskDetail.getShopName()).append("任务代码不能为空");
+            }
+            if(StringUtils.isEmpty(dtBusinessTaskDetail.getShopName())){
+                vailedMsg.append("<br/>" + dtBusinessTaskDetail.getTaskNo()).append("店铺名不能为空");
+            }
+            if(StringUtils.isNull(dtBusinessTaskDetail.getUnitPrice())){
+                vailedMsg.append("<br/>" + dtBusinessTaskDetail.getShopName()).append("单价不能为空");
+            }
+        }
+        String msg = vailedMsg.toString();
+        if(StringUtils.isNotEmpty(msg)){
+            throw new BusinessException(msg);
+        }
+    }
+
     private void formatDto4DtGroupBusinessTaskRespDto(List<DtGroupBusinessTaskRespDto> resultList,
-                                                      Map<Long,String> deptIdAndNameMap,
-                                                      Map<Long,String> salesmanIdAndUserName) {
+                                                      Map<Long,String> deptIdAndNameMap) {
         for(DtGroupBusinessTaskRespDto dto: resultList){
             dto.setDeptName(deptIdAndNameMap.get(dto.getDeptId()));
-            dto.setSalesmanName(salesmanIdAndUserName.get(dto.getSalesmanId()));
             List<DtGroupBusinessTaskDetailRespDto> detailRespDto = dto.getDtGroupBusinessTaskDetailRespDtoList();
             dto.setOrderNumber(detailRespDto.size());
             List<BigDecimal> principalList = detailRespDto.stream().map(DtGroupBusinessTaskDetailRespDto::getUnitPrice).collect(Collectors.toList());
@@ -135,18 +210,6 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
         }
     }
 
-    private Map<Long, String> getsalesmanIdAndUserName4DtGroupBusinessTaskRespDto(List<DtSalesman> dtSalesmans) {
-        Map<Long,Long> salesmanIdAndUserIdMap = dtSalesmans.stream().collect(Collectors.toMap(DtSalesman::getId, DtSalesman::getUserId, (key1, key2) -> key2));
-        List<Long> userIds = salesmanIdAndUserIdMap.entrySet().stream().map(x -> x.getValue()).collect(Collectors.toList());
-        List<SysUser> users = sysUserMapper.selectUserListByIds(userIds);
-        Map<Long,String> userIdAndNameMap = users.stream().collect(Collectors.toMap(SysUser::getUserId,SysUser::getUserName,(key1,key2) -> key2));
-        Map<Long,String> resultMap = new HashMap<>();
-        for(Map.Entry<Long,Long> entry:salesmanIdAndUserIdMap.entrySet()){
-            resultMap.put(entry.getKey(),userIdAndNameMap.get(entry.getValue()));
-        }
-        return resultMap;
-    }
-
     /**
      * 新增商业任务信息
      * 
@@ -157,10 +220,11 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
     @Override
     public int insertDtBusinessTask(DtBusinessTask dtBusinessTask)
     {
-        dtBusinessTask.setCreateTime(DateUtils.getNowDate());
+        /*dtBusinessTask.setCreateTime(DateUtils.getNowDate());
         int rows = dtBusinessTaskMapper.insertDtBusinessTask(dtBusinessTask);
         insertDtBusinessTaskDetail(dtBusinessTask);
-        return rows;
+        return rows;*/
+        return 0;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.ruoyi.groupcompany.service;
 
 import java.util.List;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
+import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
@@ -67,4 +68,7 @@ public interface IDtBusinessTaskService
 
 
     int assginDept(AssginReqDto assginReqDto);
+
+
+    String batchInsertTask(List<List<DtBusinessTaskDetail>> list, List<DtBusinessTaskDetail> vaildList);
 }

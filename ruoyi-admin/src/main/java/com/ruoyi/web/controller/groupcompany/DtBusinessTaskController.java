@@ -1,10 +1,14 @@
 package com.ruoyi.web.controller.groupcompany;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
+import com.ruoyi.repurchase.domain.MemberConsumptionTrack;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -142,10 +146,25 @@ public class DtBusinessTaskController extends BaseController
 
     @RequestMapping("/upload/insert")
     @ResponseBody
-    public AjaxResult insert(HttpServletRequest request, HttpServletResponse response
-            , @RequestParam("file") MultipartFile[] file) throws Exception{
+    public AjaxResult insert(@RequestParam("file") MultipartFile[] file) throws Exception{
+        ExcelUtil<DtBusinessTaskDetail> util = new ExcelUtil<DtBusinessTaskDetail>(DtBusinessTaskDetail.class);
+        List<List<DtBusinessTaskDetail>> list = new ArrayList<>();
+        List<DtBusinessTaskDetail> vaildList = new ArrayList<>();
+        for (MultipartFile f : file){
+            List<DtBusinessTaskDetail> businessTaskList = util.importExcel(f.getInputStream());
+            list.add(businessTaskList);
+            vaildList.addAll(businessTaskList);
+        }
+        String message = dtBusinessTaskService.batchInsertTask(list,vaildList);
+        return AjaxResult.success(message);
+    }
 
-        return success();
+    @GetMapping("/importTemplate")
+    @ResponseBody
+    public AjaxResult importTemplate()
+    {
+        ExcelUtil<DtBusinessTaskDetail> util = new ExcelUtil<DtBusinessTaskDetail>(DtBusinessTaskDetail.class);
+        return util.importTemplateExcel("任务明细数据");
     }
 
 }

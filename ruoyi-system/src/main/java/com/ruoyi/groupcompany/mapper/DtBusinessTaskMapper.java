@@ -3,6 +3,7 @@ package com.ruoyi.groupcompany.mapper;
 import java.util.List;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
+import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import org.apache.ibatis.annotations.Param;
@@ -37,7 +38,7 @@ public interface DtBusinessTaskMapper
      * @param dtBusinessTask 商业任务信息
      * @return 结果
      */
-    public int insertDtBusinessTask(DtBusinessTask dtBusinessTask);
+    public Long insertDtBusinessTask(DtBusinessTask dtBusinessTask);
 
     /**
      * 修改商业任务信息
@@ -98,4 +99,8 @@ public interface DtBusinessTaskMapper
 
 
     List<DtBusinessTask> selectDtBusinessTaskListWithAllocateTimeByIds(@Param("array")Long[] taskIds);
+
+    void batchInsertDtBusinessTaskDetail(@Param("taskId") Long taskId, @Param("list") List<DtBusinessTaskDetail> taskDetailList);
+
+    List<DtGroupBusinessTaskDetailRespDto> selectGroupBusinessTaskDetailDtoByTaskIds(@Param("array") List<Long> taskIds);
 }

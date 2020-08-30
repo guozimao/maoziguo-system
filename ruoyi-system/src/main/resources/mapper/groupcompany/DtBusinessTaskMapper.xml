@@ -56,6 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <resultMap type="DtGroupBusinessTaskDetailRespDto" id="DtGroupBusinessDetailTaskRespDtoResult">
+        <result property="taskId"    column="task_id"    />
         <result property="taskNo"    column="task_no"    />
         <result property="orderDate"    column="order_date"    />
         <result property="shopName"    column="shop_name"    />
@@ -63,10 +64,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersModifyUnitPrice" column="promoters_modify_unit_price" />
         <result property="keyword1"    column="keyword1"    />
         <result property="keyword2"    column="keyword2"    />
+        <result property="platformUrl" column="platform_url"/>
     </resultMap>
 
     <sql id="selectDtBusinessTaskVo">
-        select id, group_allocate_time, dept_id, order_status, allocate_time, salesman_id,completion_time, create_time from dt_business_task
+        select id, group_allocate_time, dept_id, order_status, allocate_time,completion_time, create_time from dt_business_task
     </sql>
 
     <select id="selectDtBusinessTaskList" parameterType="DtBusinessTask" resultMap="DtBusinessTaskResult">
@@ -89,21 +91,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where a.id = #{id}
     </select>
     <select id="selectGroupDtBusinessTaskDtoList"
-            parameterType="DtGroupBusinessTaskRespDto" resultMap="DtGroupBusinessTaskRespDtoDetailResult">
-            select b.*,task_no,order_date,shop_name,keyword1,keyword2,unit_price,platform_nickname,promoters_modify_unit_price,group_allocate_time,completion_time
-            from(
-                SELECT id,dept_id,order_status,salesman_id,
-                        completion_time,create_time,platform_nickname,group_allocate_time
-                from dt_business_task
-                <where>
-                    <if test="deptId != null and deptId != ''">dept_id = #{deptId}</if>
-                    <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
-                </where>
-            )b join dt_business_task_detail dbtd on b.id = dbtd.task_id
+            parameterType="DtGroupBusinessTaskRespDto" resultMap="DtGroupBusinessTaskRespDtoResult">
+            SELECT id,dept_id,order_status,
+                    completion_time,create_time,group_allocate_time
+            from dt_business_task
             <where>
-                <if test="orderDate != null">order_date =#{orderDate}</if>
-                <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
-                <if test="platformNickname != null and platformNickname != ''">and platform_nickname like concat('%', #{platformNickname}, '%')</if>
+                <if test="deptId != null and deptId != ''">dept_id = #{deptId}</if>
+                <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
+                <if test="createTime != null">and create_time BETWEEN #{createTime} and  date_add(#{createTime},interval 1 day)</if>
             </where>
             order by id DESC
     </select>
@@ -115,6 +110,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
+        </foreach>
+    </select>
+    <select id="selectGroupBusinessTaskDetailDtoByTaskIds"
+            parameterType="DtGroupBusinessTaskDetailRespDto" resultMap="DtGroupBusinessDetailTaskRespDtoResult">
+        select task_id,task_no,platform_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword1,keyword2
+        from dt_business_task_detail
+        where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
         </foreach>
     </select>
 
@@ -132,7 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">feedback_picture_url4,</if>
             <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">feedback_picture_url5,</if>
             <if test="completionTime != null">completion_time,</if>
-            <if test="createTime != null">create_time,</if>
+            create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="groupAllocateTime != null">#{groupAllocateTime},</if>
@@ -146,7 +150,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">#{feedbackPictureUrl4},</if>
             <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">#{feedbackPictureUrl5},</if>
             <if test="completionTime != null">#{completionTime},</if>
-            <if test="createTime != null">#{createTime},</if>
+            sysdate()
          </trim>
     </insert>
 
@@ -192,9 +196,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <insert id="batchDtBusinessTaskDetail">
-        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url, shop_name, unit_price, unit_price_remark, special_remarks, keywork1, keywork2, promoters_modify_unit_price, promoters_unit_price_remark) values
+        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword1, keyword2, promoters_modify_unit_price, promoters_unit_price_remark) values
 		<foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{item.taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keywork1}, #{item.keywork2}, #{item.promotersModifyUnitPrice}, #{item.promotersUnitPriceRemark})
+            ( #{item.id}, #{item.taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword1}, #{item.keyword2}, #{item.promotersModifyUnitPrice}, #{item.promotersUnitPriceRemark})
+        </foreach>
+    </insert>
+    <insert id="batchInsertDtBusinessTaskDetail">
+        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url ,platform_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword1, keyword2) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl} ,#{item.platformUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword1}, #{item.keyword2})
         </foreach>
     </insert>
 

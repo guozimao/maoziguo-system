@@ -28,12 +28,6 @@ public class DtGroupBusinessTaskRespDto {
     /** 集团分配时间 */
     private Date groupAllocateTime;
 
-    private Long salesmanId;
-
-    private String salesmanName;
-
-    private String platformNickname;
-
     /** 完成时间 */
     private Date completionTime;
 
@@ -83,22 +77,6 @@ public class DtGroupBusinessTaskRespDto {
         this.orderStatus = orderStatus;
     }
 
-    public Long getSalesmanId() {
-        return salesmanId;
-    }
-
-    public void setSalesmanId(Long salesmanId) {
-        this.salesmanId = salesmanId;
-    }
-
-    public String getSalesmanName() {
-        return salesmanName;
-    }
-
-    public void setSalesmanName(String salesmanName) {
-        this.salesmanName = salesmanName;
-    }
-
     public Date getCompletionTime() {
         return completionTime;
     }
@@ -137,14 +115,6 @@ public class DtGroupBusinessTaskRespDto {
 
     public void setGroupAllocateTime(Date groupAllocateTime) {
         this.groupAllocateTime = groupAllocateTime;
-    }
-
-    public String getPlatformNickname() {
-        return platformNickname;
-    }
-
-    public void setPlatformNickname(String platformNickname) {
-        this.platformNickname = platformNickname;
     }
 
     public List<DtGroupBusinessTaskDetailRespDto> getDtGroupBusinessTaskDetailRespDtoList() {

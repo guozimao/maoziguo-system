@@ -9,6 +9,7 @@
         <div class="col-xs-offset-1">
             <div class="form-group">
                 <label class="font-noraml">提醒：批量上传文件。这里只支持上传.xls以及.xlsx后缀的excel文件</label>
+                <a onclick="importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
                 <div class="file-loading">
                     <input id="fileinput" name="file" type="file" multiple accept=".xls,.xlsx">
                 </div>
@@ -41,22 +42,19 @@
                 var index = parent.layer.getFrameIndex(window.name);
                 parent.layer.close(index);
                 parent.layer.alert(data.response.msg);
-                console.log(parent);
             })
             ;
         });
-        var callback = function (result) {
-            parent.layer.alert(result.msg);
-        }
-        function submitHandler() {
-            var id = $("input[name='userId']").val();
-            $.operate.syncSubmit("/businessteam/salesman/applicationAssociation","get","json",'id='+id,callback);
-            var index = parent.layer.getFrameIndex(window.name);
-            parent.layer.close(index);
-        }
-        function searchVailResult() {
-            var id = $("input[name='userId']").val();
-            $.operate.submit("/businessteam/salesman/checkVail4Id","get","json",'id='+id);
+        function importTemplate() {
+            $.get("/groupcompany/task/importTemplate", function(result) {
+                if (result.code == web_status.SUCCESS) {
+                    window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                } else if (result.code == web_status.WARNING) {
+                    $.modal.alertWarning(result.msg)
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+            });
         }
     </script>
 </body>

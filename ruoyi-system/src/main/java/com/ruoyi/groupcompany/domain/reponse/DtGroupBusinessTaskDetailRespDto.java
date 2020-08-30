@@ -9,10 +9,14 @@ public class DtGroupBusinessTaskDetailRespDto {
 
     private static final long serialVersionUID = 1L;
 
+    private Long taskId;
+
     /** 任务编码 */
     private String taskNo;
 
     private String shopName;
+
+    private String platformUrl;
 
     /** 订单日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -25,6 +29,14 @@ public class DtGroupBusinessTaskDetailRespDto {
     private String keyword1;
 
     private String keyword2;
+
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
 
     public String getTaskNo() {
         return taskNo;
@@ -80,5 +92,13 @@ public class DtGroupBusinessTaskDetailRespDto {
 
     public void setPromotersModifyUnitPrice(BigDecimal promotersModifyUnitPrice) {
         this.promotersModifyUnitPrice = promotersModifyUnitPrice;
+    }
+
+    public String getPlatformUrl() {
+        return platformUrl;
+    }
+
+    public void setPlatformUrl(String platformUrl) {
+        this.platformUrl = platformUrl;
     }
 }

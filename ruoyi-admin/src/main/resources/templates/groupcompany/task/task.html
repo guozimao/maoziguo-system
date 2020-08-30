@@ -16,16 +16,8 @@
                                 <input type="text" placeholder="部门id" name="deptId" hidden="true"/>
                             </li>
                             <li>
-                                <label>会员名：</label>
-                                <input type="text" id="platformNickname" placeholder="会员名" name="platformNickname"/>
-                            </li>
-                            <li>
-                                <label>店铺名：</label>
-                                <input type="text" id="shopName" placeholder="店铺名" name="shopName"/>
-                            </li>
-                            <li>
-                                <label>订单日期：</label>
-                                <input type="text" class="time-input" id="orderDate" placeholder="订单日期" name="orderDate"/>
+                                <label>生成日期：</label>
+                                <input type="text" class="time-input" id="createTime" placeholder="订单生成日期" name="createTime"/>
                             </li>
                             <li>
                                 <label>订单状态：</label>
@@ -47,7 +39,7 @@
                 <a class="btn btn-primary" onclick="dataImport()">
                     <i class="fa fa-plus"></i> 导入
                 </a>
-                <a class="btn btn-success single disabled" onclick="batchAssign()">
+                <a class="btn btn-success multiple disabled" onclick="batchAssign()">
                     <i class="fa fa-at"></i> 调配
                 </a>
             </div>
@@ -64,25 +56,25 @@
         $(function() {
             var options = {
                 url: prefix + "/list",
-                createUrl: prefix + "/add",
-                updateUrl: prefix + "/edit/{id}",
-                removeUrl: prefix + "/remove",
-                exportUrl: prefix + "/export",
+                importTemplateUrl: prefix + "/importTemplate",
                 modalName: "商业任务信息",
                 columns: [{
                     checkbox: true
                 },
                 {
                     field: 'id',
-                    title: '编号'
+                    title: '编号',
+                    align: 'center'
                 },
                 {
                     field: 'deptName',
-                    title: '归属组织'
+                    title: '归属组织',
+                    align: 'center'
                 },
                 {
                     field: 'taskNo',
-                    title: '任务编码',
+                    title: '任务代号',
+                    align: 'center',
                     formatter: function(value, row, index) {
                         var html = ''
                         for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
@@ -99,6 +91,7 @@
                     field: 'shopName',
                     title: '店铺名',
                     width: '150',
+                    align: 'center',
                     formatter: function(value, row, index) {
                         var html = ''
                         for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
@@ -112,9 +105,27 @@
                     }
                 },
                 {
+                    field: 'platformUrl',
+                    title: '链接',
+                    align: 'center',
+                    width: '70',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
+                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
+                                html = html + $.common.sprintf("<div><a title='商品链接' href='%s' target='_blank'>链接%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].platformUrl,i+1);
+                            }else{
+                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'><a title='商品链接' href='%s' target='_blank'>链接%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].platformUrl,i+1);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
                     field: 'orderDate',
                     title: '订单日期',
                     width: '95',
+                    align: 'center',
                     formatter: function(value, row, index) {
                         var html = ''
                         for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
@@ -130,6 +141,7 @@
                 {
                     field: 'keyword1',
                     title: '关键字1',
+                    align: 'center',
                     formatter: function(value, row, index) {
                         var html = ''
                         for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
@@ -159,42 +171,41 @@
                 },
                 {
                     field: 'orderNumber',
-                    title: '订单数'
+                    title: '订单数',
+                    align: 'center'
                 },
                 {
                     field: 'totalPrincipal',
-                    title: '总本金'
+                    title: '总本金',
+                    align: 'center'
                 },
                 {
                     field: 'actualTotalPrincipal',
-                    title: '实际总本金'
+                    title: '实际总本金',
+                    align: 'center'
                 },
                 {
                     field: 'orderStatus',
                     title: '订单状态',
+                    align: 'center',
                     formatter: function(value, row, index) {
                         return $.table.selectDictLabel(orderStatusDatas, value);
                     }
                 },
                 {
                     field: 'groupAllocateTime',
-                    title: '集团分配时间'
-                },
-                {
-                    field: 'salesmanName',
-                    title: '地推员'
-                },
-                {
-                    field: 'platformNickname',
-                    title: '会员名'
+                    title: '集团分配时间',
+                    align: 'center'
                 },
                 {
                     field: 'completionTime',
-                    title: '完成时间'
+                    title: '完成时间',
+                    align: 'center'
                 },
                 {
                     field: 'createTime',
-                    title: '生成时间'
+                    title: '生成时间',
+                    align: 'center'
                 },
                 {
                     title: '操作',
