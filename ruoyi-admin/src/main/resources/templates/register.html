@@ -61,11 +61,12 @@
 				        <input type="checkbox" id="acceptTerm" name="acceptTerm"> <label for="acceptTerm">我已阅读并同意</label>
 				        <a>使用条款</a>
 				    </div>
+                    <label class="radio-box">
+                        <input type="radio" checked value="02" name="userType">地推人员
+                        <input type="radio" value="01" name="userType">业务组长
+                        <input type="radio" disabled value="03" name="userType">商家
+                    </label>
                     <div>
-                        <label class="radio-box">
-                            <input type="radio" checked value="02" id="userType1" name="userType">业务员</label>
-                        <label class="radio-box">
-                            <input type="radio" disabled value="03" id="userType2" name="userType">商家</label>
                         <button class="btn btn-success btn-block" id="btnSubmit" data-loading="正在验证注册，请稍后...">注册</button>
                     </div>
                 </form>

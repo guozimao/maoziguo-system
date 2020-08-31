@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DtSalesmanLeaderMapper">
+    
+    <resultMap type="DtSalesmanLeader" id="DtSalesmanLeaderResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="commission"    column="commission"    />
+        <result property="receivingLimit"    column="receiving_limit"    />
+        <result property="associationStatus"    column="association_status"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectDtSalesmanLeaderVo">
+        select id, user_id, commission, receiving_limit, association_status, del_flag from dt_salesman_leader
+    </sql>
+
+    <select id="selectDtSalesmanLeaderList" parameterType="DtSalesmanLeader" resultMap="DtSalesmanLeaderResult">
+        <include refid="selectDtSalesmanLeaderVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="commission != null "> and commission = #{commission}</if>
+            <if test="receivingLimit != null "> and receiving_limit = #{receivingLimit}</if>
+            <if test="associationStatus != null  and associationStatus != ''"> and association_status = #{associationStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectDtSalesmanLeaderById" parameterType="Long" resultMap="DtSalesmanLeaderResult">
+        <include refid="selectDtSalesmanLeaderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDtSalesmanLeader" parameterType="DtSalesmanLeader" useGeneratedKeys="true" keyProperty="id">
+        insert into dt_salesman_leader
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="commission != null">commission,</if>
+            <if test="receivingLimit != null">receiving_limit,</if>
+            <if test="associationStatus != null">association_status,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="commission != null">#{commission},</if>
+            <if test="receivingLimit != null">#{receivingLimit},</if>
+            <if test="associationStatus != null">#{associationStatus},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDtSalesmanLeader" parameterType="DtSalesmanLeader">
+        update dt_salesman_leader
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="commission != null">commission = #{commission},</if>
+            <if test="receivingLimit != null">receiving_limit = #{receivingLimit},</if>
+            <if test="associationStatus != null">association_status = #{associationStatus},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDtSalesmanLeaderById" parameterType="Long">
+        delete from dt_salesman_leader where id = #{id}
+    </delete>
+
+    <delete id="deleteDtSalesmanLeaderByIds" parameterType="String">
+        delete from dt_salesman_leader where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="deleteDtSalesmanLeaderByUserIds">
+        update dt_salesman_leader set del_flag = '2' where user_id in
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </update>
+</mapper>

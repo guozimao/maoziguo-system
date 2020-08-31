@@ -1,6 +1,12 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.ruoyi.common.constant.UserConstants;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
+import com.ruoyi.system.domain.SysRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -55,7 +61,28 @@ public class SysIndexController extends BaseController
     @GetMapping("/system/main")
     public String main(ModelMap mmap)
     {
+        SysUser user = ShiroUtils.getSysUser();
+        List<SysRole> roles = user.getRoles();
+        List<String> roleList = roles.stream().map(SysRole::getRoleName).collect(Collectors.toList());
+        String roleNames = StringUtils.join(roleList.iterator(),",");
+        String userType = getUserType(user.getUserType());
         mmap.put("version", Global.getVersion());
+        mmap.put("user",user);
+        mmap.put("roleNames",roleNames);
+        mmap.put("userType",userType);
         return "main";
+    }
+
+    private String getUserType(String userType) {
+        if(userType.equals(UserConstants.SYSTEM_USER_TYPE)){
+            return "系统用户";
+        }else if(userType.equals(UserConstants.SALEMAN_USER_TYPE)){
+            return "地推人员";
+        }else if(userType.equals(UserConstants.SALEMAN_LEADER_TYPE)){
+            return "业务组长";
+        }else if(userType.equals(UserConstants.MERCHANT_USER_TYPE)){
+            return "商家";
+        }
+        return "";
     }
 }

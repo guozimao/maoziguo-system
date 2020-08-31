@@ -278,6 +278,16 @@ public class SysUserController extends BaseController
     }
 
     /**
+     * 校验用戶呢称
+     */
+    @PostMapping("/checkUserName")
+    @ResponseBody
+    public String checkUserName(SysUser user)
+    {
+        return userService.checkUserName(user);
+    }
+
+    /**
      * 用户状态修改
      */
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)

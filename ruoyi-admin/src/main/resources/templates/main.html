@@ -21,12 +21,12 @@
             <hr>
         </div>
         <div class="col-sm-4">
-			<h2><strong>驻马店团队</strong></h2>
+			<h2><strong th:text="${user.userName}"></strong></h2>
 			<small>用户昵称</small>
             <br>
         </div>
         <div class="col-sm-4">
-            <h2><strong>业务员组长</strong></h2>
+            <h2><strong th:text="${roleNames}"></strong></h2>
 			<small>用户角色</small>
             <!--<p>一直想做一款后台管理系统，看了很多优秀的开源项目但是发现没有合适自己的。于是利用空闲休息时间开始自己写一套后台系统。如此有了若依管理系统。，她可以用于所有的Web应用程序，如<b>网站管理后台</b>，<b>网站会员中心</b>，<b>CMS</b>，<b>CRM</b>，<b>OA</b>等等，当然，您也可以对她进行深度定制，以做出更强系统。所有前端后台代码封装过后十分精简易上手，出错概率低。同时支持移动客户端访问。系统会陆续更新一些实用功能。</p>
             <p>
@@ -46,7 +46,7 @@
             </p>-->
         </div>
         <div class="col-sm-4">
-			<h2><strong>17589506990</strong></h2>
+			<h2><strong th:text="${user.loginName}"></strong></h2>
 			<small>登录账号</small>
             <!--<ol>
                 <li>核心框架：Spring Boot。</li>
@@ -60,16 +60,16 @@
             </ol>-->
         </div>
 		<div class="col-sm-4">
-			<h2><strong>广东代理</strong></h2>
+			<h2><strong th:text="${user.dept.deptName}"></strong></h2>
 			<small>部门</small>
 		</div>
 		<div class="col-sm-4">
-			<h2><strong>系统用户</strong></h2>
+			<h2><strong th:text="${userType}"></strong></h2>
 			<small>用户类型</small>
 		</div>
 		<div class="col-sm-4">
-			<h2><strong>2020-07-23 14:03:24</strong></h2>
-			<small>最后一次登陆</small>
+			<h2><strong th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm:ss')}"></strong></h2>
+			<small>创建时间</small>
 		</div>
     </div>
     <!--<div class="wrapper wrapper-content">

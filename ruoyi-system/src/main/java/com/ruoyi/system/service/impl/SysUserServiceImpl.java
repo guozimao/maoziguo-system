@@ -1,10 +1,12 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.ruoyi.businessteam.domain.DtSalesman;
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
+import com.ruoyi.common.constant.RoleConstants;
 import com.ruoyi.system.domain.*;
 import com.ruoyi.system.mapper.*;
 import org.slf4j.Logger;
@@ -51,6 +53,15 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Autowired
     private ISysConfigService configService;
+
+    @Autowired
+    private SysUserRoleMapper sysUserRoleMapper;
+
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
+
+    @Autowired
+    private DtSalesmanLeaderMapper dtSalesmanLeaderMapper;
 
     /**
      * 根据条件分页查询用户列表
@@ -182,6 +193,7 @@ public class SysUserServiceImpl implements ISysUserService
         {
             checkUserAllowed(new SysUser(userId));
         }
+        dtSalesmanLeaderMapper.deleteDtSalesmanLeaderByUserIds(userIds);
         dtSalesmanMapper.deleteDtSalesmanByUserIds(userIds);
         return userMapper.deleteUserByIds(userIds);
     }
@@ -217,17 +229,42 @@ public class SysUserServiceImpl implements ISysUserService
     {
         user.setCreateBy("customer");
         if(user.getUserType().equals(UserConstants.SALEMAN_USER_TYPE)){
-            userMapper.insertUser(user);
-            SysUser sysUser = userMapper.selectUserByLoginName(user.getLoginName());
-            if(StringUtils.isNull(sysUser)){
+            int rows = userMapper.insertUser(user);
+            if(rows < 1){
                 return false;
             }
+            setRoleId4NewUser(user.getUserId(),RoleConstants.SALEMAN_ROLE_NAME);
+
             DtSalesman salesman = new DtSalesman();
-            salesman.setUserId(sysUser.getUserId());
+            salesman.setUserId(user.getUserId());
             return dtSalesmanMapper.insertDtSalesman(salesman) > 0;
-        }else {
+        }else if(user.getUserType().equals(UserConstants.SALEMAN_LEADER_TYPE)) {
+            int rows = userMapper.insertUser(user);
+            if(rows < 1){
+                return false;
+            }
+            setRoleId4NewUser(user.getUserId(),RoleConstants.SALEMAN_LEADER_ROLE_NAME);
+
+            DtSalesmanLeader dtSalesmanLeader = new DtSalesmanLeader();
+            dtSalesmanLeader.setUserId(user.getUserId());
+            return dtSalesmanLeaderMapper.insertDtSalesmanLeader(dtSalesmanLeader) > 0;
+        }else{
             return userMapper.insertUser(user) > 0;
         }
+    }
+
+
+    private void setRoleId4NewUser(Long userId, String salemanRoleName) {
+        Long roleId = sysRoleMapper.selectIdByName(salemanRoleName);
+        if(StringUtils.isNull(roleId)){
+            throw new BusinessException("没有设置角色" + salemanRoleName);
+        }
+        List<SysUserRole> sysUserRoles= new ArrayList<>();
+        SysUserRole sysUserRole = new SysUserRole();
+        sysUserRole.setRoleId(roleId);
+        sysUserRole.setUserId(userId);
+        sysUserRoles.add(sysUserRole);
+        sysUserRoleMapper.batchUserRole(sysUserRoles);
     }
 
     /**
@@ -576,5 +613,16 @@ public class SysUserServiceImpl implements ISysUserService
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String checkUserName(SysUser user) {
+        Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
+        SysUser info = userMapper.checkUserName(user.getUserName());
+        if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
+        {
+            return UserConstants.USER_ANONYMOUS_NOT_UNIQUE;
+        }
+        return UserConstants.USER_ANONYMOUS_UNIQUE;
     }
 }

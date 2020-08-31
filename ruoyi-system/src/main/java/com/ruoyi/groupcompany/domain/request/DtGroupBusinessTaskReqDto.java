@@ -8,6 +8,8 @@ public class DtGroupBusinessTaskReqDto {
 
     private static final long serialVersionUID = 1L;
 
+    private Long id;
+
     /** 部门id */
     @Excel(name = "部门id")
     private Long deptId;
@@ -19,6 +21,14 @@ public class DtGroupBusinessTaskReqDto {
     /** 订单日期 */
     @Excel(name = "订单生成日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date createTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getDeptId() {
         return deptId;

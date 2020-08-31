@@ -81,4 +81,12 @@ public interface SysRoleMapper
      * @return 角色信息
      */
     public SysRole checkRoleKeyUnique(String roleKey);
+
+    /**
+     * 通过角色名查出角色id
+     *
+     * @param salemanRoleName 角色名
+     * @return 角色信息
+     */
+    Long selectIdByName(String salemanRoleName);
 }

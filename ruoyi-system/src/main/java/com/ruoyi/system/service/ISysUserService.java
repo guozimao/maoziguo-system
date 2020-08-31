@@ -229,4 +229,12 @@ public interface ISysUserService
      * @return 结果
      */
     public boolean isExistSamePhone(String phoneName);
+
+    /**
+     * 校验用户昵称是否唯一
+     *
+     * @param currentUser 用户信息
+     * @return 结果
+     */
+    String checkUserName(SysUser currentUser);
 }

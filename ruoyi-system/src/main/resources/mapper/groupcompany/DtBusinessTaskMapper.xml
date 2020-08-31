@@ -99,7 +99,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     completion_time,create_time,group_allocate_time
             from dt_business_task
             <where>
-                <if test="deptId != null and deptId != ''">dept_id = #{deptId}</if>
+                <if test="id != null and id != ''">id = #{id}</if>
+                <if test="deptId != null and deptId != ''">and dept_id = #{deptId}</if>
                 <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
                 <if test="createTime != null">and create_time BETWEEN #{createTime} and  date_add(#{createTime},interval 1 day)</if>
             </where>

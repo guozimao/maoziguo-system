@@ -44,7 +44,7 @@ public class DtSalesmanController extends BaseController
     @Autowired
     private ITeamAssociationApplicationService teamAssociationApplicationService;
 
-    @RequiresPermissions("system:salesman:view")
+    @RequiresPermissions("businessteam:salesman:view")
     @GetMapping()
     public String salesman()
     {

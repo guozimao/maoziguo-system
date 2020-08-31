@@ -145,6 +145,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="checkEmailUnique" parameterType="String" resultMap="SysUserResult">
 		select user_id, email from sys_user where email=#{email} limit 1
 	</select>
+
+	<select id="checkUserName" parameterType="String" resultMap="SysUserResult">
+		select user_id, user_name from sys_user where user_name=#{userName} limit 1
+	</select>
 	
 	<select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
 		<include refid="selectUserVo"/>

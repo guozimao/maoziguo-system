@@ -169,6 +169,25 @@
                         }
                     }
         		},
+                userName:{
+                    required:true,
+                    remote: {
+                        url: ctx + "system/user/checkUserName",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "userId": function() {
+                                return $("#userId").val();
+                            },
+                            "userName": function() {
+                                return $.common.trim($("#userName").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                            return $.validate.unique(data);
+                        }
+                    }
+                },
         		password:{
         			minlength: 5,
         			maxlength: 20
@@ -207,6 +226,10 @@
         		},
         	},
         	messages: {
+                "userName": {
+                    required: "请输入用户名称",
+                    remote:"用户昵称已经存在"
+                },
                 "loginName": {
                     remote: "用户已经存在"
                 },

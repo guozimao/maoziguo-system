@@ -32,7 +32,7 @@ function register() {
     var phonenumber = $.common.trim($("input[name='phonenumber']").val());
     var email = $.common.trim($("input[name='email']").val());
     var validateCode = $("input[name='validateCode']").val();
-    var userType = $("input[name='userType']").val();
+    var userType = $("input[name='userType']:checked").val();
     $.ajax({
         type: "post",
         url: ctx + "register",

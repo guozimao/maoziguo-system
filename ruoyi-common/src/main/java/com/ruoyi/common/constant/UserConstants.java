@@ -1,5 +1,7 @@
 package com.ruoyi.common.constant;
 
+import java.util.List;
+
 /**
  * 用户常量信息
  * 
@@ -54,6 +56,10 @@ public class UserConstants
     public final static String USER_EMAIL_UNIQUE = "0";
     public final static String USER_EMAIL_NOT_UNIQUE = "1";
 
+    /** userName用户昵称 是否唯一的返回结果 */
+    public final static String USER_ANONYMOUS_UNIQUE = "0";
+    public final static String USER_ANONYMOUS_NOT_UNIQUE = "1";
+
     /** 部门名称是否唯一的返回结果码 */
     public final static String DEPT_NAME_UNIQUE = "0";
     public final static String DEPT_NAME_NOT_UNIQUE = "1";
@@ -96,8 +102,10 @@ public class UserConstants
      * 用户类型
      */
     public static final String SYSTEM_USER_TYPE = "00";
-    public static final String MERCHANT_USER_TYPE = "01";
+    public static final String SALEMAN_LEADER_TYPE = "01";
     public static final String SALEMAN_USER_TYPE = "02";
+    public static final String MERCHANT_USER_TYPE = "03";
+
 
     /**
      * 手机号码格式限制

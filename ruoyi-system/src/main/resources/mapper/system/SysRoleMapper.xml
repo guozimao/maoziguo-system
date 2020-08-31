@@ -77,8 +77,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectRoleVo"/>
 		 where r.role_key=#{roleKey} limit 1
 	</select>
-	
-	<delete id="deleteRoleById" parameterType="Long">
+    <select id="selectIdByName" resultType="java.lang.Long">
+		select r.role_id
+        from sys_role r
+        where
+         r.del_flag = '0'
+         and r.role_name = #{name}
+	</select>
+
+    <delete id="deleteRoleById" parameterType="Long">
  		delete from sys_role where role_id = #{roleId}
  	</delete>
  	

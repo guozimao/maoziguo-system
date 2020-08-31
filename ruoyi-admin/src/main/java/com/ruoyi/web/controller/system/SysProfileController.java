@@ -1,5 +1,7 @@
 package com.ruoyi.web.controller.system;
 
+import com.ruoyi.common.constant.UserConstants;
+import com.ruoyi.common.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +135,16 @@ public class SysProfileController extends BaseController
         currentUser.setEmail(user.getEmail());
         currentUser.setPhonenumber(user.getPhonenumber());
         currentUser.setSex(user.getSex());
+
+        if(userService.checkPhoneUnique(currentUser).equals(UserConstants.USER_PHONE_NOT_UNIQUE)){
+            throw new BusinessException("更新用户信息失败，手机号已被注册");
+        }else if(userService.checkEmailUnique(currentUser).equals(UserConstants.USER_EMAIL_NOT_UNIQUE)){
+            throw new BusinessException("更新用户信息失败，邮箱已被注册");
+        }else if(userService.checkUserName(currentUser).equals(UserConstants.USER_ANONYMOUS_NOT_UNIQUE)){
+            throw new BusinessException("更新用户信息失败，用户昵称已被注册");
+        }
+
+
         if (userService.updateUserInfo(currentUser) > 0)
         {
             ShiroUtils.setSysUser(userService.selectUserById(currentUser.getUserId()));
