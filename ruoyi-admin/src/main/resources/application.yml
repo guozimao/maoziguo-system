@@ -135,3 +135,8 @@ xss:
 swagger:
   # 是否开启swagger
   enabled: true
+
+# oss配置
+oss:
+  accessKeyId: LTAI4GDPSzeJWUP2w4UyTVty
+  enpoint: http://maoziguo.oss-cn-beijing.aliyuncs.com/

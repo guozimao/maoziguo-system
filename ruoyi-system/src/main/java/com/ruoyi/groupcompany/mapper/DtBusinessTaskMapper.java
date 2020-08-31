@@ -103,4 +103,6 @@ public interface DtBusinessTaskMapper
     void batchInsertDtBusinessTaskDetail(@Param("taskId") Long taskId, @Param("list") List<DtBusinessTaskDetail> taskDetailList);
 
     List<DtGroupBusinessTaskDetailRespDto> selectGroupBusinessTaskDetailDtoByTaskIds(@Param("array") List<Long> taskIds);
+
+    List<DtBusinessTaskDetail> selectDtBusinessTaskDetailListByTaskId(Long id);
 }

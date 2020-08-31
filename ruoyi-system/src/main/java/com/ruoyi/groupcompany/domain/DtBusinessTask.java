@@ -38,10 +38,6 @@ public class DtBusinessTask
     @Excel(name = "分配时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date allocateTime;
 
-    /** 业务员id */
-    @Excel(name = "业务员id")
-    private Long salesmanId;
-
     /** 反馈图片url1 */
     @Excel(name = "反馈图片url1")
     private String feedbackPictureUrl1;
@@ -69,6 +65,8 @@ public class DtBusinessTask
     /** 生成时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+
+    private String remark;
 
     /** 商业任务信息明细信息 */
     private List<DtBusinessTaskDetail> dtBusinessTaskDetailList;
@@ -114,20 +112,11 @@ public class DtBusinessTask
         this.allocateTime = allocateTime;
     }
 
-    public Date getAllocateTime() 
-    {
+    public Date getAllocateTime() {
         return allocateTime;
     }
-    public void setSalesmanId(Long salesmanId) 
-    {
-        this.salesmanId = salesmanId;
-    }
 
-    public Long getSalesmanId() 
-    {
-        return salesmanId;
-    }
-    public void setFeedbackPictureUrl1(String feedbackPictureUrl1) 
+    public void setFeedbackPictureUrl1(String feedbackPictureUrl1)
     {
         this.feedbackPictureUrl1 = feedbackPictureUrl1;
     }
@@ -200,6 +189,14 @@ public class DtBusinessTask
         this.dtBusinessTaskDetailList = dtBusinessTaskDetailList;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -208,7 +205,6 @@ public class DtBusinessTask
             .append("deptId", getDeptId())
             .append("orderStatus", getOrderStatus())
             .append("allocateTime", getAllocateTime())
-            .append("salesmanId", getSalesmanId())
             .append("feedbackPictureUrl1", getFeedbackPictureUrl1())
             .append("feedbackPictureUrl2", getFeedbackPictureUrl2())
             .append("feedbackPictureUrl3", getFeedbackPictureUrl3())

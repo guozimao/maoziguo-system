@@ -10,7 +10,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="deptId"    column="dept_id"    />
         <result property="orderStatus"    column="order_status"    />
         <result property="allocateTime"    column="allocate_time"    />
-        <result property="salesmanId"    column="salesman_id"    />
         <result property="feedbackPictureUrl1"    column="feedback_picture_url1"    />
         <result property="feedbackPictureUrl2"    column="feedback_picture_url2"    />
         <result property="feedbackPictureUrl3"    column="feedback_picture_url3"    />
@@ -18,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="feedbackPictureUrl5"    column="feedback_picture_url5"    />
         <result property="completionTime"    column="completion_time"    />
         <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
     </resultMap>
 
     <resultMap id="DtBusinessTaskDtBusinessTaskDetailResult" type="DtBusinessTask" extends="DtBusinessTaskResult">
@@ -36,8 +36,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="specialRemarks"    column="special_remarks"    />
         <result property="keywork1"    column="keywork1"    />
         <result property="keywork2"    column="keywork2"    />
+        <result property="platformUrl" column="platform_url" />
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
+        <result property="commission" column="commission" />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="salesmanId" column="salesman_id" />
+        <result property="status" column="status" />
     </resultMap>
 
     <resultMap type="DtGroupBusinessTaskRespDto" id="DtGroupBusinessTaskRespDtoResult">
@@ -83,11 +88,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectDtBusinessTaskById" parameterType="Long" resultMap="DtBusinessTaskDtBusinessTaskDetailResult">
-        select a.id, a.group_allocate_time, a.dept_id, a.order_status, a.allocate_time, a.salesman_id, a.feedback_picture_url1, a.feedback_picture_url2, a.feedback_picture_url3, a.feedback_picture_url4, a.feedback_picture_url5, a.completion_time, a.create_time,
-            b.id, b.task_id, b.task_no, b.order_date, b.picture_url, b.shop_name, b.unit_price, b.unit_price_remark, b.special_remarks, b.keywork1, b.keywork2, b.promoters_modify_unit_price, b.promoters_unit_price_remark
+    <select id="selectDtBusinessTaskById" parameterType="Long" resultMap="DtBusinessTaskResult">
+        select a.id, a.group_allocate_time, a.dept_id, a.order_status, a.allocate_time, a.feedback_picture_url1, a.feedback_picture_url2, a.feedback_picture_url3, a.feedback_picture_url4, a.feedback_picture_url5, a.completion_time, a.create_time,a.remark
         from dt_business_task a
-        left join dt_business_task_detail b on b.task_id = a.id
         where a.id = #{id}
     </select>
     <select id="selectGroupDtBusinessTaskDtoList"
@@ -120,6 +123,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="taskId" collection="array" open="(" separator="," close=")">
             #{taskId}
         </foreach>
+    </select>
+    <select id="selectDtBusinessTaskDetailListByTaskId"
+            parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
+        select task_id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword1,keyword2,commission,platform_nickname,salesman_id,status
+        from dt_business_task_detail
+        where task_id = #{id}
     </select>
 
     <insert id="insertDtBusinessTask" parameterType="DtBusinessTask" useGeneratedKeys="true" keyProperty="id">

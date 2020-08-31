@@ -71,4 +71,6 @@ public interface IDtBusinessTaskService
 
 
     String batchInsertTask(List<List<DtBusinessTaskDetail>> list, List<DtBusinessTaskDetail> vaildList);
+
+    List<DtBusinessTaskDetail> selectDtBusinessTaskDetailList(Long id);
 }

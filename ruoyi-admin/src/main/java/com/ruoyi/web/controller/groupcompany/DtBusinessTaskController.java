@@ -1,17 +1,25 @@
 package com.ruoyi.web.controller.groupcompany;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
 import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.repurchase.domain.MemberConsumptionTrack;
+import com.ruoyi.system.domain.SysDept;
 import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.system.service.ISysDeptService;
+import com.ruoyi.system.service.ISysDictDataService;
+import com.ruoyi.system.service.ISysDictTypeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,6 +52,9 @@ public class DtBusinessTaskController extends BaseController
 
     @Autowired
     private IDtBusinessTaskService dtBusinessTaskService;
+
+    @Autowired
+    private ISysDeptService sysDeptService;
 
     @RequiresPermissions("groupcompany:task:view")
     @GetMapping()
@@ -176,9 +187,24 @@ public class DtBusinessTaskController extends BaseController
     @GetMapping("/queryDetailPopup/{id}")
     public String queryDetail(@PathVariable("id") Long id, ModelMap mmap)
     {
-        DtBusinessTask dtBusinessTask = new DtBusinessTask();
-        dtBusinessTask.setFeedbackPictureUrl1("http://maoziguo.oss-cn-beijing.aliyuncs.com//picture/8506a2b9-4828-4b7a-93fa-c32ae290c624.png?Expires=1914137907&OSSAccessKeyId=LTAI4GDPSzeJWUP2w4UyTVty&Signature=Vqe2XbvJGxN8Boy0q5Ulc%2BLtRzk%3D");
+        BigDecimal totalPrincipal = new BigDecimal(0);
+        BigDecimal actualTotalPrincipal = new BigDecimal(0);
+        DtBusinessTask dtBusinessTask = dtBusinessTaskService.selectDtBusinessTaskById(id);
+        List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskService.selectDtBusinessTaskDetailList(id);
+
+        for(DtBusinessTaskDetail detail: dtBusinessTaskDetails){
+            totalPrincipal = totalPrincipal.add(detail.getUnitPrice());
+            actualTotalPrincipal = actualTotalPrincipal.add(detail.getPromotersModifyUnitPrice());
+        }
+        SysDept sysDept = sysDeptService.selectDeptById(dtBusinessTask.getDeptId());
+        if(StringUtils.isNotNull(sysDept)){
+            mmap.put("deptName",sysDept.getDeptName());
+        }
         mmap.put("dtBusinessTask", dtBusinessTask);
+        mmap.put("dtBusinessTaskDetail", dtBusinessTaskDetails);
+        mmap.put("orderNumber",dtBusinessTaskDetails.size());
+        mmap.put("totalPrincipal", totalPrincipal);
+        mmap.put("actualTotalPrincipal", actualTotalPrincipal);
         return prefix + "/queryDetailPopup";
     }
 

@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
 import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
@@ -60,7 +61,30 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
     @Override
     public DtBusinessTask selectDtBusinessTaskById(Long id)
     {
-        return dtBusinessTaskMapper.selectDtBusinessTaskById(id);
+        DtBusinessTask dtBusinessTask = dtBusinessTaskMapper.selectDtBusinessTaskById(id);
+
+        doProcessUrl4BusinessTask(dtBusinessTask);
+
+        return dtBusinessTask;
+    }
+
+    private void doProcessUrl4BusinessTask(DtBusinessTask dtBusinessTask) {
+        if(StringUtils.isNotEmpty(dtBusinessTask.getFeedbackPictureUrl1())){
+            dtBusinessTask.setFeedbackPictureUrl1(OssClientUtils.getPictureUrlByOssParam(dtBusinessTask.getFeedbackPictureUrl1()));
+        }
+        if(StringUtils.isNotEmpty(dtBusinessTask.getFeedbackPictureUrl2())){
+            dtBusinessTask.setFeedbackPictureUrl2(OssClientUtils.getPictureUrlByOssParam(dtBusinessTask.getFeedbackPictureUrl2()));
+        }
+        if(StringUtils.isNotEmpty(dtBusinessTask.getFeedbackPictureUrl3())){
+            dtBusinessTask.setFeedbackPictureUrl3(OssClientUtils.getPictureUrlByOssParam(dtBusinessTask.getFeedbackPictureUrl3()));
+        }
+        if(StringUtils.isNotEmpty(dtBusinessTask.getFeedbackPictureUrl4())){
+            dtBusinessTask.setFeedbackPictureUrl4(OssClientUtils.getPictureUrlByOssParam(dtBusinessTask.getFeedbackPictureUrl4()));
+        }
+        if(StringUtils.isNotEmpty(dtBusinessTask.getFeedbackPictureUrl5())){
+            dtBusinessTask.setFeedbackPictureUrl5(OssClientUtils.getPictureUrlByOssParam(dtBusinessTask.getFeedbackPictureUrl5()));
+        }
+
     }
 
     @Override
@@ -165,6 +189,15 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
         }
         return successMsg.toString();
+    }
+
+    @Override
+    public List<DtBusinessTaskDetail> selectDtBusinessTaskDetailList(Long id) {
+        List<DtBusinessTaskDetail> resultList = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskId(id);
+        for (DtBusinessTaskDetail detail:resultList){
+            detail.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(detail.getPictureUrl()));
+        }
+        return resultList;
     }
 
     private void vaildBusinessTaskDetailList(List<DtBusinessTaskDetail> vaildList) {

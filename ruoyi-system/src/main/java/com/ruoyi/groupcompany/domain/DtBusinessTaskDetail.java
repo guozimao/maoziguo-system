@@ -2,6 +2,8 @@ package com.ruoyi.groupcompany.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -29,6 +31,7 @@ public class DtBusinessTaskDetail
 
     /** 订单日期 */
     @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date orderDate;
 
     /** 图片url */
@@ -67,6 +70,14 @@ public class DtBusinessTaskDetail
 
     /** 地推员备注 */
     private String promotersUnitPriceRemark;
+
+    private BigDecimal commission;
+
+    private String platformNickname;
+
+    private Long salesmanId;
+
+    private String status;
 
     public void setId(Long id) 
     {
@@ -191,6 +202,38 @@ public class DtBusinessTaskDetail
 
     public void setPlatformUrl(String platformUrl) {
         this.platformUrl = platformUrl;
+    }
+
+    public BigDecimal getCommission() {
+        return commission;
+    }
+
+    public void setCommission(BigDecimal commission) {
+        this.commission = commission;
+    }
+
+    public String getPlatformNickname() {
+        return platformNickname;
+    }
+
+    public void setPlatformNickname(String platformNickname) {
+        this.platformNickname = platformNickname;
+    }
+
+    public Long getSalesmanId() {
+        return salesmanId;
+    }
+
+    public void setSalesmanId(Long salesmanId) {
+        this.salesmanId = salesmanId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
