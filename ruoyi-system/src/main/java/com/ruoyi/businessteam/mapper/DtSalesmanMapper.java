@@ -89,4 +89,6 @@ public interface DtSalesmanMapper
     DtSalesman selectDtSalesmanByUserId(Long userId);
 
     List<DtSalesman> selectDtSalesmanByIds(@Param("array") List<Long> salesmanIds);
+
+    Long selectIdByUserId(Long userId);
 }

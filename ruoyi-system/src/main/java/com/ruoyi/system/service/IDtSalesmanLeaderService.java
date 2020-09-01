@@ -58,4 +58,9 @@ public interface IDtSalesmanLeaderService
      * @return 结果
      */
     public int deleteDtSalesmanLeaderById(Long id);
+
+    /**
+     * 根据用户id查找组长id
+     * */
+    Long selectIdByUserId(Long userId);
 }

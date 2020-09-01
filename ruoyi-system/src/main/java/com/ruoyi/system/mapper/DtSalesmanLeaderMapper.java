@@ -61,4 +61,6 @@ public interface DtSalesmanLeaderMapper
     public int deleteDtSalesmanLeaderByIds(String[] ids);
 
     void deleteDtSalesmanLeaderByUserIds(@Param("array") Long[] userIds);
+
+    Long selectIdByUserId(Long userId);
 }

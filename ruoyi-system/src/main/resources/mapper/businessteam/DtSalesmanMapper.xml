@@ -74,6 +74,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </select>
+    <select id="selectIdByUserId" resultType="java.lang.Long">
+        <include refid="selectDtSalesmanVo"/>
+        where user_id = #{userId}
+    </select>
 
     <insert id="insertDtSalesman" parameterType="DtSalesman" useGeneratedKeys="true" keyProperty="id">
         insert into dt_salesman
@@ -122,10 +126,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    <delete id="deleteDtSalesmanByUserIds">
+    <update id="deleteDtSalesmanByUserIds">
         update dt_salesman set del_flag = '2' where user_id in
         <foreach collection="array" item="userId" open="(" separator="," close=")">
             #{userId}
         </foreach>
-    </delete>
+    </update>
 </mapper>

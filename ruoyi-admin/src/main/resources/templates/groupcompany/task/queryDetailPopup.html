@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('查看商业任务明细信息')" />
-    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-editable-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -75,7 +75,7 @@
         </form>
     </div>
     <th:block th:include="include :: footer" />
-    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: bootstrap-table-editable-js" />
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
         var prefix = ctx + "groupcompany/task";
@@ -93,6 +93,7 @@
                 showToggle: false,
                 showColumns: false,
                 sidePagination: "client",
+                onEditableSave: onEditableSave,
                 columns: [
                 {
                     field: 'index',
@@ -106,17 +107,20 @@
                 {
                     field: 'taskNo',
                     align: 'center',
-                    title: '任务编码'
+                    title: '任务编码',
+                    editable: true
 				},
                 {
                     field: 'orderDate',
                     align: 'center',
-                    title: '订单日期'
+                    title: '订单日期',
+                    editable: true
 				},
                 {
                     field: 'shopName',
                     align: 'center',
-                    title: '店铺名'
+                    title: '店铺名',
+                    editable: true
                 },
                 {
                     field: 'pictureUrl',
@@ -135,29 +139,28 @@
                     }
                 },
                 {
-                    field: 'keyword1',
+                    field: 'keyword',
                     align: 'center',
-                    title: '关键词1'
-                },
-                {
-                    field: 'keyword2',
-                    align: 'center',
-                    title: '关键词2'
+                    title: '关键词',
+                    editable: true
                 },
                 {
                     field: 'unitPrice',
                     align: 'center',
-                    title: '单价/元'
+                    title: '单价/元',
+                    editable: true
 				},
                 {
                     field: 'platformNickname',
                     align: 'center',
-                    title: '买家昵称'
+                    title: '淘宝昵称',
+                    editable: true
                 },
                 {
                     field: 'promotersModifyUnitPrice',
                     align: 'center',
-                    title: '实际单价/元'
+                    title: '实际单价/元',
+                    editable: true
                 },
                 {
                     field: 'promotersUnitPriceRemark',
@@ -175,6 +178,10 @@
             };
             $.table.init(options);
         });
+
+        function onEditableSave (field, row, oldValue, $el) {
+            $.operate.submit("/groupcompany/task/detailEdit","post","json",row);
+        }
     </script>
 </body>
 </html>

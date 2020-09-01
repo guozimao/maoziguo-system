@@ -97,4 +97,9 @@ public interface IDtSalesmanService
      * @return 结果
      */
     boolean hasAssociationWithTeam(Long id, Long deptId);
+
+    /**
+     * 根据用户id查找地推人员id
+     * */
+    Long selectIdByUserId(Long userId);
 }

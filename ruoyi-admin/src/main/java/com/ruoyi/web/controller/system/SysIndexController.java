@@ -3,10 +3,13 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ruoyi.businessteam.service.IDtSalesmanService;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
 import com.ruoyi.system.domain.SysRole;
+import com.ruoyi.system.service.IDtMerchantService;
+import com.ruoyi.system.service.IDtSalesmanLeaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,6 +35,15 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private ISysConfigService configService;
+
+    @Autowired
+    private IDtSalesmanLeaderService salesmanLeaderService;
+
+    @Autowired
+    private IDtSalesmanService dtSalesmanService;
+
+    @Autowired
+    private IDtMerchantService dtMerchantService;
 
     // 系统首页
     @GetMapping("/index")
@@ -62,27 +74,18 @@ public class SysIndexController extends BaseController
     public String main(ModelMap mmap)
     {
         SysUser user = ShiroUtils.getSysUser();
-        List<SysRole> roles = user.getRoles();
-        List<String> roleList = roles.stream().map(SysRole::getRoleName).collect(Collectors.toList());
-        String roleNames = StringUtils.join(roleList.iterator(),",");
-        String userType = getUserType(user.getUserType());
+        if(UserConstants.SALEMAN_LEADER_TYPE.equals(user.getUserType())){
+            Long salesManLeaderId = salesmanLeaderService.selectIdByUserId(user.getUserId());
+            mmap.put("salesManLeaderId",salesManLeaderId);
+        }else if(UserConstants.SALEMAN_USER_TYPE.equals(user.getUserType())){
+            Long salesManId = dtSalesmanService.selectIdByUserId(user.getUserId());
+            mmap.put("salesManId",salesManId);
+        }else if(UserConstants.MERCHANT_USER_TYPE.equals(user.getUserType())){
+            Long merchantId =dtMerchantService.selectIdByUserId(user.getUserId());
+            mmap.put("merchantId",merchantId);
+        }
         mmap.put("version", Global.getVersion());
         mmap.put("user",user);
-        mmap.put("roleNames",roleNames);
-        mmap.put("userType",userType);
         return "main";
-    }
-
-    private String getUserType(String userType) {
-        if(userType.equals(UserConstants.SYSTEM_USER_TYPE)){
-            return "系统用户";
-        }else if(userType.equals(UserConstants.SALEMAN_USER_TYPE)){
-            return "地推人员";
-        }else if(userType.equals(UserConstants.SALEMAN_LEADER_TYPE)){
-            return "业务组长";
-        }else if(userType.equals(UserConstants.MERCHANT_USER_TYPE)){
-            return "商家";
-        }
-        return "";
     }
 }

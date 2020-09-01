@@ -57,13 +57,9 @@ public class DtBusinessTaskDetail
     @Excel(name = "特殊备注")
     private String specialRemarks;
 
-    /** 关键字1 */
-    @Excel(name = "关键词1")
-    private String keyword1;
-
-    /** 关键字2 */
-    @Excel(name = "关键词2")
-    private String keyword2;
+    /** 关键字 */
+    @Excel(name = "关键词")
+    private String keyword;
 
     /** 地推员修改的单价/元 */
     private BigDecimal promotersModifyUnitPrice;
@@ -75,7 +71,7 @@ public class DtBusinessTaskDetail
 
     private String platformNickname;
 
-    private Long salesmanId;
+    private Long salesmanLeaderUserId;
 
     private String status;
 
@@ -161,20 +157,12 @@ public class DtBusinessTaskDetail
         return specialRemarks;
     }
 
-    public String getKeyword1() {
-        return keyword1;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setKeyword1(String keyword1) {
-        this.keyword1 = keyword1;
-    }
-
-    public String getKeyword2() {
-        return keyword2;
-    }
-
-    public void setKeyword2(String keyword2) {
-        this.keyword2 = keyword2;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public void setPromotersModifyUnitPrice(BigDecimal promotersModifyUnitPrice)
@@ -220,12 +208,12 @@ public class DtBusinessTaskDetail
         this.platformNickname = platformNickname;
     }
 
-    public Long getSalesmanId() {
-        return salesmanId;
+    public Long getSalesmanLeaderUserId() {
+        return salesmanLeaderUserId;
     }
 
-    public void setSalesmanId(Long salesmanId) {
-        this.salesmanId = salesmanId;
+    public void setSalesmanLeaderUserId(Long salesmanLeaderUserId) {
+        this.salesmanLeaderUserId = salesmanLeaderUserId;
     }
 
     public String getStatus() {
@@ -248,8 +236,6 @@ public class DtBusinessTaskDetail
             .append("unitPrice", getUnitPrice())
             .append("unitPriceRemark", getUnitPriceRemark())
             .append("specialRemarks", getSpecialRemarks())
-            .append("keywork1", getKeyword1())
-            .append("keywork2", getKeyword2())
             .append("promotersModifyUnitPrice", getPromotersModifyUnitPrice())
             .append("promotersUnitPriceRemark", getPromotersUnitPriceRemark())
             .toString();

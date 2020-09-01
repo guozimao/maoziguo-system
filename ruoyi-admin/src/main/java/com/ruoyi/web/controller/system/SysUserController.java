@@ -133,6 +133,9 @@ public class SysUserController extends BaseController
         else if (UserConstants.USER_EMAIL_NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
         {
             return error("新增用户'" + user.getLoginName() + "'失败，邮箱账号已存在");
+        }else if (UserConstants.USER_NAME_NOT_UNIQUE.equals(userService.checkUserName(user)))
+        {
+            return error("新增用户'" + user.getLoginName() + "'失败，用户呢称已存在");
         }
         user.setSalt(ShiroUtils.randomSalt());
         user.setPassword(passwordService.encryptPassword(user.getLoginName(), user.getPassword(), user.getSalt()));

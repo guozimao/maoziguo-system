@@ -181,6 +181,11 @@ public class DtSalesmanServiceImpl implements IDtSalesmanService
         return StringUtils.isNotNull(sysUser.getDeptId());
     }
 
+    @Override
+    public Long selectIdByUserId(Long userId) {
+        return dtSalesmanMapper.selectIdByUserId(userId);
+    }
+
     private boolean isNonUpdateSameOne(String userName, Long userId) {
         SysUser info = sysUserMapper.selectUserById(userId);
         return !StringUtils.isNotNull(info)

@@ -135,9 +135,18 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
     public int assginDept(AssginReqDto assginReqDto) {
         Long[] taskIds = Convert.toLongArray(assginReqDto.getIds());
         int count = 0;
+        SysDept dept = sysDeptMapper.selectDeptById(assginReqDto.getDeptId());
+        if(StringUtils.isNull(dept.getLeaderId())){
+            throw new BusinessException("该团队没组长，无法分配");
+        }
         List<DtBusinessTask> dtBusinessTasks = dtBusinessTaskMapper.selectDtBusinessTaskListWithAllocateTimeByIds(taskIds);
         if(dtBusinessTasks.size() > 0){
-            throw new BusinessException("团队组长已经分配任务了，无法重新分配");
+            throw new BusinessException("团队组长已经往下分配任务了，无法重新分配");
+        }
+        List<DtBusinessTaskDetail> details = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskIds(taskIds);
+        for(DtBusinessTaskDetail detail: details){
+            detail.setSalesmanLeaderUserId(dept.getLeaderId());
+            dtBusinessTaskMapper.updateDtBusinessTaskDetail(detail);
         }
 
         for(Long taskId:taskIds){
@@ -198,6 +207,11 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
             detail.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(detail.getPictureUrl()));
         }
         return resultList;
+    }
+
+    @Override
+    public int updateDtBusinessTaskDetail(DtBusinessTaskDetail dtBusinessTaskDetail) {
+        return dtBusinessTaskMapper.updateDtBusinessTaskDetail(dtBusinessTaskDetail);
     }
 
     private void vaildBusinessTaskDetailList(List<DtBusinessTaskDetail> vaildList) {

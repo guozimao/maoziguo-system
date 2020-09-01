@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="commission" column="commission" />
         <result property="platformNickname" column="platform_nickname" />
-        <result property="salesmanId" column="salesman_id" />
+        <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
         <result property="status" column="status" />
     </resultMap>
 
@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="platformNickname" column="platform_nickname" />
         <result property="orderStatus"    column="order_status"    />
         <result property="groupAllocateTime"    column="group_allocate_time"    />
-        <result property="salesmanId"    column="salesman_id"    />
+        <result property="salesmanLeaderUserId"    column="salesman_leader_user_id"    />
         <result property="completionTime"    column="completion_time"    />
         <result property="createTime"    column="create_time"    />
     </resultMap>
@@ -67,8 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="shopName"    column="shop_name"    />
         <result property="unitPrice" column="unit_price" />
         <result property="promotersModifyUnitPrice" column="promoters_modify_unit_price" />
-        <result property="keyword1"    column="keyword1"    />
-        <result property="keyword2"    column="keyword2"    />
+        <result property="keyword"    column="keyword"    />
         <result property="platformUrl" column="platform_url"/>
     </resultMap>
 
@@ -83,7 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null "> and dept_id = #{deptId}</if>
             <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
             <if test="allocateTime != null "> and allocate_time = #{allocateTime}</if>
-            <if test="salesmanId != null "> and salesman_id = #{salesmanId}</if>
+            <if test="salesmanLeaderUserId != null "> and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
             <if test="completionTime != null "> and completion_time = #{completionTime}</if>
         </where>
     </select>
@@ -92,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select a.id, a.group_allocate_time, a.dept_id, a.order_status, a.allocate_time, a.feedback_picture_url1, a.feedback_picture_url2, a.feedback_picture_url3, a.feedback_picture_url4, a.feedback_picture_url5, a.completion_time, a.create_time,a.remark
         from dt_business_task a
         where a.id = #{id}
+        and a.order_status != '2'
     </select>
     <select id="selectGroupDtBusinessTaskDtoList"
             parameterType="DtGroupBusinessTaskRespDto" resultMap="DtGroupBusinessTaskRespDtoResult">
@@ -99,7 +99,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                     completion_time,create_time,group_allocate_time
             from dt_business_task
             <where>
-                <if test="id != null and id != ''">id = #{id}</if>
+                and order_status != '2'
+                <if test="id != null and id != ''">and id = #{id}</if>
                 <if test="deptId != null and deptId != ''">and dept_id = #{deptId}</if>
                 <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
                 <if test="createTime != null">and create_time BETWEEN #{createTime} and  date_add(#{createTime},interval 1 day)</if>
@@ -118,18 +119,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectGroupBusinessTaskDetailDtoByTaskIds"
             parameterType="DtGroupBusinessTaskDetailRespDto" resultMap="DtGroupBusinessDetailTaskRespDtoResult">
-        select task_id,task_no,platform_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword1,keyword2
+        select task_id,task_no,platform_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword
         from dt_business_task_detail
-        where task_id in
+        where
+        status != '2'
+        and task_id in
         <foreach item="taskId" collection="array" open="(" separator="," close=")">
             #{taskId}
         </foreach>
     </select>
     <select id="selectDtBusinessTaskDetailListByTaskId"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select task_id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword1,keyword2,commission,platform_nickname,salesman_id,status
+        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         where task_id = #{id}
+        and status != '2'
+    </select>
+    <select id="selectDtBusinessTaskDetailListByTaskIds"
+            parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
+        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        from dt_business_task_detail
+        where  status != '2'
+        and task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
     </select>
 
     <insert id="insertDtBusinessTask" parameterType="DtBusinessTask" useGeneratedKeys="true" keyProperty="id">
@@ -139,7 +153,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null">dept_id,</if>
             <if test="orderStatus != null and orderStatus != ''">order_status,</if>
             <if test="allocateTime != null">allocate_time,</if>
-            <if test="salesmanId != null">salesman_id,</if>
             <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">feedback_picture_url1,</if>
             <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">feedback_picture_url2,</if>
             <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">feedback_picture_url3,</if>
@@ -153,7 +166,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null">#{deptId},</if>
             <if test="orderStatus != null and orderStatus != ''">#{orderStatus},</if>
             <if test="allocateTime != null">#{allocateTime},</if>
-            <if test="salesmanId != null">#{salesmanId},</if>
             <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">#{feedbackPictureUrl1},</if>
             <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">#{feedbackPictureUrl2},</if>
             <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">#{feedbackPictureUrl3},</if>
@@ -171,7 +183,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null">dept_id = #{deptId},</if>
             <if test="orderStatus != null and orderStatus != ''">order_status = #{orderStatus},</if>
             <if test="allocateTime != null">allocate_time = #{allocateTime},</if>
-            <if test="salesmanId != null">salesman_id = #{salesmanId},</if>
             <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">feedback_picture_url1 = #{feedbackPictureUrl1},</if>
             <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">feedback_picture_url2 = #{feedbackPictureUrl2},</if>
             <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">feedback_picture_url3 = #{feedbackPictureUrl3},</if>
@@ -179,6 +190,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">feedback_picture_url5 = #{feedbackPictureUrl5},</if>
             <if test="completionTime != null">completion_time = #{completionTime},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateDtBusinessTaskDetail" parameterType="DtBusinessTaskDetail">
+        update dt_business_task_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskNo != null and taskNo !=''">task_no = #{taskNo},</if>
+            <if test="orderDate != null">order_date = #{orderDate},</if>
+            <if test="shopName != null and shopName != ''">shop_name = #{shopName},</if>
+            <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+            <if test="keyword != null and keyword != ''">keyword = #{keyword},</if>
+            <if test="promotersModifyUnitPrice != null and promotersModifyUnitPrice != ''">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
+            <if test="salesmanLeaderUserId != null">salesman_leader_user_id= #{salesmanLeaderUserId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -206,15 +231,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <insert id="batchDtBusinessTaskDetail">
-        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword1, keyword2, promoters_modify_unit_price, promoters_unit_price_remark) values
+        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword, promoters_modify_unit_price, promoters_unit_price_remark) values
 		<foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{item.taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword1}, #{item.keyword2}, #{item.promotersModifyUnitPrice}, #{item.promotersUnitPriceRemark})
+            ( #{item.id}, #{item.taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword}, #{item.promotersModifyUnitPrice}, #{item.promotersUnitPriceRemark})
         </foreach>
     </insert>
     <insert id="batchInsertDtBusinessTaskDetail">
-        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url ,platform_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword1, keyword2) values
+        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url ,platform_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword) values
         <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl} ,#{item.platformUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword1}, #{item.keyword2})
+            ( #{item.id}, #{taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl} ,#{item.platformUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword})
         </foreach>
     </insert>
 

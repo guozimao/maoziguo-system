@@ -26,9 +26,7 @@ public class DtGroupBusinessTaskDetailRespDto {
 
     private BigDecimal promotersModifyUnitPrice;
 
-    private String keyword1;
-
-    private String keyword2;
+    private String keyword;
 
     public Long getTaskId() {
         return taskId;
@@ -62,20 +60,12 @@ public class DtGroupBusinessTaskDetailRespDto {
         this.orderDate = orderDate;
     }
 
-    public String getKeyword1() {
-        return keyword1;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setKeyword1(String keyword1) {
-        this.keyword1 = keyword1;
-    }
-
-    public String getKeyword2() {
-        return keyword2;
-    }
-
-    public void setKeyword2(String keyword2) {
-        this.keyword2 = keyword2;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public BigDecimal getUnitPrice() {

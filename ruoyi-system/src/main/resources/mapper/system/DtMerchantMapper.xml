@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.DtMerchantMapper">
+    
+    <resultMap type="DtMerchant" id="DtMerchantResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="associatedShopName"    column="associated_shop_name"    />
+        <result property="commission"    column="commission"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectDtMerchantVo">
+        select id, user_id, associated_shop_name, commission, del_flag from dt_merchant
+    </sql>
+
+    <select id="selectDtMerchantList" parameterType="DtMerchant" resultMap="DtMerchantResult">
+        <include refid="selectDtMerchantVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="associatedShopName != null  and associatedShopName != ''"> and associated_shop_name like concat('%', #{associatedShopName}, '%')</if>
+            <if test="commission != null "> and commission = #{commission}</if>
+        </where>
+    </select>
+    
+    <select id="selectDtMerchantById" parameterType="Long" resultMap="DtMerchantResult">
+        <include refid="selectDtMerchantVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectIdByUserId" resultType="java.lang.Long">
+        <include refid="selectDtMerchantVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertDtMerchant" parameterType="DtMerchant" useGeneratedKeys="true" keyProperty="id">
+        insert into dt_merchant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="associatedShopName != null">associated_shop_name,</if>
+            <if test="commission != null">commission,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="associatedShopName != null">#{associatedShopName},</if>
+            <if test="commission != null">#{commission},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDtMerchant" parameterType="DtMerchant">
+        update dt_merchant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="associatedShopName != null">associated_shop_name = #{associatedShopName},</if>
+            <if test="commission != null">commission = #{commission},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDtMerchantById" parameterType="Long">
+        delete from dt_merchant where id = #{id}
+    </delete>
+
+    <delete id="deleteDtMerchantByIds" parameterType="String">
+        delete from dt_merchant where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="deleteDtMerchantByUserIds">
+        update dt_merchant set del_flag = '2' where user_id in
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </update>
+
+</mapper>

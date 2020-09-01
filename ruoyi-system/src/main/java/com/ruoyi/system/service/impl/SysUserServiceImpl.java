@@ -2,6 +2,7 @@ package com.ruoyi.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.ruoyi.businessteam.domain.DtSalesman;
@@ -63,6 +64,8 @@ public class SysUserServiceImpl implements ISysUserService
     @Autowired
     private DtSalesmanLeaderMapper dtSalesmanLeaderMapper;
 
+    @Autowired
+    private DtMerchantMapper dtMerchantMapper;
     /**
      * 根据条件分页查询用户列表
      * 
@@ -195,6 +198,7 @@ public class SysUserServiceImpl implements ISysUserService
         }
         dtSalesmanLeaderMapper.deleteDtSalesmanLeaderByUserIds(userIds);
         dtSalesmanMapper.deleteDtSalesmanByUserIds(userIds);
+        dtMerchantMapper.deleteDtMerchantByUserIds(userIds);
         return userMapper.deleteUserByIds(userIds);
     }
 
@@ -208,13 +212,51 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional
     public int insertUser(SysUser user)
     {
+        user.setCreateBy("customer");
         // 新增用户信息
         int rows = userMapper.insertUser(user);
+
+        Long[] roles = null;
+
+        if(user.getUserType().equals(UserConstants.SALEMAN_USER_TYPE)){
+            roles = setDefaultRoleId4NewUser(user,RoleConstants.SALEMAN_ROLE_NAME);
+            DtSalesman salesman = new DtSalesman();
+            salesman.setUserId(user.getUserId());
+            dtSalesmanMapper.insertDtSalesman(salesman);
+        }else if(user.getUserType().equals(UserConstants.SALEMAN_LEADER_TYPE)) {
+            roles = setDefaultRoleId4NewUser(user,RoleConstants.SALEMAN_LEADER_ROLE_NAME);
+            DtSalesmanLeader dtSalesmanLeader = new DtSalesmanLeader();
+            dtSalesmanLeader.setUserId(user.getUserId());
+            dtSalesmanLeaderMapper.insertDtSalesmanLeader(dtSalesmanLeader);
+        }else if(user.getUserType().equals(UserConstants.MERCHANT_USER_TYPE)){
+            roles = setDefaultRoleId4NewUser(user,RoleConstants.SALEMAN_LEADER_ROLE_NAME);
+            DtMerchant dtMerchant = new DtMerchant();
+            dtMerchant.setUserId(user.getUserId());
+            dtMerchantMapper.insertDtMerchant(dtMerchant);
+        }
+
         // 新增用户岗位关联
         insertUserPost(user);
         // 新增用户与角色管理
-        insertUserRole(user.getUserId(), user.getRoleIds());
+        insertUserRole(user.getUserId(), roles);
         return rows;
+    }
+
+    private Long[] setDefaultRoleId4NewUser(SysUser user, String s) {
+        Long roleId = sysRoleMapper.selectIdByName(s);
+        if(StringUtils.isNull(roleId)){
+            throw new BusinessException("没有设置角色" + s);
+        }
+        List<Long> roleIds = Arrays.asList(user.getRoleIds());
+        if(roleIds.size() > 0 ){
+            if(!roleIds.contains(roleId)){
+                roleIds.add(roleId);
+            }
+        }else {
+            roleIds = new ArrayList<>();
+            roleIds.add(roleId);
+        }
+        return roleIds.toArray(new Long[roleIds.size()]);
     }
 
     /**
@@ -228,29 +270,27 @@ public class SysUserServiceImpl implements ISysUserService
     public boolean registerUser(SysUser user)
     {
         user.setCreateBy("customer");
+        int rows = userMapper.insertUser(user);
+        if(rows < 1){
+            return false;
+        }
         if(user.getUserType().equals(UserConstants.SALEMAN_USER_TYPE)){
-            int rows = userMapper.insertUser(user);
-            if(rows < 1){
-                return false;
-            }
             setRoleId4NewUser(user.getUserId(),RoleConstants.SALEMAN_ROLE_NAME);
-
             DtSalesman salesman = new DtSalesman();
             salesman.setUserId(user.getUserId());
             return dtSalesmanMapper.insertDtSalesman(salesman) > 0;
         }else if(user.getUserType().equals(UserConstants.SALEMAN_LEADER_TYPE)) {
-            int rows = userMapper.insertUser(user);
-            if(rows < 1){
-                return false;
-            }
             setRoleId4NewUser(user.getUserId(),RoleConstants.SALEMAN_LEADER_ROLE_NAME);
-
             DtSalesmanLeader dtSalesmanLeader = new DtSalesmanLeader();
             dtSalesmanLeader.setUserId(user.getUserId());
             return dtSalesmanLeaderMapper.insertDtSalesmanLeader(dtSalesmanLeader) > 0;
-        }else{
-            return userMapper.insertUser(user) > 0;
+        }else if(user.getUserType().equals(UserConstants.MERCHANT_USER_TYPE)){
+            setRoleId4NewUser(user.getUserId(),RoleConstants.SALEMAN_LEADER_ROLE_NAME);
+            DtMerchant dtMerchant = new DtMerchant();
+            dtMerchant.setUserId(user.getUserId());
+            return dtMerchantMapper.insertDtMerchant(dtMerchant) > 0;
         }
+        return true;
     }
 
 

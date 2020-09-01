@@ -105,4 +105,8 @@ public interface DtBusinessTaskMapper
     List<DtGroupBusinessTaskDetailRespDto> selectGroupBusinessTaskDetailDtoByTaskIds(@Param("array") List<Long> taskIds);
 
     List<DtBusinessTaskDetail> selectDtBusinessTaskDetailListByTaskId(Long id);
+
+    int updateDtBusinessTaskDetail(DtBusinessTaskDetail dtBusinessTaskDetail);
+
+    List<DtBusinessTaskDetail> selectDtBusinessTaskDetailListByTaskIds(@Param("array") Long[] taskIds);
 }

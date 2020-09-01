@@ -123,6 +123,16 @@ public class DtBusinessTaskController extends BaseController
     }
 
     /**
+     * 修改商业任务明细信息
+     */
+    @PostMapping("/detailEdit")
+    @ResponseBody
+    public AjaxResult detailEdit(DtBusinessTaskDetail dtBusinessTaskDetail)
+    {
+        return toAjax(dtBusinessTaskService.updateDtBusinessTaskDetail(dtBusinessTaskDetail));
+    }
+
+    /**
      * 修改保存商业任务信息
      */
     @RequiresPermissions("groupcompany:task:edit")

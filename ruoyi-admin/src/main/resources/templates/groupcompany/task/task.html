@@ -143,8 +143,8 @@
                     }
                 },
                 {
-                    field: 'keyword1',
-                    title: '关键字1',
+                    field: 'keyword',
+                    title: '关键字',
                     align: 'center',
                     formatter: function(value, row, index) {
                         var html = ''
@@ -153,21 +153,6 @@
                                 html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword1);
                             }else{
                                 html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword1);
-                            }
-                        }
-                        return html;
-                    }
-                },
-                {
-                    field: 'keyword2',
-                    title: '关键字2',
-                    formatter: function(value, row, index) {
-                        var html = ''
-                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
-                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
-                                html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword2);
-                            }else{
-                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].keyword2);
                             }
                         }
                         return html;

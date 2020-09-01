@@ -91,4 +91,9 @@ public class DtSalesmanLeaderServiceImpl implements IDtSalesmanLeaderService
     {
         return dtSalesmanLeaderMapper.deleteDtSalesmanLeaderById(id);
     }
+
+    @Override
+    public Long selectIdByUserId(Long userId) {
+        return dtSalesmanLeaderMapper.selectIdByUserId(userId);
+    }
 }
