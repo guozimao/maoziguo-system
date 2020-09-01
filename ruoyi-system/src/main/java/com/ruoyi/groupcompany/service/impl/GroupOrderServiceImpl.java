@@ -1,36 +1,37 @@
 package com.ruoyi.groupcompany.service.impl;
 
-import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
+
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
-import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
-import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
-import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
-import com.ruoyi.groupcompany.domain.request.AssginReqDto;
-import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
+import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
+
+import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
+
 import com.ruoyi.groupcompany.mapper.DtBusinessTaskMapper;
-import com.ruoyi.groupcompany.service.IDtBusinessTaskService;
+import com.ruoyi.groupcompany.mapper.GroupOrderMapper;
+
 import com.ruoyi.groupcompany.service.IGroupOrderService;
-import com.ruoyi.system.domain.SysDept;
-import com.ruoyi.system.mapper.SysDeptMapper;
+
+import com.ruoyi.system.domain.SysUser;
+
 import com.ruoyi.system.mapper.SysUserMapper;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 商业任务信息Service业务层处理
+ * 商业订单信息Service业务层处理
  * 
  * @author zimao
  * @date 2020-08-27
@@ -40,12 +41,72 @@ public class GroupOrderServiceImpl implements IGroupOrderService
 {
     private static final Logger log = LoggerFactory.getLogger(GroupOrderServiceImpl.class);
     @Autowired
+    private GroupOrderMapper groupOrderMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
     private DtBusinessTaskMapper dtBusinessTaskMapper;
 
+    @Override
+    public List<GroupOrderRespDto> selectGroupDtBusinessTaskDtoList(GroupOrderReqDto groupOrderReqDto) {
+        List<GroupOrderRespDto> orders = groupOrderMapper.selectGroupOrderList(groupOrderReqDto);
+        List<Long> userIds = orders.stream().map(GroupOrderRespDto::getSalesmanLeaderUserId).collect(Collectors.toList());
+        List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(userIds);
+        Map<Long,String> userIdAndName = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserId, SysUser::getUserName, (key1, key2) -> key2));
+        for(GroupOrderRespDto item:orders){
+            item.setSalesmanLeaderName(userIdAndName.get(item.getSalesmanLeaderUserId()));
+            item.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(item.getPictureUrl()));
+            item.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(item.getSalesmanCommitUrl()));
+        }
+        return orders;
+    }
 
     @Override
-    public List<DtBusinessTaskDetail> selectGroupDtBusinessTaskDtoList(DtBusinessTaskDetail dtBusinessTaskDetail) {
+    public int updateDtBusinessTaskDetail(DtBusinessTaskDetail dtBusinessTaskDetail) {
+        return dtBusinessTaskMapper.updateDtBusinessTaskDetail(dtBusinessTaskDetail);
+    }
 
-        return null;
+    @Override
+    public int stopOrder(String ids) {
+        Long[] idlist = Convert.toLongArray(ids);
+        List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByIds(idlist);
+        List<String> statusList = dtBusinessTaskDetails.stream().map(DtBusinessTaskDetail::getStatus).collect(Collectors.toList());
+        if(statusList.contains("0")){
+            throw new BusinessException("有订单存在已完成，坏不了单");
+        }
+        Integer num = 0;
+        for(Long id : idlist){
+            DtBusinessTaskDetail detail = new DtBusinessTaskDetail();
+            detail.setId(id);
+            detail.setStatus("2");
+            num = num + dtBusinessTaskMapper.updateDtBusinessTaskDetail(detail);
+        }
+        return num;
+    }
+
+    @Override
+    public int recoverOrder(String ids) {
+        Long[] idlist = Convert.toLongArray(ids);
+        List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByIds(idlist);
+        List<Long> taskIds = dtBusinessTaskDetails.stream().map(DtBusinessTaskDetail::getTaskId).collect(Collectors.toList());
+        List<DtBusinessTask> dtBusinessTasks = dtBusinessTaskMapper.selectDtBusinessTaskByIds(taskIds);
+        List<String> statusList = dtBusinessTaskDetails.stream().map(DtBusinessTaskDetail::getStatus).collect(Collectors.toList());
+        List<String> orderStatusList = dtBusinessTasks.stream().map(DtBusinessTask::getOrderStatus).collect(Collectors.toList());
+        if(statusList.contains("0") || statusList.contains("1")){
+            throw new BusinessException("存在订单是非停单状态的，修复不了订单,请勿选非停单状态下的订单");
+        }
+        if(orderStatusList.contains("0")){
+            throw new BusinessException("有任务存在已完成，修复不了订单");
+        }
+        Integer num = 0;
+        for(Long id : idlist){
+            DtBusinessTaskDetail detail = new DtBusinessTaskDetail();
+            detail.setId(id);
+            detail.setStatus("1");
+            num = num + dtBusinessTaskMapper.updateDtBusinessTaskDetail(detail);
+        }
+        return num;
     }
 }

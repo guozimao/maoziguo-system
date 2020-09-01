@@ -109,4 +109,10 @@ public interface DtBusinessTaskMapper
     int updateDtBusinessTaskDetail(DtBusinessTaskDetail dtBusinessTaskDetail);
 
     List<DtBusinessTaskDetail> selectDtBusinessTaskDetailListByTaskIds(@Param("array") Long[] taskIds);
+
+    List<DtBusinessTaskDetail> selectDtBusinessTaskDetailList(DtBusinessTaskDetail dtBusinessTaskDetail);
+
+    List<DtBusinessTaskDetail> selectDtBusinessTaskDetailListByIds(@Param("array") Long[] idlist);
+
+    List<DtBusinessTask> selectDtBusinessTaskByIds(@Param("array") List<Long> taskIds);
 }

@@ -1,10 +1,13 @@
 package com.ruoyi.web.controller.groupcompany;
 
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
+import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
+import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 import com.ruoyi.groupcompany.service.IDtBusinessTaskService;
 import com.ruoyi.groupcompany.service.IGroupOrderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -41,13 +44,43 @@ public class GroupOrderController extends BaseController {
     /**
      * 查询商业任务信息列表
      */
-    @RequiresPermissions("groupcompany:task:list")
+    @RequiresPermissions("groupcompany:order:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(DtBusinessTaskDetail dtBusinessTaskDetail)
+    public TableDataInfo list(GroupOrderReqDto groupOrderReqDto)
     {
         startPage();
-        List<DtBusinessTaskDetail> list = groupOrderService.selectGroupDtBusinessTaskDtoList(dtBusinessTaskDetail);
+        List<GroupOrderRespDto> list = groupOrderService.selectGroupDtBusinessTaskDtoList(groupOrderReqDto);
         return getDataTable(list);
+    }
+
+    /**
+     * 修改商业任务明细信息
+     */
+    @PostMapping("/detailEdit")
+    @ResponseBody
+    public AjaxResult detailEdit(DtBusinessTaskDetail dtBusinessTaskDetail)
+    {
+        return toAjax(groupOrderService.updateDtBusinessTaskDetail(dtBusinessTaskDetail));
+    }
+
+    /**
+     * 停掉商业订单
+     */
+    @PostMapping("/stopOrder")
+    @ResponseBody
+    public AjaxResult stopOrder(String ids)
+    {
+        return toAjax(groupOrderService.stopOrder(ids));
+    }
+
+    /**
+     * 修复停掉的商业订单
+     */
+    @PostMapping("/recoverOrder")
+    @ResponseBody
+    public AjaxResult recoverOrder(String ids)
+    {
+        return toAjax(groupOrderService.recoverOrder(ids));
     }
 }

@@ -205,6 +205,7 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
         List<DtBusinessTaskDetail> resultList = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskId(id);
         for (DtBusinessTaskDetail detail:resultList){
             detail.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(detail.getPictureUrl()));
+            detail.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(detail.getSalesmanCommitUrl()));
         }
         return resultList;
     }

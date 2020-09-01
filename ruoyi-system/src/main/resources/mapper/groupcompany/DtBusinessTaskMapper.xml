@@ -41,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="commission" column="commission" />
         <result property="platformNickname" column="platform_nickname" />
+        <result property="salesmanCommitUrl" column="salesman_commit_url"/>
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
         <result property="status" column="status" />
     </resultMap>
@@ -130,7 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectDtBusinessTaskDetailListByTaskId"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_id,task_no,platform_url,picture_url,unit_price_remark,special_remarks,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,salesman_commit_url,promoters_unit_price_remark
         from dt_business_task_detail
         where task_id = #{id}
         and status != '2'
@@ -144,6 +145,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="taskId" collection="array" open="(" separator="," close=")">
             #{taskId}
         </foreach>
+    </select>
+    <select id="selectDtBusinessTaskDetailList"
+            parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        from dt_business_task_detail
+        <where>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
+            <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="startDate!=null and startDate!=''">
+                and order_date &gt;=  #{startDate}
+            </if >
+            <if test="endDate!=null and endDate!=''">
+                and order_date &lt;=  #{endDate}
+            </if >
+            <if test="status!=null and status !=''">
+                and status = #{status}
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="selectDtBusinessTaskDetailListByIds"
+            parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        from dt_business_task_detail
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectDtBusinessTaskByIds" parameterType="DtBusinessTask" resultMap="DtBusinessTaskResult">
+        <include refid="selectDtBusinessTaskVo"/>
+        <where>
+             id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
     </select>
 
     <insert id="insertDtBusinessTask" parameterType="DtBusinessTask" useGeneratedKeys="true" keyProperty="id">
@@ -200,10 +238,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="orderDate != null">order_date = #{orderDate},</if>
             <if test="shopName != null and shopName != ''">shop_name = #{shopName},</if>
             <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+            <if test="unitPriceRemark != null and unitPriceRemark!=''">unit_price_remark = #{unitPriceRemark},</if>
+            <if test="specialRemarks != null and specialRemarks != ''">special_remarks = #{specialRemarks},</if>
             <if test="keyword != null and keyword != ''">keyword = #{keyword},</if>
-            <if test="promotersModifyUnitPrice != null and promotersModifyUnitPrice != ''">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
+            <if test="promotersModifyUnitPrice != null ">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
             <if test="salesmanLeaderUserId != null">salesman_leader_user_id= #{salesmanLeaderUserId},</if>
+            <if test="status != null">status= #{status},</if>
         </trim>
         where id = #{id}
     </update>

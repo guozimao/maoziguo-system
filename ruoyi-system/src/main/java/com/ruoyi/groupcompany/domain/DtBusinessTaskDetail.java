@@ -73,6 +73,8 @@ public class DtBusinessTaskDetail
 
     private Long salesmanLeaderUserId;
 
+    private String salesmanCommitUrl;
+
     private String status;
 
     public void setId(Long id) 
@@ -222,6 +224,14 @@ public class DtBusinessTaskDetail
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSalesmanCommitUrl() {
+        return salesmanCommitUrl;
+    }
+
+    public void setSalesmanCommitUrl(String salesmanCommitUrl) {
+        this.salesmanCommitUrl = salesmanCommitUrl;
     }
 
     @Override

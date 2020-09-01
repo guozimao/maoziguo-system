@@ -114,7 +114,13 @@
                     field: 'orderDate',
                     align: 'center',
                     title: '订单日期',
-                    editable: true
+                    editable : {
+                        type: 'date',
+                        clear: false,
+                        placement: 'right',//位置
+                        emptytext : "--",//默认值
+                        title: '请选择日期:'
+                    }
 				},
                 {
                     field: 'shopName',
@@ -151,9 +157,21 @@
                     editable: true
 				},
                 {
+                    field: 'unitPriceRemark',
+                    align: 'center',
+                    title: '单价备注',
+                    editable: true
+                },
+                {
+                    field: 'specialRemarks',
+                    align: 'center',
+                    title: '特殊备注',
+                    editable: true
+                },
+                {
                     field: 'platformNickname',
                     align: 'center',
-                    title: '淘宝昵称',
+                    title: '买家昵称',
                     editable: true
                 },
                 {
@@ -161,6 +179,14 @@
                     align: 'center',
                     title: '实际单价/元',
                     editable: true
+                },
+                {
+                    field: 'salesmanCommitUrl',
+                    align: 'center',
+                    title: '买家拍照',
+                    formatter: function(value, row, index) {
+                        return $.table.imageView(row.salesmanCommitUrl);
+                    }
                 },
                 {
                     field: 'promotersUnitPriceRemark',

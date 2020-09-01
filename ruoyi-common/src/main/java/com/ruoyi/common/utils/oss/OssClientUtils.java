@@ -28,6 +28,9 @@ public class OssClientUtils {
 
     /** oss参数格式(path,Expires,Signature) */
     public static String getPictureUrlByOssParam(String ossParam){
+        if(StringUtils.isEmpty(ossParam)){
+            return null;
+        }
         String[] param = StringUtils.split(ossParam,",");
         if(param.length != 3){
             throw new BusinessException("OssParam格式不正确");
