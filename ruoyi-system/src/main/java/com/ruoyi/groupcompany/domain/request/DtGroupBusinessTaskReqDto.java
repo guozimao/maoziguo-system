@@ -20,7 +20,7 @@ public class DtGroupBusinessTaskReqDto {
 
     /** 订单日期 */
     @Excel(name = "订单生成日期", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date createTime;
+    private Date requiredCompletionDate;
 
     public Long getId() {
         return id;
@@ -46,11 +46,11 @@ public class DtGroupBusinessTaskReqDto {
         this.orderStatus = orderStatus;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public Date getRequiredCompletionDate() {
+        return requiredCompletionDate;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setRequiredCompletionDate(Date requiredCompletionDate) {
+        this.requiredCompletionDate = requiredCompletionDate;
     }
 }

@@ -105,7 +105,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 <if test="id != null and id != ''">and id = #{id}</if>
                 <if test="deptId != null and deptId != ''">and dept_id = #{deptId}</if>
                 <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
-                <if test="createTime != null">and create_time BETWEEN #{createTime} and  date_add(#{createTime},interval 1 day)</if>
+                <if test="requiredCompletionDate != null">and required_completion_date BETWEEN #{requiredCompletionDate} and  date_add(#{requiredCompletionDate},interval 1 day)</if>
             </where>
             order by id DESC
     </select>
