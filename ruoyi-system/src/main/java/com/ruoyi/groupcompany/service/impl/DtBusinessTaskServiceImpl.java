@@ -171,18 +171,13 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
 
         StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
-        Set<Date> dateSet = new HashSet<>();
-        for(DtBusinessTaskDetail detail: vaildList){
-            dateSet.add(detail.getOrderDate());
-        }
-        Date[] requiredCompletionDate = dateSet.toArray(new Date[1]);
         for (List<DtBusinessTaskDetail> taskDetailList : list)
         {
             try
             {
                 DtBusinessTask dtBusinessTask = new DtBusinessTask();
                 dtBusinessTask.setOrderStatus("1");
-                dtBusinessTask.setRequiredCompletionDate(requiredCompletionDate[0]);
+                dtBusinessTask.setRequiredCompletionDate(vaildList.get(0).getOrderDate());
                 dtBusinessTaskMapper.insertDtBusinessTask(dtBusinessTask);
                 dtBusinessTaskMapper.batchInsertDtBusinessTaskDetail(dtBusinessTask.getId(),taskDetailList);
                 successNum++;
@@ -235,6 +230,9 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
         for(DtBusinessTaskDetail dtBusinessTaskDetail:vaildList){
             if(StringUtils.isEmpty(dtBusinessTaskDetail.getTaskNo())){
                 vailedMsg.append("<br/>" + dtBusinessTaskDetail.getShopName()).append("任务代码不能为空");
+            }
+            if(StringUtils.isNull(dtBusinessTaskDetail.getOrderDate())){
+                vailedMsg.append("<br/>" + dtBusinessTaskDetail.getShopName()).append("日期不能为空");
             }
             if(StringUtils.isEmpty(dtBusinessTaskDetail.getShopName())){
                 vailedMsg.append("<br/>" + dtBusinessTaskDetail.getTaskNo()).append("店铺名不能为空");
