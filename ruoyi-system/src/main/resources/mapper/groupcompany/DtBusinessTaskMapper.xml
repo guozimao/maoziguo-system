@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="DtBusinessTask" id="DtBusinessTaskResult">
         <result property="id"    column="id"    />
         <result property="groupAllocateTime"    column="group_allocate_time"    />
+        <result property="requiredCompletionDate"    column="required_completion_date"    />
         <result property="deptId"    column="dept_id"    />
         <result property="orderStatus"    column="order_status"    />
         <result property="allocateTime"    column="allocate_time"    />
@@ -197,6 +198,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">feedback_picture_url4,</if>
             <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">feedback_picture_url5,</if>
             <if test="completionTime != null">completion_time,</if>
+            <if test="requiredCompletionDate != null">required_completion_date,</if>
             create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -210,6 +212,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">#{feedbackPictureUrl4},</if>
             <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">#{feedbackPictureUrl5},</if>
             <if test="completionTime != null">#{completionTime},</if>
+            <if test="requiredCompletionDate != null">#{requiredCompletionDate},</if>
             sysdate()
          </trim>
     </insert>

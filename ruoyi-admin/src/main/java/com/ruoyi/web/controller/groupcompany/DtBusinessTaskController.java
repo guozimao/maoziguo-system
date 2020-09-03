@@ -1,9 +1,7 @@
 package com.ruoyi.web.controller.groupcompany;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
 import com.ruoyi.common.exception.BusinessException;
@@ -34,6 +32,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -173,14 +172,25 @@ public class DtBusinessTaskController extends BaseController
     public AjaxResult insert(@RequestParam("file") MultipartFile[] file) throws Exception{
         ExcelUtil<DtBusinessTaskDetail> util = new ExcelUtil<DtBusinessTaskDetail>(DtBusinessTaskDetail.class);
         List<List<DtBusinessTaskDetail>> list = new ArrayList<>();
-        List<DtBusinessTaskDetail> vaildList = new ArrayList<>();
+        List<DtBusinessTaskDetail> vaildList = new LinkedList<>();
         for (MultipartFile f : file){
             List<DtBusinessTaskDetail> businessTaskList = util.importExcel(f.getInputStream());
+            doProcessEmptyOrder4Excel(businessTaskList);
             list.add(businessTaskList);
             vaildList.addAll(businessTaskList);
         }
         String message = dtBusinessTaskService.batchInsertTask(list,vaildList);
         return AjaxResult.success(message);
+    }
+
+    private void doProcessEmptyOrder4Excel(List<DtBusinessTaskDetail> businessTaskList) {
+        Iterator<DtBusinessTaskDetail> dtBusinessTaskDetailIterator = businessTaskList.iterator();
+        while (dtBusinessTaskDetailIterator.hasNext()){
+            DtBusinessTaskDetail detail = dtBusinessTaskDetailIterator.next();
+            if(StringUtils.isEmpty(detail.getTaskNo())){
+                dtBusinessTaskDetailIterator.remove();
+            }
+        }
     }
 
     @GetMapping("/importTemplate")

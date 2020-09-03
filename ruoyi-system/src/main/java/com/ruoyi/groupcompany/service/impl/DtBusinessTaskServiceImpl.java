@@ -1,6 +1,7 @@
 package com.ruoyi.groupcompany.service.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
@@ -13,7 +14,9 @@ import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.system.domain.SysDept;
 import com.ruoyi.system.mapper.SysDeptMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
+import org.apache.commons.collections4.Bag;
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.bag.HashBag;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,12 +171,18 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
 
         StringBuilder successMsg = new StringBuilder();
         StringBuilder failureMsg = new StringBuilder();
+        Set<Date> dateSet = new HashSet<>();
+        for(DtBusinessTaskDetail detail: vaildList){
+            dateSet.add(detail.getOrderDate());
+        }
+        Date[] requiredCompletionDate = dateSet.toArray(new Date[1]);
         for (List<DtBusinessTaskDetail> taskDetailList : list)
         {
             try
             {
                 DtBusinessTask dtBusinessTask = new DtBusinessTask();
                 dtBusinessTask.setOrderStatus("1");
+                dtBusinessTask.setRequiredCompletionDate(requiredCompletionDate[0]);
                 dtBusinessTaskMapper.insertDtBusinessTask(dtBusinessTask);
                 dtBusinessTaskMapper.batchInsertDtBusinessTaskDetail(dtBusinessTask.getId(),taskDetailList);
                 successNum++;
@@ -221,6 +230,8 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
             throw new BusinessException("导入的任务数据不能为空！");
         }
         StringBuffer vailedMsg = new StringBuffer();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Set<String> dateSet = new HashSet<>();
         for(DtBusinessTaskDetail dtBusinessTaskDetail:vaildList){
             if(StringUtils.isEmpty(dtBusinessTaskDetail.getTaskNo())){
                 vailedMsg.append("<br/>" + dtBusinessTaskDetail.getShopName()).append("任务代码不能为空");
@@ -231,6 +242,10 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
             if(StringUtils.isNull(dtBusinessTaskDetail.getUnitPrice())){
                 vailedMsg.append("<br/>" + dtBusinessTaskDetail.getShopName()).append("单价不能为空");
             }
+            dateSet.add(sdf.format(dtBusinessTaskDetail.getOrderDate()));
+        }
+        if(dateSet.size() >1){
+            vailedMsg.insert(0,"存在多个订单日期"+ dateSet.toString() + "日期");
         }
         String msg = vailedMsg.toString();
         if(StringUtils.isNotEmpty(msg)){

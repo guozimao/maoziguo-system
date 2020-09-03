@@ -66,6 +66,8 @@ public class DtBusinessTask
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+    private Date requiredCompletionDate;
+
     private String remark;
 
     /** 商业任务信息明细信息 */
@@ -195,6 +197,14 @@ public class DtBusinessTask
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Date getRequiredCompletionDate() {
+        return requiredCompletionDate;
+    }
+
+    public void setRequiredCompletionDate(Date requiredCompletionDate) {
+        this.requiredCompletionDate = requiredCompletionDate;
     }
 
     @Override
