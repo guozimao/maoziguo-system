@@ -60,6 +60,10 @@ public class GroupOrderRespDto {
 
     private String salesmanLeaderName;
 
+    private Long merchantUserId;
+
+    private String merchantUserName;
+
     private String status;
 
     public Long getId() {
@@ -196,5 +200,21 @@ public class GroupOrderRespDto {
 
     public void setPromotersUnitPriceRemark(String promotersUnitPriceRemark) {
         this.promotersUnitPriceRemark = promotersUnitPriceRemark;
+    }
+
+    public Long getMerchantUserId() {
+        return merchantUserId;
+    }
+
+    public void setMerchantUserId(Long merchantUserId) {
+        this.merchantUserId = merchantUserId;
+    }
+
+    public String getMerchantUserName() {
+        return merchantUserName;
+    }
+
+    public void setMerchantUserName(String merchantUserName) {
+        this.merchantUserName = merchantUserName;
     }
 }

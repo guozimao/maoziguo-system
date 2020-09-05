@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="platformNickname" column="platform_nickname" />
-        <result property="merchant_user_id" column="merchant_user_id" />
+        <result property="merchantUserId" column="merchant_user_id" />
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
         <result property="salesmanCommitUrl" column="salesman_commit_url"/>
         <result property="status" column="status" />

@@ -55,10 +55,12 @@ public class GroupOrderServiceImpl implements IGroupOrderService
     public List<GroupOrderRespDto> selectGroupDtBusinessTaskDtoList(GroupOrderReqDto groupOrderReqDto) {
         List<GroupOrderRespDto> orders = groupOrderMapper.selectGroupOrderList(groupOrderReqDto);
         List<Long> userIds = orders.stream().map(GroupOrderRespDto::getSalesmanLeaderUserId).collect(Collectors.toList());
+        userIds.addAll(orders.stream().map(GroupOrderRespDto::getMerchantUserId).collect(Collectors.toList()));
         List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(userIds);
         Map<Long,String> userIdAndName = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserId, SysUser::getUserName, (key1, key2) -> key2));
         for(GroupOrderRespDto item:orders){
             item.setSalesmanLeaderName(userIdAndName.get(item.getSalesmanLeaderUserId()));
+            item.setMerchantUserName(userIdAndName.get(item.getMerchantUserId()));
             item.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(item.getPictureUrl()));
             item.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(item.getSalesmanCommitUrl()));
         }
