@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('查看商业任务明细信息')" />
+    <th:block th:include="include :: bootstrap-editable-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-task-detail-query" th:object="${dtBusinessTask}">
+            <h4 class="form-header h4">订单信息</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <h4 class="form-header h4 mt20">任务信息</h4>
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" >任务编号：</label><label class="col-sm-2 mt5" th:text="${dtBusinessTask.id}"></label>
+                <label class="col-sm-2 control-label" >任务状态：</label><label class="col-sm-2 mt5" th:text="${@dict.getLabel('sys_order_status', dtBusinessTask.orderStatus)}"></label>
+                <label class="col-sm-2 control-label" >所属团队：</label><label class="col-sm-2 mt5" th:text="${deptName}"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" >订单数量：</label><label class="col-sm-2 mt5" th:text="${orderNumber}"></label>
+                <label class="col-sm-2 control-label" >任务总本金：</label><label class="col-sm-2 mt5" th:text="${totalPrincipal}"></label>
+                <label class="col-sm-2 control-label" >实际总本金：</label><label class="col-sm-2 mt5" th:text="${actualTotalPrincipal}"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" >集团分配时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(dtBusinessTask.groupAllocateTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
+                <label class="col-sm-2 control-label" >业务组长分配时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(dtBusinessTask.allocateTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
+                <label class="col-sm-2 control-label" >完成时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(dtBusinessTask.completionTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
+            </div>
+            <h4 class="form-header h4">任务资料</h4>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">拍摄照片：</label>
+                <div class="col-sm-9">
+                    <div id="viewer" class="row">
+                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(dtBusinessTask.feedbackPictureUrl1)}">
+                            <a href="javascript:void(0)" class="thumbnail">
+                                <img th:src="${dtBusinessTask.feedbackPictureUrl1}"  alt="缩略图">
+                            </a>
+                        </div>
+                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(dtBusinessTask.feedbackPictureUrl2)}">
+                            <a href="javascript:void(0)" class="thumbnail">
+                                <img th:src="${dtBusinessTask.feedbackPictureUrl2}"  alt="缩略图">
+                            </a>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(dtBusinessTask.feedbackPictureUrl3)}">
+                                <img th:src="${dtBusinessTask.feedbackPictureUrl3}"  alt="缩略图">
+                            </a>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(dtBusinessTask.feedbackPictureUrl4)}">
+                                <img th:src="${dtBusinessTask.feedbackPictureUrl4}"  alt="缩略图">
+                            </a>
+                        </div>
+                        <div class="col-sm-3 col-md-3">
+                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(dtBusinessTask.feedbackPictureUrl5)}">
+                                <img th:src="${dtBusinessTask.feedbackPictureUrl5}"  alt="缩略图">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">任务备注：</label>
+                <div class="col-sm-9">
+                    <textarea name="remark" th:text="${dtBusinessTask.remark}" class="form-control" rows="3" readonly="ture"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-table-editable-js" />
+    <script th:inline="javascript">
+        var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
+        var prefix = ctx + "groupcompany/task";
+
+        var image = new Viewer(document.getElementById('viewer'),{
+            fullscreen:false
+        });
+
+        $(function() {
+            var options = {
+                data: [[${dtBusinessTaskDetail}]],
+                pagination: false,
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sidePagination: "client",
+                onEditableSave: onEditableSave,
+                columns: [
+                {
+                    field: 'index',
+                    align: 'center',
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                    	var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                    	return columnIndex + $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'taskNo',
+                    align: 'center',
+                    title: '任务编码',
+                    editable: true
+				},
+                {
+                    field: 'orderDate',
+                    align: 'center',
+                    title: '订单日期',
+                    editable : {
+                        type: 'date',
+                        clear: false,
+                        placement: 'right',//位置
+                        emptytext : "--",//默认值
+                        title: '请选择日期:'
+                    }
+				},
+                {
+                    field: 'shopName',
+                    align: 'center',
+                    title: '店铺名',
+                    editable: true
+                },
+                {
+                    field: 'pictureUrl',
+                    align: 'center',
+                    title: '商品主图',
+                    formatter: function(value, row, index) {
+                        return $.table.imageView(row.pictureUrl);
+                    }
+				},
+                {
+                    field: 'platformUrl',
+                    align: 'center',
+                    title: '商品链接',
+                    formatter: function(value, row, index) {
+                        return $.common.sprintf("<div><a title='商品链接' href='%s' target='_blank'>链接</div>", row.platformUrl);
+                    }
+                },
+                {
+                    field: 'keyword',
+                    align: 'center',
+                    title: '关键词',
+                    editable: true
+                },
+                {
+                    field: 'unitPrice',
+                    align: 'center',
+                    title: '单价/元',
+                    editable: true
+				},
+                {
+                    field: 'unitPriceRemark',
+                    align: 'center',
+                    title: '单价备注',
+                    editable: true
+                },
+                {
+                    field: 'specialRemarks',
+                    align: 'center',
+                    title: '特殊备注',
+                    editable: true
+                },
+                {
+                    field: 'platformNickname',
+                    align: 'center',
+                    title: '买家昵称',
+                    editable: true
+                },
+                {
+                    field: 'promotersModifyUnitPrice',
+                    align: 'center',
+                    title: '实际单价/元',
+                    editable: true
+                },
+                {
+                    field: 'salesmanCommitUrl',
+                    align: 'center',
+                    title: '买家拍照',
+                    formatter: function(value, row, index) {
+                        return $.table.imageView(row.salesmanCommitUrl);
+                    }
+                },
+                {
+                    field: 'promotersUnitPriceRemark',
+                    align: 'center',
+                    title: '买家备注'
+                },
+                {
+                    field: 'status',
+                    align: 'center',
+                    title: '订单状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(orderStatusDatas, value);
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function onEditableSave (field, row, oldValue, $el) {
+            $.operate.submit("/groupcompany/task/detailEdit","post","json",row);
+        }
+    </script>
+</body>
+</html>

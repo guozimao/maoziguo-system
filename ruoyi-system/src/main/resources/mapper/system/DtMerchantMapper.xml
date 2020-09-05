@@ -3,25 +3,28 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.DtMerchantMapper">
-    
+
+    <resultMap type="MerchantShopRelation" id="MerchantShopRelationResult">
+        <result property="merchantUserId"    column="merchant_user_id"    />
+        <result property="shopName"    column="shop_name"    />
+    </resultMap>
+
     <resultMap type="DtMerchant" id="DtMerchantResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
-        <result property="associatedShopName"    column="associated_shop_name"    />
         <result property="commission"    column="commission"    />
         <result property="delFlag"    column="del_flag"    />
     </resultMap>
 
     <sql id="selectDtMerchantVo">
-        select id, user_id, associated_shop_name, commission, del_flag from dt_merchant
+        select id, user_id, commission, del_flag from dt_merchant
     </sql>
 
     <select id="selectDtMerchantList" parameterType="DtMerchant" resultMap="DtMerchantResult">
         <include refid="selectDtMerchantVo"/>
         <where>  
             <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="associatedShopName != null  and associatedShopName != ''"> and associated_shop_name like concat('%', #{associatedShopName}, '%')</if>
-            <if test="commission != null "> and commission = #{commission}</if>
+            <if test="id != null "> and id = #{id}</if>
         </where>
     </select>
     
@@ -33,28 +36,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectDtMerchantVo"/>
         where user_id = #{userId}
     </select>
+    <select id="selectMerchantShopRelationByMerchantUserIds"
+            parameterType="MerchantShopRelation" resultMap="MerchantShopRelationResult">
+        select merchant_user_id, shop_name from dt_merchant_user_shopname
+        where merchant_user_id in
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+    <select id="selectMerchantShopRelationByShopNames"
+            parameterType="MerchantShopRelation" resultMap="MerchantShopRelationResult">
+        select merchant_user_id, shop_name from dt_merchant_user_shopname
+        where shop_name in
+        <foreach collection="set" item="shopName" open="(" separator="," close=")">
+            #{shopName}
+        </foreach>
+        and merchant_user_id != #{userId}
+    </select>
 
     <insert id="insertDtMerchant" parameterType="DtMerchant" useGeneratedKeys="true" keyProperty="id">
         insert into dt_merchant
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
-            <if test="associatedShopName != null">associated_shop_name,</if>
             <if test="commission != null">commission,</if>
             <if test="delFlag != null">del_flag,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId},</if>
-            <if test="associatedShopName != null">#{associatedShopName},</if>
             <if test="commission != null">#{commission},</if>
             <if test="delFlag != null">#{delFlag},</if>
          </trim>
+    </insert>
+    <insert id="batchInsertMerchantShopRelationByUserId">
+        insert into dt_merchant_user_shopname (merchant_user_id,shop_name)
+        VALUES
+        <foreach collection="set" item="item" separator=",">
+            (#{userId},#{item})
+        </foreach>
     </insert>
 
     <update id="updateDtMerchant" parameterType="DtMerchant">
         update dt_merchant
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null">user_id = #{userId},</if>
-            <if test="associatedShopName != null">associated_shop_name = #{associatedShopName},</if>
             <if test="commission != null">commission = #{commission},</if>
             <if test="delFlag != null">del_flag = #{delFlag},</if>
         </trim>
@@ -70,6 +94,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+    <delete id="deleteMerchantShopRelationByUserId">
+        delete from dt_merchant_user_shopname
+        where merchant_user_id = #{userId}
     </delete>
     <update id="deleteDtMerchantByUserIds">
         update dt_merchant set del_flag = '2' where user_id in

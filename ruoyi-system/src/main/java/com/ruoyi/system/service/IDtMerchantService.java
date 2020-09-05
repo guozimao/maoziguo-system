@@ -1,7 +1,10 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+
+import com.ruoyi.businessteam.domain.MerchantShopRelation;
 import com.ruoyi.system.domain.DtMerchant;
+import com.ruoyi.system.domain.SysUser;
 
 /**
  * 商家信息Service接口
@@ -63,4 +66,8 @@ public interface IDtMerchantService
      * 根据用户id查找商家id
      * */
     Long selectIdByUserId(Long userId);
+
+    List<MerchantShopRelation> getMerchantShopRelationByUserId(Long id);
+
+    SysUser getUserIdByName(String userName);
 }

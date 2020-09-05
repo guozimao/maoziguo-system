@@ -1,12 +1,20 @@
 package com.ruoyi.system.service.impl;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.ruoyi.businessteam.domain.MerchantShopRelation;
+import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.DtMerchantMapper;
 import com.ruoyi.system.domain.DtMerchant;
 import com.ruoyi.system.service.IDtMerchantService;
 import com.ruoyi.common.core.text.Convert;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 商家信息Service业务层处理
@@ -20,6 +28,9 @@ public class DtMerchantServiceImpl implements IDtMerchantService
     @Autowired
     private DtMerchantMapper dtMerchantMapper;
 
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
     /**
      * 查询商家信息
      * 
@@ -29,7 +40,10 @@ public class DtMerchantServiceImpl implements IDtMerchantService
     @Override
     public DtMerchant selectDtMerchantById(Long id)
     {
-        return dtMerchantMapper.selectDtMerchantById(id);
+        DtMerchant merchant = dtMerchantMapper.selectDtMerchantById(id);
+        SysUser user = sysUserMapper.selectUserById(merchant.getUserId());
+        merchant.setUserName(user.getUserName());
+        return merchant;
     }
 
     /**
@@ -41,7 +55,23 @@ public class DtMerchantServiceImpl implements IDtMerchantService
     @Override
     public List<DtMerchant> selectDtMerchantList(DtMerchant dtMerchant)
     {
-        return dtMerchantMapper.selectDtMerchantList(dtMerchant);
+        List<DtMerchant> resultList = dtMerchantMapper.selectDtMerchantList(dtMerchant);
+        if(resultList.size() < 1){
+            return resultList;
+        }
+        List<Long> userIds = resultList.stream().map(DtMerchant::getUserId).collect(Collectors.toList());
+        List<SysUser> users = sysUserMapper.selectUserListByIds(userIds);
+        Map<Long,String> userIdAndNameMap = users.stream().collect(Collectors.toMap(SysUser::getUserId,SysUser::getUserName,(k1,k2) -> k2));
+        List<MerchantShopRelation> merchantShopRelations = dtMerchantMapper.selectMerchantShopRelationByMerchantUserIds(userIds);
+        Map<Long, Set<String>> userIdShopnameSetMap = merchantShopRelations.stream().collect(Collectors.groupingBy(MerchantShopRelation::getMerchantUserId, Collectors.mapping(MerchantShopRelation::getShopName,Collectors.toSet())));
+        for(DtMerchant merchant : resultList){
+            merchant.setUserName(userIdAndNameMap.get(merchant.getUserId()));
+            if(userIdShopnameSetMap.get(merchant.getUserId()) != null){
+                Iterator<String> iterator = userIdShopnameSetMap.get(merchant.getUserId()).iterator();
+                merchant.setAssociatedShopName(StringUtils.join(iterator,","));
+            }
+        }
+        return resultList;
     }
 
     /**
@@ -63,8 +93,31 @@ public class DtMerchantServiceImpl implements IDtMerchantService
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateDtMerchant(DtMerchant dtMerchant)
     {
+        SysUser oldUser = sysUserMapper.selectUserById(dtMerchant.getUserId());
+
+        if(!oldUser.getUserName().equals(dtMerchant.getUserName()) &&
+                StringUtils.isNotNull(sysUserMapper.checkUserName(dtMerchant.getUserName()))){
+            throw new BusinessException("用户昵称,已被注册");
+        }
+
+
+        Set<String> shopNames = dtMerchant.getShopNames().stream().filter(item -> StringUtils.isNotEmpty(item.trim())).collect(Collectors.toSet());
+        if(shopNames.size() > 0){
+            List<MerchantShopRelation> relations = dtMerchantMapper.selectMerchantShopRelationByShopNames(shopNames,dtMerchant.getUserId());
+            if(relations.size() > 0){
+                throw new BusinessException("存在店铺名称被其它商家注册了");
+            }
+            dtMerchantMapper.deleteMerchantShopRelationByUserId(dtMerchant.getUserId());
+            dtMerchantMapper.batchInsertMerchantShopRelationByUserId(dtMerchant.getUserId(),shopNames);
+        }
+
+        SysUser user = new SysUser();
+        user.setUserId(dtMerchant.getUserId());
+        user.setUserName(dtMerchant.getUserName());
+        sysUserMapper.updateUser(user);
         return dtMerchantMapper.updateDtMerchant(dtMerchant);
     }
 
@@ -95,5 +148,17 @@ public class DtMerchantServiceImpl implements IDtMerchantService
     @Override
     public Long selectIdByUserId(Long userId) {
         return dtMerchantMapper.selectIdByUserId(userId);
+    }
+
+    @Override
+    public List<MerchantShopRelation> getMerchantShopRelationByUserId(Long id) {
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(id);
+        return dtMerchantMapper.selectMerchantShopRelationByMerchantUserIds(userIds);
+    }
+
+    @Override
+    public SysUser getUserIdByName(String userName) {
+        return sysUserMapper.selectUserByUserName(userName);
     }
 }

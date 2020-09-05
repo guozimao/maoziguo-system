@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.Repurchase;
+package com.ruoyi.web.controller.repurchase;
 
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;

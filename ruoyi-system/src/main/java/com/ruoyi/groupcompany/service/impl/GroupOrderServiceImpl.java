@@ -3,11 +3,13 @@ package com.ruoyi.groupcompany.service.impl;
 
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 
+import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 
 import com.ruoyi.groupcompany.mapper.DtBusinessTaskMapper;
@@ -109,4 +111,21 @@ public class GroupOrderServiceImpl implements IGroupOrderService
         }
         return num;
     }
+
+    @Override
+    public void doProcessReqParam(GroupOrderReqDto groupOrderReqDto) {
+        if(StringUtils.isNotEmpty(groupOrderReqDto.getSalesmanLeaderName())){
+            SysUser user = sysUserMapper.selectUserByUserName(groupOrderReqDto.getSalesmanLeaderName());
+            if(user != null){
+                groupOrderReqDto.setSalesmanLeaderUserId(user.getUserId());
+            }
+        }
+        if(StringUtils.isNotEmpty(groupOrderReqDto.getMerchantName())){
+            SysUser user = sysUserMapper.selectUserByUserName(groupOrderReqDto.getMerchantName());
+            if(user != null){
+                groupOrderReqDto.setMerchantUserId(user.getUserId());
+            }
+        }
+    }
+
 }

@@ -1,14 +1,11 @@
-package com.ruoyi.web.controller.groupcompany;
+package com.ruoyi.web.controller.salesmanleader;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
-import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
-import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
-import com.ruoyi.groupcompany.service.IDtBusinessTaskService;
 import com.ruoyi.groupcompany.service.IGroupOrderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +23,15 @@ import java.util.List;
  * @author zimao
  */
 @Controller
-@RequestMapping("/groupcompany/order")
-public class GroupOrderController extends BaseController {
+@RequestMapping("/salesmanleader/order")
+public class SalesmanLeaderOrderController extends BaseController {
 
     @Autowired
     private IGroupOrderService groupOrderService;
 
-    private String prefix = "groupcompany/order";
+    private String prefix = "templates/salesmanleader/order";
 
-    @RequiresPermissions("groupcompany:order:view")
+    @RequiresPermissions("salesmanleader:order:view")
     @GetMapping()
     public String order()
     {
@@ -44,12 +41,11 @@ public class GroupOrderController extends BaseController {
     /**
      * 查询商业任务信息列表
      */
-    @RequiresPermissions("groupcompany:order:list")
+    @RequiresPermissions("salesmanleader:order:list")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(GroupOrderReqDto groupOrderReqDto)
     {
-        groupOrderService.doProcessReqParam(groupOrderReqDto);
         startPage();
         List<GroupOrderRespDto> list = groupOrderService.selectGroupDtBusinessTaskDtoList(groupOrderReqDto);
         return getDataTable(list);

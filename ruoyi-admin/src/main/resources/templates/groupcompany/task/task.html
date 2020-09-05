@@ -76,6 +76,22 @@
                     align: 'center'
                 },
                 {
+                    field: 'detailId',
+                    title: '订单编号',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.dtGroupBusinessTaskDetailRespDtoList.length;i++){
+                            if(row.dtGroupBusinessTaskDetailRespDtoList.length === (i + 1)){
+                                html = html + $.common.sprintf("<div>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].id);
+                            }else{
+                                html = html + $.common.sprintf("<div style='border-bottom: 1px solid #DCDFE6'>%s</div>", row.dtGroupBusinessTaskDetailRespDtoList[i].id);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
                     field: 'taskNo',
                     title: '任务代号',
                     align: 'center',

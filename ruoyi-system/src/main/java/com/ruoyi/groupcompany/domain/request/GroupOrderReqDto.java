@@ -10,6 +10,14 @@ public class GroupOrderReqDto {
     private Date endDate;
     private String shopName;
     private String platformNickname;
+    /** 地推员 */
+    private String salesmanLeaderName;
+    /** 地推员id */
+    private Long salesmanLeaderUserId;
+    /** 商家 */
+    private String merchantName;
+    /** 商家id */
+    private Long merchantUserId;
 
     private String status;
 
@@ -51,5 +59,37 @@ public class GroupOrderReqDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSalesmanLeaderName() {
+        return salesmanLeaderName;
+    }
+
+    public void setSalesmanLeaderName(String salesmanLeaderName) {
+        this.salesmanLeaderName = salesmanLeaderName;
+    }
+
+    public Long getSalesmanLeaderUserId() {
+        return salesmanLeaderUserId;
+    }
+
+    public void setSalesmanLeaderUserId(Long salesmanLeaderUserId) {
+        this.salesmanLeaderUserId = salesmanLeaderUserId;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public Long getMerchantUserId() {
+        return merchantUserId;
+    }
+
+    public void setMerchantUserId(Long merchantUserId) {
+        this.merchantUserId = merchantUserId;
     }
 }

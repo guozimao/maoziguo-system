@@ -1,13 +1,13 @@
-package com.ruoyi.groupcompany.domain.request;
+package com.ruoyi.salesmanleader.domain.request;
 
 import com.ruoyi.common.annotation.Excel;
 
 import java.util.Date;
 
-public class DtGroupBusinessTaskReqDto {
+public class SalesmanLeaderTaskReqDto {
 
     private static final long serialVersionUID = 1L;
-    /** id */
+
     private Long id;
 
     /** 部门id */
@@ -19,7 +19,7 @@ public class DtGroupBusinessTaskReqDto {
     private String orderStatus;
 
     /** 订单日期 */
-    @Excel(name = "订单生成日期", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "任务日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date requiredCompletionDate;
 
     public Long getId() {

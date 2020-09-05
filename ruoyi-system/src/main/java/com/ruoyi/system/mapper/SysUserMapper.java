@@ -142,4 +142,6 @@ public interface SysUserMapper
     int updateDeptI2NulldByIds(@Param("array") List<Long> userIds);
 
     List<SysUser> selectUserListByIds(@Param("array")  List<Long> userIds);
+
+    SysUser selectUserByUserName(String salesmanLeaderName);
 }

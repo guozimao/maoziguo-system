@@ -1,15 +1,13 @@
-package com.ruoyi.groupcompany.domain.reponse;
+package com.ruoyi.salesmanleader.domain.reponse;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class DtGroupBusinessTaskDetailRespDto {
+public class SalesmanLeaderTaskDetailRespDto {
 
     private static final long serialVersionUID = 1L;
-
-    private Long id;
 
     private Long taskId;
 
@@ -29,6 +27,8 @@ public class DtGroupBusinessTaskDetailRespDto {
     private BigDecimal promotersModifyUnitPrice;
 
     private String keyword;
+
+    private Long salesmanUserId;
 
     public Long getTaskId() {
         return taskId;
@@ -94,11 +94,11 @@ public class DtGroupBusinessTaskDetailRespDto {
         this.platformUrl = platformUrl;
     }
 
-    public Long getId() {
-        return id;
+    public Long getSalesmanUserId() {
+        return salesmanUserId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setSalesmanUserId(Long salesmanUserId) {
+        this.salesmanUserId = salesmanUserId;
     }
 }

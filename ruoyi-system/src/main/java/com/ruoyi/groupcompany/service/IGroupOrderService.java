@@ -15,4 +15,6 @@ public interface IGroupOrderService {
     int stopOrder(String ids);
 
     int recoverOrder(String ids);
+
+    void doProcessReqParam(GroupOrderReqDto groupOrderReqDto);
 }

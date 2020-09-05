@@ -1,7 +1,11 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+import java.util.Set;
+
+import com.ruoyi.businessteam.domain.MerchantShopRelation;
 import com.ruoyi.system.domain.DtMerchant;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 商家信息Mapper接口
@@ -62,4 +66,12 @@ public interface DtMerchantMapper
     Long selectIdByUserId(Long userId);
 
     void deleteDtMerchantByUserIds(Long[] userIds);
+
+    List<MerchantShopRelation> selectMerchantShopRelationByMerchantUserIds(@Param("array") List<Long> userIds);
+
+    void deleteMerchantShopRelationByUserId(Long userId);
+
+    void batchInsertMerchantShopRelationByUserId(@Param("userId") Long userId,@Param("set") Set<String> shopNames);
+
+    List<MerchantShopRelation> selectMerchantShopRelationByShopNames(@Param("set") Set<String> shopNames, @Param("userId")Long userId);
 }

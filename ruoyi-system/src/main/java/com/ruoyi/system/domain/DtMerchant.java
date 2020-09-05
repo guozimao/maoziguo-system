@@ -1,6 +1,8 @@
 package com.ruoyi.system.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -23,6 +25,8 @@ public class DtMerchant extends BaseEntity
     @Excel(name = "用户ID")
     private Long userId;
 
+    private String userName;
+
     /** 已关联店铺名集合 */
     @Excel(name = "已关联店铺名集合")
     private String associatedShopName;
@@ -30,6 +34,8 @@ public class DtMerchant extends BaseEntity
     /** 佣金 */
     @Excel(name = "佣金")
     private BigDecimal commission;
+
+    private List<String> shopNames;
 
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;
@@ -78,6 +84,22 @@ public class DtMerchant extends BaseEntity
     public String getDelFlag() 
     {
         return delFlag;
+    }
+
+    public List<String> getShopNames() {
+        return shopNames;
+    }
+
+    public void setShopNames(List<String> shopNames) {
+        this.shopNames = shopNames;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override

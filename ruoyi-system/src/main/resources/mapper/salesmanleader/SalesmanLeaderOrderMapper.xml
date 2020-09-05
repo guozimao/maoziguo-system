@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.groupcompany.mapper.GroupOrderMapper">
+<mapper namespace="com.ruoyi.salesmanleader.mapper.SalesmanLeaderOrderMapper">
 
-    <resultMap type="GroupOrderRespDto" id="GroupOrderRespDtoResult">
+    <resultMap type="SalesmanLeaderOrderRespDto" id="SalesmanLeaderOrderRespDtoResult">
         <result property="id"    column="id"    />
         <result property="taskId"    column="task_id"    />
         <result property="taskNo"    column="task_no"    />
@@ -20,20 +20,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="platformNickname" column="platform_nickname" />
-        <result property="merchant_user_id" column="merchant_user_id" />
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
         <result property="salesmanCommitUrl" column="salesman_commit_url"/>
         <result property="status" column="status" />
     </resultMap>
 
-    <select id="selectGroupOrderList" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+    <select id="selectSalesmanLeaderOrderList" parameterType="SalesmanLeaderOrderRespDto" resultMap="SalesmanLeaderOrderRespDtoResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
             <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
-            <if test="salesmanLeaderUserId != null">and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
-            <if test="merchantUserId != null">and merchant_user_id = #{merchantUserId}</if>
             <if test="startDate!=null">
                 and order_date &gt;=  #{startDate}
             </if >
