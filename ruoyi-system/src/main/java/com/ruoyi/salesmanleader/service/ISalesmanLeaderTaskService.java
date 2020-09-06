@@ -77,4 +77,6 @@ public interface ISalesmanLeaderTaskService
     List<SalesmanLeaderTaskDetail> selectSalesmanLeaderTaskDetailList(Long id);
 
     int updateSalesmanLeaderTaskDetail(SalesmanLeaderTaskDetail dtBusinessTaskDetail);
+
+    SysUser getSalesmanBySalesManUserName(String salesmanUserName);
 }

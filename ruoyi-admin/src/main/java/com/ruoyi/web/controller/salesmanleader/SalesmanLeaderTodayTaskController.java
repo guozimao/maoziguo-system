@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.salesmanleader;
 
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.constant.QueryParaConstants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -66,12 +67,24 @@ public class SalesmanLeaderTodayTaskController extends BaseController
     @RequiresPermissions("salesmanLeader:todaytask:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(SalesmanLeaderTaskReqDto SalesmanLeaderTaskReqDto)
+    public TableDataInfo list(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto)
     {
+        doProcessQueryParam(salesmanLeaderTaskReqDto);
         startPage();
         SysUser user = ShiroUtils.getSysUser();
-        List<SalesmanLeaderTaskRespDto> list = salesmanLeaderTaskService.selectSalesmanLeaderTaskDtoList(SalesmanLeaderTaskReqDto,user);
+        List<SalesmanLeaderTaskRespDto> list = salesmanLeaderTaskService.selectSalesmanLeaderTaskDtoList(salesmanLeaderTaskReqDto,user);
         return getDataTable(list);
+    }
+
+    private void doProcessQueryParam(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto) {
+        if(StringUtils.isNotEmpty(salesmanLeaderTaskReqDto.getSalesmanUserName())){
+            SysUser user = salesmanLeaderTaskService.getSalesmanBySalesManUserName(salesmanLeaderTaskReqDto.getSalesmanUserName());
+            if(StringUtils.isNotNull(user)){
+                salesmanLeaderTaskReqDto.setSalesmanUserId(user.getUserId());
+            }else {
+                salesmanLeaderTaskReqDto.setSalesmanUserId(QueryParaConstants.PARAM_NULL);
+            }
+        }
     }
 
     /**
@@ -132,4 +145,9 @@ public class SalesmanLeaderTodayTaskController extends BaseController
         return prefix + "/queryDetailPopup";
     }
 
+    @GetMapping("/salesmanlist")
+    public String salesmanlist()
+    {
+        return prefix + "/salesmanPopup";
+    }
 }

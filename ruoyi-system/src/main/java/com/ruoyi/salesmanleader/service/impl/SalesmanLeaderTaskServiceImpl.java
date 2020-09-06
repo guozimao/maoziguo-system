@@ -240,6 +240,11 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
         return salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(dtBusinessTaskDetail);
     }
 
+    @Override
+    public SysUser getSalesmanBySalesManUserName(String salesmanUserName) {
+        return sysUserMapper.selectUserByUserName(salesmanUserName);
+    }
+
     private void vaildSalesmanLeaderTaskDetailList(List<SalesmanLeaderTaskDetail> vaildList) {
         if (StringUtils.isNull(vaildList) || vaildList.size() == 0)
         {

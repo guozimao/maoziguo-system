@@ -22,6 +22,10 @@ public class SalesmanLeaderTaskReqDto {
     @Excel(name = "任务日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date requiredCompletionDate;
 
+    private Long salesmanUserId;
+
+    private String salesmanUserName;
+
     public Long getId() {
         return id;
     }
@@ -44,6 +48,22 @@ public class SalesmanLeaderTaskReqDto {
 
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public Long getSalesmanUserId() {
+        return salesmanUserId;
+    }
+
+    public void setSalesmanUserId(Long salesmanUserId) {
+        this.salesmanUserId = salesmanUserId;
+    }
+
+    public String getSalesmanUserName() {
+        return salesmanUserName;
+    }
+
+    public void setSalesmanUserName(String salesmanUserName) {
+        this.salesmanUserName = salesmanUserName;
     }
 
     public Date getRequiredCompletionDate() {
