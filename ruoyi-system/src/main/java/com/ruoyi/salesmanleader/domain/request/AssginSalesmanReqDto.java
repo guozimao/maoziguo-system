@@ -1,13 +1,13 @@
 package com.ruoyi.salesmanleader.domain.request;
 
 
-public class SalesmanAssginReqDto {
+public class AssginSalesmanReqDto {
 
     private static final long serialVersionUID = 1L;
 
     private String ids;
 
-    private Long deptId;
+    private Long salesmanUserId;
 
     public String getIds() {
         return ids;
@@ -17,11 +17,11 @@ public class SalesmanAssginReqDto {
         this.ids = ids;
     }
 
-    public Long getDeptId() {
-        return deptId;
+    public Long getSalesmanUserId() {
+        return salesmanUserId;
     }
 
-    public void setDeptId(Long deptId) {
-        this.deptId = deptId;
+    public void setSalesmanUserId(Long salesmanUserId) {
+        this.salesmanUserId = salesmanUserId;
     }
 }

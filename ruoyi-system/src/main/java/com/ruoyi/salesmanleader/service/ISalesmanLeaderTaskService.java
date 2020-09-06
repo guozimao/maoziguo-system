@@ -3,7 +3,7 @@ package com.ruoyi.salesmanleader.service;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTask;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderTaskRespDto;
-import com.ruoyi.salesmanleader.domain.request.SalesmanAssginReqDto;
+import com.ruoyi.salesmanleader.domain.request.AssginSalesmanReqDto;
 import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderTaskReqDto;
 import com.ruoyi.system.domain.SysUser;
 
@@ -69,9 +69,6 @@ public interface ISalesmanLeaderTaskService
     public List<SalesmanLeaderTaskRespDto> selectSalesmanLeaderTaskDtoList(SalesmanLeaderTaskReqDto SalesmanLeaderTaskReqDto, SysUser user);
 
 
-    int assginDept(SalesmanAssginReqDto assginReqDto);
-
-
     String batchInsertTask(List<List<SalesmanLeaderTaskDetail>> list, List<SalesmanLeaderTaskDetail> vaildList);
 
     List<SalesmanLeaderTaskDetail> selectSalesmanLeaderTaskDetailList(Long id);
@@ -79,4 +76,6 @@ public interface ISalesmanLeaderTaskService
     int updateSalesmanLeaderTaskDetail(SalesmanLeaderTaskDetail dtBusinessTaskDetail);
 
     SysUser getSalesmanBySalesManUserName(String salesmanUserName);
+
+    int assginSalesman(AssginSalesmanReqDto assginReqDto);
 }

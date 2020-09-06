@@ -200,6 +200,9 @@
             var res = window["layui-layer-iframe" + index].callbackdata();
             //打印返回的值，看是否有我们想返回的值。
             console.log(res);
+            if(res){
+                $.operate.submit(prefix + "/assgin","post","json",{ids:selectedIds,salesmanUserId:res[0].userId});
+            }
             //最后关闭弹出层
             layer.close(index);
         }

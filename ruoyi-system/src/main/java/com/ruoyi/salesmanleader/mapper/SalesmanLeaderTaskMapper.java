@@ -28,26 +28,26 @@ public interface SalesmanLeaderTaskMapper
     /**
      * 查询商业任务信息列表
      * 
-     * @param dtBusinessTask 商业任务信息
+     * @param salesmanLeaderTask 商业任务信息
      * @return 商业任务信息集合
      */
-    public List<SalesmanLeaderTask> selectSalesmanLeaderTaskList(SalesmanLeaderTask dtBusinessTask);
+    public List<SalesmanLeaderTask> selectSalesmanLeaderTaskList(SalesmanLeaderTask salesmanLeaderTask);
 
     /**
      * 新增商业任务信息
      * 
-     * @param dtBusinessTask 商业任务信息
+     * @param salesmanLeaderTask 商业任务信息
      * @return 结果
      */
-    public Long insertSalesmanLeaderTask(SalesmanLeaderTask dtBusinessTask);
+    public Long insertSalesmanLeaderTask(SalesmanLeaderTask salesmanLeaderTask);
 
     /**
      * 修改商业任务信息
      * 
-     * @param dtBusinessTask 商业任务信息
+     * @param salesmanLeaderTask 商业任务信息
      * @return 结果
      */
-    public int updateSalesmanLeaderTask(SalesmanLeaderTask dtBusinessTask);
+    public int updateSalesmanLeaderTask(SalesmanLeaderTask salesmanLeaderTask);
 
     /**
      * 删除商业任务信息
@@ -79,7 +79,7 @@ public interface SalesmanLeaderTaskMapper
      * @param dtBusinessTaskDetailList 商业任务信息明细列表
      * @return 结果
      */
-    public int batchSalesmanLeaderTaskDetail(List<SalesmanLeaderTaskDetail> dtBusinessTaskDetailList);
+    public int batchSalesmanLeaderTaskDetail(List<SalesmanLeaderTaskDetail> salesmanLeaderTaskDetailList);
     
 
     /**
@@ -93,10 +93,10 @@ public interface SalesmanLeaderTaskMapper
     /**
      * 查询商业任务列表
      *
-     * @param dtGroupBusinessTaskReqDto 商业任务请求
+     * @param salesmanLeaderTaskReqDto 商业任务请求
      * @return 结果
      */
-    List<SalesmanLeaderTaskRespDto> selectSalesmanLeaderTaskDtoList(SalesmanLeaderTaskReqDto dtGroupBusinessTaskReqDto);
+    List<SalesmanLeaderTaskRespDto> selectSalesmanLeaderTaskDtoList(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto);
 
 
     List<SalesmanLeaderTask> selectSalesmanLeaderTaskListWithAllocateTimeByIds(@Param("array")Long[] taskIds);
@@ -107,13 +107,17 @@ public interface SalesmanLeaderTaskMapper
 
     List<SalesmanLeaderTaskDetail> selectSalesmanLeaderTaskDetailListByTaskId(Long id);
 
-    int updateSalesmanLeaderTaskDetail(SalesmanLeaderTaskDetail dtBusinessTaskDetail);
+    int updateSalesmanLeaderTaskDetail(SalesmanLeaderTaskDetail salesmanLeaderTaskDetail);
 
     List<SalesmanLeaderTaskDetail> selectSalesmanLeaderTaskDetailListByTaskIds(@Param("array") Long[] taskIds);
 
-    List<SalesmanLeaderTaskDetail> selectSalesmanLeaderTaskDetailList(SalesmanLeaderTaskDetail dtBusinessTaskDetail);
+    List<SalesmanLeaderTaskDetail> selectSalesmanLeaderTaskDetailList(SalesmanLeaderTaskDetail salesmanLeaderTaskDetail);
 
     List<SalesmanLeaderTaskDetail> selectSalesmanLeaderTaskDetailListByIds(@Param("array") Long[] idlist);
 
     List<SalesmanLeaderTask> selectSalesmanLeaderTaskByIds(@Param("array") List<Long> taskIds);
+
+    int updateSalesmanLeaderTaskDetailByNameAndIds(@Param("salesmanUserId") Long salesmanUserId,@Param("array") Long[] taskIds);
+
+    void updateSalesmanLeaderTaskAllocateTimeByIds(@Param("array") Long[] taskIds);
 }

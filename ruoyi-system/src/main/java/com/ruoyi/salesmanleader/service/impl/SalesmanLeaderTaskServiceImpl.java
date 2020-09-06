@@ -9,7 +9,7 @@ import com.ruoyi.salesmanleader.domain.SalesmanLeaderTask;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderTaskDetailRespDto;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderTaskRespDto;
-import com.ruoyi.salesmanleader.domain.request.SalesmanAssginReqDto;
+import com.ruoyi.salesmanleader.domain.request.AssginSalesmanReqDto;
 import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderTaskReqDto;
 import com.ruoyi.salesmanleader.mapper.SalesmanLeaderTaskMapper;
 import com.ruoyi.salesmanleader.service.ISalesmanLeaderTaskService;
@@ -156,34 +156,6 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
     }
 
     @Override
-    public int assginDept(SalesmanAssginReqDto assginReqDto) {
-        Long[] taskIds = Convert.toLongArray(assginReqDto.getIds());
-        int count = 0;
-        SysDept dept = sysDeptMapper.selectDeptById(assginReqDto.getDeptId());
-        if(StringUtils.isNull(dept.getLeaderId())){
-            throw new BusinessException("该团队没组长，无法分配");
-        }
-        List<SalesmanLeaderTask> dtBusinessTasks = salesmanLeaderTaskMapper.selectSalesmanLeaderTaskListWithAllocateTimeByIds(taskIds);
-        if(dtBusinessTasks.size() > 0){
-            throw new BusinessException("团队组长已经往下分配任务了，无法重新分配");
-        }
-        List<SalesmanLeaderTaskDetail> details = salesmanLeaderTaskMapper.selectSalesmanLeaderTaskDetailListByTaskIds(taskIds);
-        for(SalesmanLeaderTaskDetail detail: details){
-            detail.setSalesmanLeaderUserId(dept.getLeaderId());
-            salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(detail);
-        }
-
-        for(Long taskId:taskIds){
-            SalesmanLeaderTask dtBusinessTask = new SalesmanLeaderTask();
-            dtBusinessTask.setDeptId(assginReqDto.getDeptId());
-            dtBusinessTask.setId(taskId);
-            dtBusinessTask.setGroupAllocateTime(new Date());
-            count = count + salesmanLeaderTaskMapper.updateSalesmanLeaderTask(dtBusinessTask);
-        }
-        return count;
-    }
-
-    @Override
     @Transactional
     public String batchInsertTask(List<List<SalesmanLeaderTaskDetail>> list, List<SalesmanLeaderTaskDetail> vaildList) {
         vaildSalesmanLeaderTaskDetailList(vaildList);
@@ -243,6 +215,19 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
     @Override
     public SysUser getSalesmanBySalesManUserName(String salesmanUserName) {
         return sysUserMapper.selectUserByUserName(salesmanUserName);
+    }
+
+    @Override
+    @Transactional
+    public int assginSalesman(AssginSalesmanReqDto assginReqDto) {
+        Long[] taskIds = Convert.toLongArray(assginReqDto.getIds());
+        List<SalesmanLeaderTask> salesmanLeaderTasks = salesmanLeaderTaskMapper.selectSalesmanLeaderTaskByIds(Arrays.asList(taskIds));
+        List<SalesmanLeaderTask> salesmanLeaderTasksWithFinishedStatus = salesmanLeaderTasks.stream().filter(item -> item.getOrderStatus().equals("0")).collect(Collectors.toList());
+        if(salesmanLeaderTasksWithFinishedStatus.size() > 0){
+            throw new BusinessException("存在任务是完成的，无法重新分配");
+        }
+        salesmanLeaderTaskMapper.updateSalesmanLeaderTaskAllocateTimeByIds(taskIds);
+        return salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetailByNameAndIds(assginReqDto.getSalesmanUserId(),taskIds);
     }
 
     private void vaildSalesmanLeaderTaskDetailList(List<SalesmanLeaderTaskDetail> vaildList) {

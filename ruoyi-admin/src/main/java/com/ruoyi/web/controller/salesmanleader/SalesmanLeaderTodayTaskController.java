@@ -18,6 +18,7 @@ import com.ruoyi.groupcompany.service.IDtBusinessTaskService;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTask;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderTaskRespDto;
+import com.ruoyi.salesmanleader.domain.request.AssginSalesmanReqDto;
 import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderTaskReqDto;
 import com.ruoyi.salesmanleader.service.ISalesmanLeaderTaskService;
 import com.ruoyi.system.domain.SysDept;
@@ -69,22 +70,10 @@ public class SalesmanLeaderTodayTaskController extends BaseController
     @ResponseBody
     public TableDataInfo list(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto)
     {
-        doProcessQueryParam(salesmanLeaderTaskReqDto);
         startPage();
         SysUser user = ShiroUtils.getSysUser();
         List<SalesmanLeaderTaskRespDto> list = salesmanLeaderTaskService.selectSalesmanLeaderTaskDtoList(salesmanLeaderTaskReqDto,user);
         return getDataTable(list);
-    }
-
-    private void doProcessQueryParam(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto) {
-        if(StringUtils.isNotEmpty(salesmanLeaderTaskReqDto.getSalesmanUserName())){
-            SysUser user = salesmanLeaderTaskService.getSalesmanBySalesManUserName(salesmanLeaderTaskReqDto.getSalesmanUserName());
-            if(StringUtils.isNotNull(user)){
-                salesmanLeaderTaskReqDto.setSalesmanUserId(user.getUserId());
-            }else {
-                salesmanLeaderTaskReqDto.setSalesmanUserId(QueryParaConstants.PARAM_NULL);
-            }
-        }
     }
 
     /**
@@ -103,9 +92,8 @@ public class SalesmanLeaderTodayTaskController extends BaseController
 
     @PostMapping("/assgin")
     @ResponseBody
-    public AjaxResult assgin(AssginReqDto assginReqDto){
-        //return toAjax(salesmanLeaderTaskService.assginDept(assginReqDto));
-        return null;
+    public AjaxResult assgin(AssginSalesmanReqDto assginReqDto){
+        return toAjax(salesmanLeaderTaskService.assginSalesman(assginReqDto));
     }
 
     private void doProcessEmptyOrder4Excel(List<DtBusinessTaskDetail> businessTaskList) {
@@ -116,6 +104,16 @@ public class SalesmanLeaderTodayTaskController extends BaseController
                 dtBusinessTaskDetailIterator.remove();
             }
         }
+    }
+
+    /**
+     * 修改商业任务明细信息
+     */
+    @PostMapping("/detailEdit")
+    @ResponseBody
+    public AjaxResult detailEdit(SalesmanLeaderTaskDetail salesmanLeaderTaskDetail)
+    {
+        return toAjax(salesmanLeaderTaskService.updateSalesmanLeaderTaskDetail(salesmanLeaderTaskDetail));
     }
 
     /**
