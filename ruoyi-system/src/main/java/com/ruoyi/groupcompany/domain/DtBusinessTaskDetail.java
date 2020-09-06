@@ -73,6 +73,10 @@ public class DtBusinessTaskDetail
 
     private Long salesmanLeaderUserId;
 
+    private Long merchantUserId;
+
+    private String merchatUserName;
+
     private String salesmanCommitUrl;
 
     private String status;
@@ -232,6 +236,22 @@ public class DtBusinessTaskDetail
 
     public void setSalesmanCommitUrl(String salesmanCommitUrl) {
         this.salesmanCommitUrl = salesmanCommitUrl;
+    }
+
+    public Long getMerchantUserId() {
+        return merchantUserId;
+    }
+
+    public void setMerchantUserId(Long merchantUserId) {
+        this.merchantUserId = merchantUserId;
+    }
+
+    public String getMerchatUserName() {
+        return merchatUserName;
+    }
+
+    public void setMerchatUserName(String merchatUserName) {
+        this.merchatUserName = merchatUserName;
     }
 
     @Override

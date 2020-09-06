@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ruoyi.businessteam.domain.MerchantShopRelation;
+import com.ruoyi.common.constant.QueryParaConstants;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -65,6 +66,16 @@ public class DtMerchantController extends BaseController
             SysUser user = dtMerchantService.getUserIdByName(dtMerchant.getUserName());
             if(StringUtils.isNotNull(user)){
                 dtMerchant.setUserId(user.getUserId());
+            }else {
+                dtMerchant.setUserId(QueryParaConstants.PARAM_NULL);
+            }
+        }
+        if(StringUtils.isNotEmpty(dtMerchant.getShopName())){
+            MerchantShopRelation relation = dtMerchantService.getMerchantUserIdByShopName(dtMerchant.getShopName());
+            if(StringUtils.isNotNull(relation)){
+                dtMerchant.setUserId(relation.getMerchantUserId());
+            }else {
+                dtMerchant.setUserId(QueryParaConstants.PARAM_NULL);
             }
         }
     }

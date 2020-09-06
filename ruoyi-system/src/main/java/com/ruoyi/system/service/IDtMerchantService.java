@@ -70,4 +70,6 @@ public interface IDtMerchantService
     List<MerchantShopRelation> getMerchantShopRelationByUserId(Long id);
 
     SysUser getUserIdByName(String userName);
+
+    MerchantShopRelation getMerchantUserIdByShopName(String shopName);
 }

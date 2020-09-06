@@ -44,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{userId}
         </foreach>
     </select>
-    <select id="selectMerchantShopRelationByShopNames"
+    <select id="selectMerchantShopRelationByShopNamesAndUserId"
             parameterType="MerchantShopRelation" resultMap="MerchantShopRelationResult">
         select merchant_user_id, shop_name from dt_merchant_user_shopname
         where shop_name in
@@ -52,6 +52,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{shopName}
         </foreach>
         and merchant_user_id != #{userId}
+    </select>
+    <select id="selectMerchantShopRelationByShopNames"
+            parameterType="MerchantShopRelation" resultMap="MerchantShopRelationResult">
+        select merchant_user_id, shop_name from dt_merchant_user_shopname
+        where shop_name in
+        <foreach collection="set" item="shopName" open="(" separator="," close=")">
+            #{shopName}
+        </foreach>
     </select>
 
     <insert id="insertDtMerchant" parameterType="DtMerchant" useGeneratedKeys="true" keyProperty="id">
@@ -79,7 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update dt_merchant
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null">user_id = #{userId},</if>
-            <if test="commission != null">commission = #{commission},</if>
+            commission = #{commission},
             <if test="delFlag != null">del_flag = #{delFlag},</if>
         </trim>
         where id = #{id}

@@ -1,6 +1,7 @@
 package com.ruoyi.groupcompany.service.impl;
 
 
+import com.ruoyi.common.constant.QueryParaConstants;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
@@ -120,12 +121,16 @@ public class GroupOrderServiceImpl implements IGroupOrderService
             SysUser user = sysUserMapper.selectUserByUserName(groupOrderReqDto.getSalesmanLeaderName());
             if(user != null){
                 groupOrderReqDto.setSalesmanLeaderUserId(user.getUserId());
+            }else {
+                groupOrderReqDto.setSalesmanLeaderUserId(QueryParaConstants.PARAM_NULL);
             }
         }
         if(StringUtils.isNotEmpty(groupOrderReqDto.getMerchantName())){
             SysUser user = sysUserMapper.selectUserByUserName(groupOrderReqDto.getMerchantName());
             if(user != null){
                 groupOrderReqDto.setMerchantUserId(user.getUserId());
+            }else{
+                groupOrderReqDto.setMerchantUserId(QueryParaConstants.PARAM_NULL);
             }
         }
     }

@@ -73,5 +73,7 @@ public interface DtMerchantMapper
 
     void batchInsertMerchantShopRelationByUserId(@Param("userId") Long userId,@Param("set") Set<String> shopNames);
 
-    List<MerchantShopRelation> selectMerchantShopRelationByShopNames(@Param("set") Set<String> shopNames, @Param("userId")Long userId);
+    List<MerchantShopRelation> selectMerchantShopRelationByShopNamesAndUserId(@Param("set") Set<String> shopNames, @Param("userId")Long userId);
+
+    List<MerchantShopRelation> selectMerchantShopRelationByShopNames(@Param("set") Set<String> shopNames);
 }

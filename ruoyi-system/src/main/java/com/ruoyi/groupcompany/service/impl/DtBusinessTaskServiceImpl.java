@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.ruoyi.businessteam.domain.MerchantShopRelation;
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.oss.OssClientUtils;
@@ -13,6 +14,7 @@ import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.system.domain.SysDept;
 import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.system.mapper.DtMerchantMapper;
 import com.ruoyi.system.mapper.SysDeptMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.apache.commons.collections4.MultiValuedMap;
@@ -53,6 +55,9 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private DtMerchantMapper dtMerchantMapper;
 
     /**
      * 查询商业任务信息
@@ -174,6 +179,7 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
         {
             try
             {
+                doProcessDetail4MerchantId(taskDetailList);
                 DtBusinessTask dtBusinessTask = new DtBusinessTask();
                 dtBusinessTask.setOrderStatus("1");
                 dtBusinessTask.setRequiredCompletionDate(vaildList.get(0).getOrderDate());
@@ -203,10 +209,29 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
         return successMsg.toString();
     }
 
+    private void doProcessDetail4MerchantId(List<DtBusinessTaskDetail> taskDetailList) {
+        Set<String> shopNames = taskDetailList.stream().map(DtBusinessTaskDetail::getShopName).collect(Collectors.toSet());
+        if(taskDetailList.size() != shopNames.size()){
+            throw new BusinessException("<br/>任务中的店铺名，存在重复");
+        }
+        List<MerchantShopRelation> merchantShopRelations = dtMerchantMapper.selectMerchantShopRelationByShopNames(shopNames);
+        if(taskDetailList.size() != merchantShopRelations.size()){
+            throw new BusinessException("<br/>存在导入的店铺名没有绑定商家，所以无法导入该任务");
+        }
+        Map<String,Long> shopnameAndMerchantUserIdMap = merchantShopRelations.stream().collect(Collectors.toMap(MerchantShopRelation::getShopName,MerchantShopRelation::getMerchantUserId,(k1,k2) -> k2));
+        for(DtBusinessTaskDetail detail:taskDetailList){
+            detail.setMerchantUserId(shopnameAndMerchantUserIdMap.get(detail.getShopName()));
+        }
+    }
+
     @Override
     public List<DtBusinessTaskDetail> selectDtBusinessTaskDetailList(Long id) {
         List<DtBusinessTaskDetail> resultList = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskId(id);
+        List<Long> merchantUserIds = resultList.stream().map(DtBusinessTaskDetail::getMerchantUserId).collect(Collectors.toList());
+        List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(merchantUserIds);
+        Map<Long,String> userIdAndNameMap = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserId,SysUser::getUserName,(k1,k2) -> k2));
         for (DtBusinessTaskDetail detail:resultList){
+            detail.setMerchatUserName(userIdAndNameMap.get(detail.getMerchantUserId()));
             detail.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(detail.getPictureUrl()));
             detail.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(detail.getSalesmanCommitUrl()));
         }

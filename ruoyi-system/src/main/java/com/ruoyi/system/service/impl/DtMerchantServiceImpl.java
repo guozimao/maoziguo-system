@@ -106,7 +106,7 @@ public class DtMerchantServiceImpl implements IDtMerchantService
 
         Set<String> shopNames = dtMerchant.getShopNames().stream().filter(item -> StringUtils.isNotEmpty(item.trim())).collect(Collectors.toSet());
         if(shopNames.size() > 0){
-            List<MerchantShopRelation> relations = dtMerchantMapper.selectMerchantShopRelationByShopNames(shopNames,dtMerchant.getUserId());
+            List<MerchantShopRelation> relations = dtMerchantMapper.selectMerchantShopRelationByShopNamesAndUserId(shopNames,dtMerchant.getUserId());
             if(relations.size() > 0){
                 throw new BusinessException("存在店铺名称被其它商家注册了");
             }
@@ -160,5 +160,13 @@ public class DtMerchantServiceImpl implements IDtMerchantService
     @Override
     public SysUser getUserIdByName(String userName) {
         return sysUserMapper.selectUserByUserName(userName);
+    }
+
+    @Override
+    public MerchantShopRelation getMerchantUserIdByShopName(String shopName) {
+        Set<String> stringSet = new HashSet<>();
+        stringSet.add(shopName);
+        List<MerchantShopRelation> list = dtMerchantMapper.selectMerchantShopRelationByShopNames(stringSet);
+        return list.size() > 0 ? list.get(0) : null;
     }
 }

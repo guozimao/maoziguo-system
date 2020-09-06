@@ -37,6 +37,8 @@ public class DtMerchant extends BaseEntity
 
     private List<String> shopNames;
 
+    private String shopName;
+
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;
 
@@ -100,6 +102,14 @@ public class DtMerchant extends BaseEntity
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
     }
 
     @Override
