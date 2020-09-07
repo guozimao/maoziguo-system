@@ -106,8 +106,6 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
 
         salesmanLeaderTaskReqDto.setDeptId(user.getDeptId());
 
-        setTodayDate(salesmanLeaderTaskReqDto);
-
         List<SalesmanLeaderTaskRespDto> resultList = salesmanLeaderTaskMapper.selectSalesmanLeaderTaskDtoList(salesmanLeaderTaskReqDto);
 
         doProcessDetail4SalesmanLeaderTaskRespDto(resultList);
@@ -122,15 +120,6 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
             throw new BusinessException("本账号还没设置部门/团队，无法查看数据");
         }else if(!user.getDept().getLeaderId().equals(user.getUserId())){
             throw new BusinessException("本账号不是部门/团队的负责人，无法查看数据");
-        }
-    }
-
-    private void setTodayDate(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            salesmanLeaderTaskReqDto.setRequiredCompletionDate(sdf.parse(sdf.format(new Date())));
-        } catch (ParseException e) {
-            log.error(e.getMessage());
         }
     }
 

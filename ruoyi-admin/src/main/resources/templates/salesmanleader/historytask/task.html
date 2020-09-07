@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('业务组长今日任务信息列表')" />
+    <th:block th:include="include :: header('业务组长历史任务信息列表')" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -13,6 +13,10 @@
                             <li>
                                 <label>编号：</label>
                                 <input type="text" id="id" placeholder="编号" name="id"/>
+                            </li>
+                            <li>
+                                <label>任务日期：</label>
+                                <input type="text" class="time-input" id="requiredCompletionDate" placeholder="任务要求完成日期" name="requiredCompletionDate"/>
                             </li>
                             <li>
                                 <label>订单状态：</label>
@@ -43,12 +47,12 @@
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
-        var prefix = ctx + "salesmanleader/todaytask";
+        var prefix = ctx + "salesmanleader/historytask";
         var selectedIds = '';
         $(function() {
             var options = {
                 url: prefix + "/list",
-                modalName: "业务组长今日任务信息",
+                modalName: "业务组长历史任务信息",
                 columns: [{
                     checkbox: true
                 },
@@ -194,7 +198,6 @@
             selectedIds = ids;
             $.modal.open("选择业务员", prefix + "/salesmanlist",'','',yes);
         }
-
         var yes = function(index){
             //当点击‘确定'按钮的时候，获取弹出层返回的值
             var res = window["layui-layer-iframe" + index].callbackdata();

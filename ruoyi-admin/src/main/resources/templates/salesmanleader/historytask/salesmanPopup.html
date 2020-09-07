@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('radio表格页')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+		var associationStatusDatas = [[${@dict.getType('sys_association_status')}]];
+		var userStatusDatas = [[${@dict.getType('sys_normal_disable')}]];
+
+		$(function() {
+			var options = {
+				url: "/businessteam/salesman/list",
+				modalName: "业务人员信息",
+				columns: [
+					{
+						radio: true
+					},
+					{
+						field: 'id',
+						title: '业务员编码'
+					},
+					{
+						field: 'userId',
+						title: '用户编码'
+					},
+					{
+						field: 'loginName',
+						title: '业务员账号'
+					},
+					{
+						field: 'userName',
+						title: '业务员昵称'
+					},
+					{
+						field: 'receivingLimit',
+						title: '接单上限'
+					},
+					{
+						field: 'commission',
+						title: '佣金'
+					},
+					{
+						field: 'status',
+						title: '状态',
+						align: 'center',
+						formatter: function(value, row, index) {
+							return $.table.selectDictLabel(userStatusDatas, value);
+						}
+					},
+					{
+						field: 'associationStatus',
+						title: '关联状态',
+						align: 'center',
+						formatter: function(value, row, index) {
+							return $.table.selectDictLabel(associationStatusDatas, value);
+						}
+					},
+					{
+						field: 'createTime',
+						title: '创建时间',
+						sortable: true
+					}]
+			};
+			$.table.init(options);
+		});
+		var selectRow = function() {
+			var rows = $.map($("#" + table.options.id).bootstrapTable('getSelections'), function (row) {
+				var item1 = {
+					salesmanId: $.common.getItemField(row, table.options.columns[1].field),
+					userId: $.common.getItemField(row, table.options.columns[2].field),
+					userStatus: $.common.getItemField(row, table.options.columns[7].field),
+					associateStatus: $.common.getItemField(row, table.options.columns[8].field)
+				}
+				return item1;
+			});
+			if ($.common.isNotEmpty(table.options.rememberSelected) && table.options.rememberSelected) {
+				var selectedRows = table.rememberSelecteds[table.options.id];
+				if($.common.isNotEmpty(selectedRows)) {
+					rows = $.map(selectedRows, function (row) {
+						var item2 = {
+							salesmanId: $.common.getItemField(row, table.options.columns[1].field),
+							userId: $.common.getItemField(row, table.options.columns[2].field),
+							userStatus: $.common.getItemField(row, table.options.columns[7].field),
+							associateStatus: $.common.getItemField(row, table.options.columns[8].field)
+						}
+						return item2;
+					});
+				}
+			}
+			return $.common.uniqueFn(rows);
+		}
+		var callbackdata = function () {
+			var rows = selectRow();
+			if (rows.length == 0) {
+				parent.layer.alert("请至少选择一条记录");
+				return;
+			}
+			if(rows[0].userStatus !== '0'){
+				parent.layer.alert("该业务员的状态非正常，无法分配！");
+				return;
+			}
+			if(rows[0].associateStatus !== '0'){
+				parent.layer.alert("该业务员的关联状态非正常，无法分配！");
+				return;
+			}
+			return rows;
+		}
+    </script>
+</body>
+</html>

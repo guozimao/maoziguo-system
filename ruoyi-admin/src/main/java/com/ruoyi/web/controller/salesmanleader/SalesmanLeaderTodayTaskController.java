@@ -32,10 +32,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 业务组长任务信息Controller
@@ -44,10 +43,10 @@ import java.util.List;
  * @date 2020-09-05
  */
 @Controller
-@RequestMapping("/salesmanLeader/todaytask")
+@RequestMapping("/salesmanleader/todaytask")
 public class SalesmanLeaderTodayTaskController extends BaseController
 {
-    private String prefix = "salesmanLeader/todaytask";
+    private String prefix = "salesmanleader/todaytask";
 
     @Autowired
     private ISalesmanLeaderTaskService salesmanLeaderTaskService;
@@ -55,7 +54,7 @@ public class SalesmanLeaderTodayTaskController extends BaseController
     @Autowired
     private ISysDeptService sysDeptService;
 
-    @RequiresPermissions("salesmanLeader:todaytask:view")
+    @RequiresPermissions("salesmanleader:todaytask:view")
     @GetMapping()
     public String todaytask()
     {
@@ -65,13 +64,14 @@ public class SalesmanLeaderTodayTaskController extends BaseController
     /**
      * 查询商业任务信息列表
      */
-    @RequiresPermissions("salesmanLeader:todaytask:list")
+    @RequiresPermissions("salesmanleader:todaytask:list")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto)
     {
         startPage();
         SysUser user = ShiroUtils.getSysUser();
+        setTodayDate(salesmanLeaderTaskReqDto);
         List<SalesmanLeaderTaskRespDto> list = salesmanLeaderTaskService.selectSalesmanLeaderTaskDtoList(salesmanLeaderTaskReqDto,user);
         return getDataTable(list);
     }
@@ -79,7 +79,7 @@ public class SalesmanLeaderTodayTaskController extends BaseController
     /**
      * 导出商业任务信息列表
      */
-    @RequiresPermissions("salesmanLeader:todaytask:export")
+    @RequiresPermissions("salesmanleader:todaytask:export")
     @Log(title = "商业任务信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
@@ -135,8 +135,8 @@ public class SalesmanLeaderTodayTaskController extends BaseController
         if(StringUtils.isNotNull(sysDept)){
             mmap.put("deptName",sysDept.getDeptName());
         }
-        mmap.put("dtBusinessTask", salesmanLeaderTask);
-        mmap.put("dtBusinessTaskDetail", salesmanLeaderTaskDetails);
+        mmap.put("salesmanLeaderTask", salesmanLeaderTask);
+        mmap.put("salesmanLeaderTaskDetail", salesmanLeaderTaskDetails);
         mmap.put("orderNumber",salesmanLeaderTaskDetails.size());
         mmap.put("totalPrincipal", totalPrincipal);
         mmap.put("actualTotalPrincipal", actualTotalPrincipal);
@@ -147,5 +147,14 @@ public class SalesmanLeaderTodayTaskController extends BaseController
     public String salesmanlist()
     {
         return prefix + "/salesmanPopup";
+    }
+
+    private void setTodayDate(SalesmanLeaderTaskReqDto salesmanLeaderTaskReqDto) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            salesmanLeaderTaskReqDto.setRequiredCompletionDate(sdf.parse(sdf.format(new Date())));
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

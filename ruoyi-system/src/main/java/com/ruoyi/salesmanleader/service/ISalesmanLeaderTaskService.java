@@ -65,9 +65,7 @@ public interface ISalesmanLeaderTaskService
      */
     public int deleteSalesmanLeaderTaskById(Long id);
 
-
     public List<SalesmanLeaderTaskRespDto> selectSalesmanLeaderTaskDtoList(SalesmanLeaderTaskReqDto SalesmanLeaderTaskReqDto, SysUser user);
-
 
     String batchInsertTask(List<List<SalesmanLeaderTaskDetail>> list, List<SalesmanLeaderTaskDetail> vaildList);
 
