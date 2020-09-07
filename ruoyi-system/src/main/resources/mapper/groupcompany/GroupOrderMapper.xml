@@ -14,8 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="unitPrice"    column="unit_price"    />
         <result property="unitPriceRemark"    column="unit_price_remark"    />
         <result property="specialRemarks"    column="special_remarks"    />
-        <result property="keywork1"    column="keywork1"    />
-        <result property="keywork2"    column="keywork2"    />
+        <result property="keywork"    column="keywork"    />
         <result property="platformUrl" column="platform_url" />
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />

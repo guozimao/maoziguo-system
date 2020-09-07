@@ -62,6 +62,10 @@ public class SalesmanLeaderOrderRespDto {
 
     private String status;
 
+    private Long salesmanUserId;
+
+    private String salesmanUserName;
+
     public Long getId() {
         return id;
     }
@@ -188,6 +192,22 @@ public class SalesmanLeaderOrderRespDto {
 
     public void setSalesmanCommitUrl(String salesmanCommitUrl) {
         this.salesmanCommitUrl = salesmanCommitUrl;
+    }
+
+    public Long getSalesmanUserId() {
+        return salesmanUserId;
+    }
+
+    public void setSalesmanUserId(Long salesmanUserId) {
+        this.salesmanUserId = salesmanUserId;
+    }
+
+    public String getSalesmanUserName() {
+        return salesmanUserName;
+    }
+
+    public void setSalesmanUserName(String salesmanUserName) {
+        this.salesmanUserName = salesmanUserName;
     }
 
     public String getPromotersUnitPriceRemark() {

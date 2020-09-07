@@ -10,6 +10,9 @@ public class SalesmanLeaderOrderReqDto {
     private Date endDate;
     private String shopName;
     private String platformNickname;
+    private Long salesmanUserId;
+    private String salesmanUserName;
+    private Long salesmanLeaderUserId;
 
     private String status;
 
@@ -51,5 +54,29 @@ public class SalesmanLeaderOrderReqDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Long getSalesmanUserId() {
+        return salesmanUserId;
+    }
+
+    public void setSalesmanUserId(Long salesmanUserId) {
+        this.salesmanUserId = salesmanUserId;
+    }
+
+    public String getSalesmanUserName() {
+        return salesmanUserName;
+    }
+
+    public void setSalesmanUserName(String salesmanUserName) {
+        this.salesmanUserName = salesmanUserName;
+    }
+
+    public Long getSalesmanLeaderUserId() {
+        return salesmanLeaderUserId;
+    }
+
+    public void setSalesmanLeaderUserId(Long salesmanLeaderUserId) {
+        this.salesmanLeaderUserId = salesmanLeaderUserId;
     }
 }

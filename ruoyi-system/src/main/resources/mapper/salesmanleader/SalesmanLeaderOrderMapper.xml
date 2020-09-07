@@ -14,23 +14,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="unitPrice"    column="unit_price"    />
         <result property="unitPriceRemark"    column="unit_price_remark"    />
         <result property="specialRemarks"    column="special_remarks"    />
-        <result property="keywork1"    column="keywork1"    />
-        <result property="keywork2"    column="keywork2"    />
+        <result property="keywork"    column="keywork"    />
         <result property="platformUrl" column="platform_url" />
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="platformNickname" column="platform_nickname" />
-        <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
+        <result property="salesmanUserId" column="salesman_user_id" />
         <result property="salesmanCommitUrl" column="salesman_commit_url"/>
         <result property="status" column="status" />
     </resultMap>
 
     <select id="selectSalesmanLeaderOrderList" parameterType="SalesmanLeaderOrderRespDto" resultMap="SalesmanLeaderOrderRespDtoResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_user_id,salesman_commit_url,status,promoters_unit_price_remark
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
             <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="salesmanUserId != null">and salesman_user_id = #{salesmanUserId}</if>
+            <if test="salesmanLeaderUserId != null">and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
             <if test="startDate!=null">
                 and order_date &gt;=  #{startDate}
             </if >

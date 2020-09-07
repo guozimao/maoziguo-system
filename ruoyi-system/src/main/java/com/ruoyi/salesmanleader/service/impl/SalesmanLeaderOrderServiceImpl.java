@@ -3,6 +3,7 @@ package com.ruoyi.salesmanleader.service.impl;
 
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTask;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
@@ -10,7 +11,7 @@ import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderOrderRespDto;
 import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderOrderReqDto;
 import com.ruoyi.salesmanleader.mapper.SalesmanLeaderTaskMapper;
 import com.ruoyi.salesmanleader.mapper.SalesmanLeaderOrderMapper;
-import com.ruoyi.salesmanleader.service.ISalesmanOrderService;
+import com.ruoyi.salesmanleader.service.ISalesmanLeaderOrderService;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.slf4j.Logger;
@@ -29,9 +30,9 @@ import java.util.stream.Collectors;
  * @date 2020-08-27
  */
 @Service
-public class SalesManOrderServiceImpl implements ISalesmanOrderService
+public class SalesmanLeaderOrderServiceImpl implements ISalesmanLeaderOrderService
 {
-    private static final Logger log = LoggerFactory.getLogger(SalesManOrderServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SalesmanLeaderOrderServiceImpl.class);
     @Autowired
     private SalesmanLeaderOrderMapper salesmanLeaderOrderMapper;
 
@@ -42,13 +43,15 @@ public class SalesManOrderServiceImpl implements ISalesmanOrderService
     private SalesmanLeaderTaskMapper salesmanLeaderTaskMapper;
 
     @Override
-    public List<SalesmanLeaderOrderRespDto> selectGroupDtBusinessTaskDtoList(SalesmanLeaderOrderReqDto groupOrderReqDto) {
-        List<SalesmanLeaderOrderRespDto> orders = salesmanLeaderOrderMapper.selectSalesmanLeaderOrderList(groupOrderReqDto);
-        List<Long> userIds = orders.stream().map(SalesmanLeaderOrderRespDto::getSalesmanLeaderUserId).collect(Collectors.toList());
+    public List<SalesmanLeaderOrderRespDto> selectSalesmanLeaderTaskDtoList(SalesmanLeaderOrderReqDto salesmanLeaderOrderReqDto, SysUser user) {
+        vaildSalesmanleader(user);
+        salesmanLeaderOrderReqDto.setSalesmanLeaderUserId(user.getUserId());
+        List<SalesmanLeaderOrderRespDto> orders = salesmanLeaderOrderMapper.selectSalesmanLeaderOrderList(salesmanLeaderOrderReqDto);
+        List<Long> userIds = orders.stream().map(SalesmanLeaderOrderRespDto::getSalesmanUserId).collect(Collectors.toList());
         List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(userIds);
         Map<Long,String> userIdAndName = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserId, SysUser::getUserName, (key1, key2) -> key2));
         for(SalesmanLeaderOrderRespDto item:orders){
-            item.setSalesmanLeaderName(userIdAndName.get(item.getSalesmanLeaderUserId()));
+            item.setSalesmanUserName(userIdAndName.get(item.getSalesmanUserId()));
             item.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(item.getPictureUrl()));
             item.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(item.getSalesmanCommitUrl()));
         }
@@ -56,8 +59,8 @@ public class SalesManOrderServiceImpl implements ISalesmanOrderService
     }
 
     @Override
-    public int updateDtBusinessTaskDetail(SalesmanLeaderTaskDetail dtBusinessTaskDetail) {
-        return salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(dtBusinessTaskDetail);
+    public int updateDtsalesmanLeaderTaskDetail(SalesmanLeaderTaskDetail salesmanLeaderTaskDetail) {
+        return salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(salesmanLeaderTaskDetail);
     }
 
     @Override
@@ -100,5 +103,18 @@ public class SalesManOrderServiceImpl implements ISalesmanOrderService
             num = num + salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(detail);
         }
         return num;
+    }
+
+    @Override
+    public SysUser getUserBySalesManUserName(String salesmanUserName) {
+        return sysUserMapper.selectUserByUserName(salesmanUserName);
+    }
+
+    private void vaildSalesmanleader(SysUser user) {
+        if(StringUtils.isNull(user.getDept())){
+            throw new BusinessException("本账号还没设置部门/团队，无法查看数据");
+        }else if(!user.getDept().getLeaderId().equals(user.getUserId())){
+            throw new BusinessException("本账号不是部门/团队的负责人，无法查看数据");
+        }
     }
 }

@@ -1,12 +1,16 @@
 package com.ruoyi.web.controller.salesmanleader;
 
+import com.ruoyi.common.constant.QueryParaConstants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
-import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
-import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
-import com.ruoyi.groupcompany.service.IGroupOrderService;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
+import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderOrderRespDto;
+import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderOrderReqDto;
+import com.ruoyi.salesmanleader.service.ISalesmanLeaderOrderService;
+import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,9 +31,9 @@ import java.util.List;
 public class SalesmanLeaderOrderController extends BaseController {
 
     @Autowired
-    private IGroupOrderService groupOrderService;
+    private ISalesmanLeaderOrderService salesmanLeaderOrderService;
 
-    private String prefix = "templates/salesmanleader/order";
+    private String prefix = "salesmanleader/order";
 
     @RequiresPermissions("salesmanleader:order:view")
     @GetMapping()
@@ -44,11 +48,24 @@ public class SalesmanLeaderOrderController extends BaseController {
     @RequiresPermissions("salesmanleader:order:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(GroupOrderReqDto groupOrderReqDto)
+    public TableDataInfo list(SalesmanLeaderOrderReqDto salesmanLeaderOrderReqDto)
     {
+        doProcessParam(salesmanLeaderOrderReqDto);
         startPage();
-        List<GroupOrderRespDto> list = groupOrderService.selectGroupDtBusinessTaskDtoList(groupOrderReqDto);
+        SysUser user = ShiroUtils.getSysUser();
+        List<SalesmanLeaderOrderRespDto> list = salesmanLeaderOrderService.selectSalesmanLeaderTaskDtoList(salesmanLeaderOrderReqDto,user);
         return getDataTable(list);
+    }
+
+    private void doProcessParam(SalesmanLeaderOrderReqDto salesmanLeaderOrderReqDto) {
+        if(StringUtils.isNotEmpty(salesmanLeaderOrderReqDto.getSalesmanUserName())){
+            SysUser user = salesmanLeaderOrderService.getUserBySalesManUserName(salesmanLeaderOrderReqDto.getSalesmanUserName());
+            if(StringUtils.isNotNull(user)){
+                salesmanLeaderOrderReqDto.setSalesmanUserId(user.getUserId());
+            }else {
+                salesmanLeaderOrderReqDto.setSalesmanUserId(QueryParaConstants.PARAM_NULL);
+            }
+        }
     }
 
     /**
@@ -56,9 +73,9 @@ public class SalesmanLeaderOrderController extends BaseController {
      */
     @PostMapping("/detailEdit")
     @ResponseBody
-    public AjaxResult detailEdit(DtBusinessTaskDetail dtBusinessTaskDetail)
+    public AjaxResult detailEdit(SalesmanLeaderTaskDetail salesmanLeaderTaskDetail)
     {
-        return toAjax(groupOrderService.updateDtBusinessTaskDetail(dtBusinessTaskDetail));
+        return toAjax(salesmanLeaderOrderService.updateDtsalesmanLeaderTaskDetail(salesmanLeaderTaskDetail));
     }
 
     /**
@@ -68,7 +85,7 @@ public class SalesmanLeaderOrderController extends BaseController {
     @ResponseBody
     public AjaxResult stopOrder(String ids)
     {
-        return toAjax(groupOrderService.stopOrder(ids));
+        return toAjax(salesmanLeaderOrderService.stopOrder(ids));
     }
 
     /**
@@ -78,6 +95,6 @@ public class SalesmanLeaderOrderController extends BaseController {
     @ResponseBody
     public AjaxResult recoverOrder(String ids)
     {
-        return toAjax(groupOrderService.recoverOrder(ids));
+        return toAjax(salesmanLeaderOrderService.recoverOrder(ids));
     }
 }

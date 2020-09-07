@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-    <th:block th:include="include :: header('商业订单信息列表')" />
-    <th:block th:include="include :: bootstrap-editable-css" />
+    <th:block th:include="include :: header('业务组长订单信息列表')" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -26,6 +25,10 @@
                                 <input type="text" id="shopName" placeholder="店铺名" name="shopName"/>
                             </li>
                             <li>
+                                <label>业务员：</label>
+                                <input type="text" id="salesmanUserName" placeholder="精准搜索（业务员）" name="salesmanUserName"/>
+                            </li>
+                            <li>
                                 <label>订单状态：</label>
                                 <select name="status" th:with="type=${@dict.getType('sys_order_status')}">
                                     <option value="">所有</option>
@@ -41,14 +44,6 @@
                 </form>
             </div>
 
-            <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-danger multiple disabled" onclick="batchStopOrder()">
-                    <i class="fa fa-hand-paper-o"></i> 坏单
-                </a>
-                <a class="btn btn-success multiple disabled" onclick="batchCoverOrder()">
-                    <i class="fa fa-level-up"></i> 修单
-                </a>
-            </div>
             <div class="col-sm-12 select-table table-hover">
                 <table id="bootstrap-table"></table>
             </div>
@@ -59,7 +54,7 @@
                      <div class="modal-header">
                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
                          </button>
-                         <h4 class="modal-title">买家反馈</h4>
+                         <h4 class="modal-title">业务员反馈</h4>
                      </div>
                      <div class="modal-body">
                          <div class="row">
@@ -86,19 +81,15 @@
          </div>
     </div>
     <th:block th:include="include :: footer" />
-     <th:block th:include="include :: bootstrap-table-editable-js" />
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
-        var prefix = ctx + "groupcompany/order";
+        var prefix = ctx + "salesmanleader/order";
         var selectedIds = '';
         $(function() {
             var options = {
                 url: prefix + "/list",
                 modalName: "商业订单信息",
-                onEditableSave:onEditableSave,
-                columns: [{
-                    checkbox: true
-                },
+                columns: [
                 {
                     field: 'id',
                     title: '编号',
@@ -107,8 +98,7 @@
                 {
                     field: 'taskNo',
                     title: '任务代号',
-                    align: 'center',
-                    editable: true
+                    align: 'center'
                 },
                 {
                     field: 'pictureUrl',
@@ -122,71 +112,50 @@
                     field: 'shopName',
                     title: '店铺名',
                     width: '150',
-                    align: 'center',
-                    editable: true
-                },
-                {
-                    field: 'platformUrl',
-                    align: 'center',
-                    title: '商品链接',
-                    formatter: function(value, row, index) {
-                        return $.common.sprintf("<div><a title='商品链接' href='%s' target='_blank'>链接</div>", row.platformUrl);
-                    }
+                    align: 'center'
                 },
                 {
                     field: 'unitPrice',
                     align: 'center',
-                    title: '单价/元',
-                    editable: true
+                    title: '单价/元'
                 },
                 {
                     field: 'unitPriceRemark',
                     align: 'center',
-                    title: '单价备注',
-                    editable: true
+                    title: '单价备注'
                 },
                 {
                     field: 'specialRemarks',
                     align: 'center',
-                    title: '特殊备注',
-                    editable: true
+                    title: '特殊备注'
                 },
                 {
                     field: 'orderDate',
                     title: '订单日期',
                     width: '95',
-                    align: 'center',
-                    editable : {
-                        type: 'date',
-                        clear: false,
-                        placement: 'left',//位置
-                        emptytext : "--",//默认值
-                        title: '请选择日期:'
-                    }
+                    align: 'center'
                 },
                 {
                     field: 'keyword',
                     title: '关键字',
+                    align: 'center'
+                },
+                {
+                    field: 'salesmanUserName',
+                    title: '业务员',
                     align: 'center',
-                    editable: true
+                    width: '70'
                 },
                 {
                     field: 'platformNickname',
                     title: '买家呢称',
                     align: 'center',
-                    width: '70',
-                    editable: true
+                    width: '70'
                 },
                 {
                     field: 'promotersModifyUnitPrice',
                     align: 'center',
-                    title: '实际单价/元',
-                    editable: true
-                },
-                {
-                    field: 'salesmanLeaderName',
-                    title: '地推人',
-                    align: 'center'
+                    title: '实际单价/元'
                 },
                 {
                     field: 'status',
@@ -201,9 +170,7 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="stopOrder(\'' + row.id + '\')"><i class="fa fa-hand-paper-o"></i>坏单</a> ');
-                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="recoverOrder(\'' + row.id + '\')"><i class="fa fa-level-up"></i>修单</a> ');
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="searchOrderRemark(\'' + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark + '\')"><i class="fa fa fa-search"></i>备注</a>');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="searchOrderRemark(\'' + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark + '\')"><i class="fa fa fa-search"></i>备注</a>');
                         return actions.join('');
                     }
                 }]
@@ -211,32 +178,6 @@
             $.table.init(options);
         });
 
-        function onEditableSave (field, row, oldValue, $el) {
-            $.operate.submit(prefix +"/detailEdit","post","json",row);
-        }
-
-        function stopOrder(id) {
-            $.modal.confirm("确定坏掉订单吗？", function() {
-                    var data = { "ids": id };
-                    $.operate.submit(prefix + "/stopOrder", "post", "json", data);
-            });
-        }
-        function batchStopOrder() {
-            table.set();
-            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
-            stopOrder(rows.join());
-        }
-        function recoverOrder(id) {
-            $.modal.confirm("确定修复订单吗？", function() {
-                var data = { "ids": id };
-                $.operate.submit(prefix + "/recoverOrder", "post", "json", data);
-            });
-        }
-        function batchCoverOrder() {
-            table.set();
-            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
-            recoverOrder(rows.join());
-        }
         function searchOrderRemark(salesmanCommitUrl,promotersUnitPriceRemark) {
             $('#img').attr('src',salesmanCommitUrl);
             $("#promotersUnitPriceRemark").val(promotersUnitPriceRemark);
