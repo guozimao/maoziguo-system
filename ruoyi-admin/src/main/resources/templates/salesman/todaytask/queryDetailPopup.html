@@ -79,10 +79,13 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
+                            <input id="orderId" name="orderId" type="text" hidden>
+                            <input id="platformNickname" name="platformNickname" type="text" hidden>
+                            <input id="img" name="img" type="text" hidden>
                             <label class="col-sm-3 control-label"><span style="color:red">*</span>拍摄照片：</label>
                             <div class="col-sm-9" >
                                 <div class="file-loading">
-                                    <input id="fileinput" name="file" type="file" multiple accept=".jpg,.png">
+                                    <input id="fileinput" name="fileinput" type="file" multiple accept=".jpg,.png">
                                 </div>
                             </div>
                         </div>
@@ -90,13 +93,13 @@
                         <div class="row">
                             <label class="col-sm-3 control-label">备注：</label>
                             <div class="col-sm-9">
-                                <textarea id="promotersUnitPriceRemark" name="promotersUnitPriceRemark" class="form-control" rows="3" readonly="ture"></textarea>
+                                <textarea id="promotersUnitPriceRemark" name="promotersUnitPriceRemark" class="form-control" rows="3"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-success" onclick="commitOrder()">确定</button>
                         <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary">保存</button>
                     </div>
                 </div>
             </div>
@@ -249,7 +252,7 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrder(\'' + index + '\')"><i class="fa fa check"></i>提交</a>');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrderDialog(\'' + index + "\',\'" + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark  + "\',\'" + row.platformNickname + "\',\'" + row.id + '\')"><i class="fa fa-check"></i>提交</a>');
                         return actions.join('');
                     }
                 }]
@@ -258,18 +261,27 @@
         });
 
         function onEditableSave (field, row, oldValue, $el) {
-
-            $.operate.submit("/salesmanleader/todaytask/detailEdit","post","json",row);
+            $.operate.submit("/salesman/todaytask/detailEdit","post","json",row);
         }
 
-        function commitOrder(index) {
-            /*$('#img').attr('src',salesmanCommitUrl);
-            $("#promotersUnitPriceRemark").val(promotersUnitPriceRemark);*/
+        function commitOrderDialog(index,salesmanCommitUrl,promotersUnitPriceRemark,platformNickname,id) {
+            $('#img').val(salesmanCommitUrl);
+            $("#promotersUnitPriceRemark").val(promotersUnitPriceRemark);
+            $("#platformNickname").val(platformNickname);
+            $("#orderId").val(id);
             var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]");
             $("#myModal").css({'margin-top': trHtml.offset().top});
             $('#myModal').modal('show');
             $('.modal-open').find('.modal-backdrop').remove();
+        }
 
+        function commitOrder() {
+            console.log("commitOrder");
+            var img = $('#img').val();
+            var promotersUnitPriceRemark = $("#promotersUnitPriceRemark").val();
+            var platformNickname = $("#platformNickname").val();
+            var id = $("#orderId").val()
+            $.operate.submit("/salesman/todaytask/commitOrder","post","json", {img: img,promotersUnitPriceRemark:promotersUnitPriceRemark,platformNickname:platformNickname,id:id});
         }
     </script>
 </body>

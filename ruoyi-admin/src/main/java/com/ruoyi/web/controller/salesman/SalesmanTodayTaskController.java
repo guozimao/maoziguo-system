@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
+import com.ruoyi.salesman.domain.reponse.CommitOrder;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
@@ -131,6 +132,16 @@ public class SalesmanTodayTaskController extends BaseController
         } catch (ParseException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    /**
+     * 修改保存商业任务信息
+     */
+    @PostMapping("/commitOrder")
+    public AjaxResult commitOrder(CommitOrder commitOrder)
+    {
+        //return toAjax(salesmanTaskService.updateSalesmanTask(salesmanTask));
+        return success();
     }
 
 }
