@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.salesman.mapper.SalesmanTaskMapper">
+    
+    <resultMap type="SalesmanTask" id="SalesmanTaskResult">
+        <result property="id"    column="id"    />
+        <result property="groupAllocateTime"    column="group_allocate_time"    />
+        <result property="requiredCompletionDate"    column="required_completion_date"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="allocateTime"    column="allocate_time"    />
+        <result property="feedbackPictureUrl1"    column="feedback_picture_url1"    />
+        <result property="feedbackPictureUrl2"    column="feedback_picture_url2"    />
+        <result property="feedbackPictureUrl3"    column="feedback_picture_url3"    />
+        <result property="feedbackPictureUrl4"    column="feedback_picture_url4"    />
+        <result property="feedbackPictureUrl5"    column="feedback_picture_url5"    />
+        <result property="completionTime"    column="completion_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap type="SalesmanTaskDetail" id="SalesmanTaskDetailResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="pictureUrl"    column="picture_url"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="unitPriceRemark"    column="unit_price_remark"    />
+        <result property="specialRemarks"    column="special_remarks"    />
+        <result property="keywork1"    column="keywork1"    />
+        <result property="keywork2"    column="keywork2"    />
+        <result property="platformUrl" column="platform_url" />
+        <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
+        <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
+        <result property="commission" column="commission" />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="salesmanCommitUrl" column="salesman_commit_url"/>
+        <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
+        <result property="merchantUserId" column="merchant_user_id"/>
+        <result property="status" column="status" />
+    </resultMap>
+
+    <resultMap type="SalesmanTaskRespDto" id="SalesmanTaskRespDtoResult">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="groupAllocateTime"    column="group_allocate_time"    />
+        <result property="salesmanLeaderUserId"    column="salesman_leader_user_id"    />
+        <result property="completionTime"    column="completion_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <resultMap type="SalesmanTaskDetailRespDto" id="SalesmanDetailTaskRespDtoResult">
+        <result property="id" column="id" />
+        <result property="taskId"    column="task_id"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice" column="unit_price" />
+        <result property="promotersModifyUnitPrice" column="promoters_modify_unit_price" />
+        <result property="keyword"    column="keyword"    />
+        <result property="platformUrl" column="platform_url"/>
+    </resultMap>
+
+    <sql id="selectSalesmanTaskVo">
+        select id, group_allocate_time, dept_id, order_status, allocate_time,completion_time, create_time from dt_business_task
+    </sql>
+
+    <select id="selectSalesmanTaskList" parameterType="SalesmanTask" resultMap="SalesmanTaskResult">
+        <include refid="selectSalesmanTaskVo"/>
+        <where>  
+            <if test="groupAllocateTime != null "> and group_allocate_time = #{groupAllocateTime}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="orderStatus != null  and orderStatus != ''"> and order_status = #{orderStatus}</if>
+            <if test="allocateTime != null "> and allocate_time = #{allocateTime}</if>
+            <if test="salesmanLeaderUserId != null "> and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
+            <if test="completionTime != null "> and completion_time = #{completionTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSalesmanTaskById" parameterType="Long" resultMap="SalesmanTaskResult">
+        select a.id, a.group_allocate_time, a.dept_id, a.order_status, a.allocate_time, a.feedback_picture_url1, a.feedback_picture_url2, a.feedback_picture_url3, a.feedback_picture_url4, a.feedback_picture_url5, a.completion_time, a.create_time,a.remark
+        from dt_business_task a
+        where a.id = #{id}
+        and a.order_status != '2'
+    </select>
+    <select id="selectSalesmanTaskDtoList"
+            parameterType="SalesmanTaskRespDto" resultMap="SalesmanTaskRespDtoResult">
+            SELECT id,dept_id,order_status,
+                    completion_time,create_time,group_allocate_time
+            from dt_business_task
+            <where>
+                and order_status != '2'
+                <if test="id != null and id != ''">and id = #{id}</if>
+                <if test="deptId != null and deptId != ''">and dept_id = #{deptId}</if>
+                <if test="orderStatus != null and orderStatus != ''">and order_status = #{orderStatus}</if>
+                <if test="requiredCompletionDate != null">and required_completion_date BETWEEN #{requiredCompletionDate} and  date_add(#{requiredCompletionDate},interval 1 day)</if>
+            </where>
+            order by id DESC
+    </select>
+    <select id="selectSalesmanTaskDetailDtoByTaskIds"
+            parameterType="SalesmanTaskDetailRespDto" resultMap="SalesmanDetailTaskRespDtoResult">
+        select id,task_id,task_no,platform_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword
+        from dt_business_task_detail
+        where
+        status != '2'
+        and task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </select>
+    <select id="selectSalesmanTaskDetailListByTaskId"
+            parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
+        select id,task_id,task_no,platform_url,picture_url,unit_price_remark,special_remarks,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,salesman_commit_url,promoters_unit_price_remark,merchant_user_id
+        from dt_business_task_detail
+        where task_id = #{id}
+        and status != '2'
+    </select>
+    <select id="selectSalesmanTaskDetailList"
+            parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        from dt_business_task_detail
+        <where>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
+            <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="startDate!=null and startDate!=''">
+                and order_date &gt;=  #{startDate}
+            </if >
+            <if test="endDate!=null and endDate!=''">
+                and order_date &lt;=  #{endDate}
+            </if >
+            <if test="status!=null and status !=''">
+                and status = #{status}
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="selectSalesmanTaskDetailListByIds"
+            parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        from dt_business_task_detail
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectSalesmanTaskByIds" parameterType="SalesmanTask" resultMap="SalesmanTaskResult">
+        <include refid="selectSalesmanTaskVo"/>
+        <where>
+             id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+    <select id="selectTaskIdsBySalesmanUserId" resultType="java.lang.Long">
+        select task_id  from dt_business_task_detail
+        where
+            salesman_user_id = #{salesmanUserId}
+            and status != 2
+    </select>
+    <select id="selectSalesmanTaskDtoListByIds"
+            parameterType="SalesmanTaskRespDto" resultMap="SalesmanTaskRespDtoResult">
+        <include refid="selectSalesmanTaskVo"/>
+        <where>
+            id in
+            <foreach item="id" collection="set" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+            <if test="salesmanTaskReqDto.deptId != null and salesmanTaskReqDto.deptId != ''">and dept_id = #{salesmanTaskReqDto.deptId}</if>
+            <if test="salesmanTaskReqDto.orderStatus != null and salesmanTaskReqDto.orderStatus != ''">and order_status = #{salesmanTaskReqDto.orderStatus}</if>
+            <if test="salesmanTaskReqDto.requiredCompletionDate != null">and required_completion_date BETWEEN #{salesmanTaskReqDto.requiredCompletionDate} and  date_add(#{salesmanTaskReqDto.requiredCompletionDate},interval 1 day)</if>
+        </where>
+    </select>
+
+    <update id="updateSalesmanTask" parameterType="DtBusinessTask">
+        update dt_business_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupAllocateTime != null">group_allocate_time = #{groupAllocateTime},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="orderStatus != null and orderStatus != ''">order_status = #{orderStatus},</if>
+            <if test="allocateTime != null">allocate_time = #{allocateTime},</if>
+            <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">feedback_picture_url1 = #{feedbackPictureUrl1},</if>
+            <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">feedback_picture_url2 = #{feedbackPictureUrl2},</if>
+            <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">feedback_picture_url3 = #{feedbackPictureUrl3},</if>
+            <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">feedback_picture_url4 = #{feedbackPictureUrl4},</if>
+            <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">feedback_picture_url5 = #{feedbackPictureUrl5},</if>
+            <if test="completionTime != null">completion_time = #{completionTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateSalesmanTaskDetail" parameterType="SalesmanTaskDetail">
+        update dt_business_task_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskNo != null and taskNo !=''">task_no = #{taskNo},</if>
+            <if test="orderDate != null">order_date = #{orderDate},</if>
+            <if test="shopName != null and shopName != ''">shop_name = #{shopName},</if>
+            <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+            <if test="unitPriceRemark != null and unitPriceRemark!=''">unit_price_remark = #{unitPriceRemark},</if>
+            <if test="specialRemarks != null and specialRemarks != ''">special_remarks = #{specialRemarks},</if>
+            <if test="keyword != null and keyword != ''">keyword = #{keyword},</if>
+            <if test="promotersModifyUnitPrice != null ">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
+            <if test="salesmanLeaderUserId != null">salesman_leader_user_id= #{salesmanLeaderUserId},</if>
+            <if test="status != null">status= #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSalesmanTaskDetailByTaskId" parameterType="Long">
+        delete from dt_business_task_detail where task_id = #{taskId}
+    </delete>
+
+    <insert id="batchSalesmanTaskDetail">
+        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword, promoters_modify_unit_price, promoters_unit_price_remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword}, #{item.promotersModifyUnitPrice}, #{item.promotersUnitPriceRemark})
+        </foreach>
+    </insert>
+
+</mapper>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('业务员今日任务信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>编号：</label>
+                                <input type="text" id="id" placeholder="编号" name="id"/>
+                            </li>
+                            <li>
+                                <label>订单状态：</label>
+                                <select name="orderStatus" th:with="type=${@dict.getType('sys_order_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-hover">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
+        var prefix = ctx + "salesman/todaytask";
+        var selectedIds = '';
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                modalName: "业务员今日任务信息",
+                columns: [
+                {
+                    field: 'id',
+                    title: '编号',
+                    align: 'center'
+                },
+                {
+                    field: 'taskNo',
+                    title: '任务代号',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var html = ''
+                        for(var i=0;i<row.salesmanTaskDetailRespDtos.length;i++){
+                            if(i === 0){
+                                html = html + $.common.sprintf("<span>%s</span>", row.salesmanTaskDetailRespDtos[i].taskNo);
+                            }else{
+                                html = html + $.common.sprintf("<span>,%s</span>", row.salesmanTaskDetailRespDtos[i].taskNo);
+                            }
+                        }
+                        return html;
+                    }
+                },
+                {
+                    field: 'orderNumber',
+                    title: '订单数',
+                    align: 'center'
+                },
+                {
+                    field: 'totalPrincipal',
+                    title: '总本金',
+                    align: 'center'
+                },
+                {
+                    field: 'actualTotalPrincipal',
+                    title: '实际总本金',
+                    align: 'center'
+                },
+                {
+                    field: 'orderStatus',
+                    title: '订单状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(orderStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'completionTime',
+                    title: '完成时间',
+                    align: 'center'
+                },
+                {
+                    field: 'createTime',
+                    title: '生成时间',
+                    align: 'center'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="searchDetail(\'' + row.id + '\')"><i class="fa fa fa-search"></i>查看</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function searchDetail(id) {
+            $.modal.openFull("任务详情明细", prefix + "/queryDetailPopup/" + id);
+        }
+    </script>
+</body>
+</html>

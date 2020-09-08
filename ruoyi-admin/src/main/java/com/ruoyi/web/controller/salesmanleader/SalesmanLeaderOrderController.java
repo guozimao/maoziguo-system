@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * 集团公司订单 信息操作处理
+ * 业务组长订单 信息操作处理
  *
  * @author zimao
  */

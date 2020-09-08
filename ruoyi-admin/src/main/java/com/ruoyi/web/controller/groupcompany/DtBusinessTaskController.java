@@ -3,21 +3,13 @@ package com.ruoyi.web.controller.groupcompany;
 import java.math.BigDecimal;
 import java.util.*;
 
-import com.ruoyi.businessteam.domain.dto.response.SalesManRespDto;
-import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.oss.OssClientUtils;
-import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
-import com.ruoyi.repurchase.domain.MemberConsumptionTrack;
 import com.ruoyi.system.domain.SysDept;
-import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysDeptService;
-import com.ruoyi.system.service.ISysDictDataService;
-import com.ruoyi.system.service.ISysDictTypeService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,10 +24,6 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 商业任务信息Controller
