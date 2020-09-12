@@ -1,11 +1,14 @@
 package com.ruoyi.web.controller.salesman;
 
+import com.aliyun.oss.internal.OSSUtils;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
@@ -13,7 +16,7 @@ import com.ruoyi.salesman.domain.reponse.CommitOrder;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
-import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderTaskReqDto;
+
 import com.ruoyi.system.domain.SysDept;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysDeptService;
@@ -22,10 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
+import java.io.IOException;
 import java.math.BigDecimal;
-
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -113,16 +119,24 @@ public class SalesmanTodayTaskController extends BaseController
     public String queryDetail(@PathVariable("id") Long id, ModelMap mmap)
     {
         SalesmanTask salesmanTask = salesmanTaskService.selectSalesmanTaskById(id);
-        List<SalesmanTaskDetail> salesmanTaskDetails = salesmanTaskService.selectSalesmanTaskDetailList(id);
-
         SysDept sysDept = sysDeptService.selectDeptById(salesmanTask.getDeptId());
         if(StringUtils.isNotNull(sysDept)){
             mmap.put("deptName",sysDept.getDeptName());
         }
         mmap.put("salesmanTask", salesmanTask);
-        mmap.put("salesmanTaskDetail", salesmanTaskDetails);
-        mmap.put("orderNumber",salesmanTaskDetails.size());
         return prefix + "/queryDetailPopup";
+    }
+
+    /**
+     * 查看任务信息明细
+     */
+    @GetMapping("/todaytaskDetailByTaskId/{id}")
+    @ResponseBody
+    public TableDataInfo todaytaskDetailByTaskId(@PathVariable("id") Long id)
+    {
+        startPage();
+        List<SalesmanTaskDetail> salesmanTaskDetails = salesmanTaskService.selectSalesmanTaskDetailList(id);
+        return getDataTable(salesmanTaskDetails);
     }
 
     private void setTodayDate(SalesmanTaskReqDto salesmanTaskReqDto) {
@@ -138,10 +152,31 @@ public class SalesmanTodayTaskController extends BaseController
      * 修改保存商业任务信息
      */
     @PostMapping("/commitOrder")
-    public AjaxResult commitOrder(CommitOrder commitOrder)
-    {
-        //return toAjax(salesmanTaskService.updateSalesmanTask(salesmanTask));
-        return success();
+    @ResponseBody
+    public AjaxResult commitOrder(@RequestParam("fileinput") MultipartFile[] file, MultipartHttpServletRequest multipartHttpServletRequest) throws IOException {
+        CommitOrder commitOrder = new CommitOrder();
+        commitOrder.setId(Long.valueOf(multipartHttpServletRequest.getParameter("id")));
+        commitOrder.setPlatformNickname(multipartHttpServletRequest.getParameter("platformNickname"));
+        commitOrder.setPromotersUnitPriceRemark(multipartHttpServletRequest.getParameter("promotersUnitPriceRemark"));
+        commitOrder.setPromotersModifyUnitPrice(new BigDecimal(multipartHttpServletRequest.getParameter("promotersModifyUnitPrice")));
+        vaildateParam4CommitOrder(file.length,commitOrder);
+        URL url = OssClientUtils.picOSS(file[0].getBytes());
+        if(StringUtils.isNull(url)){
+            return error("上传图片失败");
+        }
+        commitOrder.setImg(OssClientUtils.URL2OssParam(url));
+        return toAjax(salesmanTaskService.commitOrder(commitOrder));
+    }
+
+    private void vaildateParam4CommitOrder(int length, CommitOrder commitOrder) {
+        if(length == 0){
+            throw new BusinessException("必须上传图片");
+        }
+        if(StringUtils.isNull(commitOrder.getPromotersModifyUnitPrice())){
+            throw new BusinessException("必须输入价格");
+        }
+        salesmanTaskService.checkoutStatus(commitOrder.getId());
+        salesmanTaskService.queryRepurchase(commitOrder.getPlatformNickname());
     }
 
 }

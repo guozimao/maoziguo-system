@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.salesman.mapper.SalesmanOrderMapper">
+
+    <resultMap type="SalesmanOrderRespDto" id="SalesmanOrderRespDtoResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="pictureUrl"    column="picture_url"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="unitPriceRemark"    column="unit_price_remark"    />
+        <result property="specialRemarks"    column="special_remarks"    />
+        <result property="keywork"    column="keywork"    />
+        <result property="platformUrl" column="platform_url" />
+        <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
+        <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="merchantUserId" column="merchant_user_id" />
+        <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
+        <result property="salesmanCommitUrl" column="salesman_commit_url"/>
+        <result property="status" column="status" />
+    </resultMap>
+
+    <resultMap type="SalesmanTaskDetail" id="SalesmanTaskDetailResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="pictureUrl"    column="picture_url"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="unitPriceRemark"    column="unit_price_remark"    />
+        <result property="specialRemarks"    column="special_remarks"    />
+        <result property="keywork"    column="keywork"    />
+        <result property="platformUrl" column="platform_url" />
+        <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
+        <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
+        <result property="commission" column="commission" />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="salesmanCommitUrl" column="salesman_commit_url"/>
+        <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
+        <result property="merchantUserId" column="merchant_user_id"/>
+        <result property="status" column="status" />
+    </resultMap>
+    <update id="updateSalesmanOrder">
+        update dt_business_task_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="img != null and img != ''">salesman_commit_url = #{img},</if>
+            <if test="promotersModifyUnitPrice != null">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
+            <if test="promotersUnitPriceRemark != null and promotersUnitPriceRemark != ''">promoters_unit_price_remark = #{promotersUnitPriceRemark},</if>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
+            status= 0
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="selectSalesmanOrderList" parameterType="SalesmanOrderRespDto" resultMap="SalesmanOrderRespDtoResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        from dt_business_task_detail
+        <where>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
+            <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="salesmanLeaderUserId != null">and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
+            <if test="merchantUserId != null">and merchant_user_id = #{merchantUserId}</if>
+            <if test="startDate!=null">
+                and order_date &gt;=  #{startDate}
+            </if >
+            <if test="endDate!=null">
+                and order_date &lt;=  #{endDate}
+            </if >
+            <if test="status!=null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="selectSalesmanOrderListByPlatformNicknameWithRepurchase"
+            parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
+        select id,task_id,task_no,platform_url,picture_url,unit_price_remark,special_remarks,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,salesman_commit_url,promoters_unit_price_remark,merchant_user_id
+        from dt_business_task_detail
+        where platform_nickname = #{platformNickname}
+        and status = '0'
+        and order_date > date_sub(sysdate(),interval 1 month)
+    </select>
+
+</mapper>

@@ -5,9 +5,11 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
+import com.ruoyi.salesman.domain.reponse.CommitOrder;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskDetailRespDto;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
+import com.ruoyi.salesman.mapper.SalesmanOrderMapper;
 import com.ruoyi.salesman.mapper.SalesmanTaskMapper;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
 import com.ruoyi.system.domain.SysDept;
@@ -38,10 +40,10 @@ public class SalesmanTaskServiceImpl implements ISalesmanTaskService
     private static final Logger log = LoggerFactory.getLogger(SalesmanTaskServiceImpl.class);
     @Autowired
     private SalesmanTaskMapper salesmanTaskMapper;
-
+    @Autowired
+    private SalesmanOrderMapper salesmanOrderMapper;
     @Autowired
     private SysDeptMapper sysDeptMapper;
-
     @Autowired
     private SysUserMapper sysUserMapper;
 
@@ -149,12 +151,42 @@ public class SalesmanTaskServiceImpl implements ISalesmanTaskService
 
     @Override
     public int updateSalesmanTaskDetail(SalesmanTaskDetail salesmanTaskDetail) {
+        checkoutStatus(salesmanTaskDetail.getId());
+        queryRepurchase(salesmanTaskDetail.getPlatformNickname());
         return salesmanTaskMapper.updateSalesmanTaskDetail(salesmanTaskDetail);
+    }
+
+    @Override
+    public void checkoutStatus(Long id) {
+        SalesmanTaskDetail salesmanTaskDetail = salesmanTaskMapper.selectSalesmanTaskDetailById(id);
+
+        if(salesmanTaskDetail.getStatus().equals("0")){
+            throw new BusinessException("已经提交过订单了");
+        }
+        if(salesmanTaskDetail.getStatus().equals("2")){
+            throw new BusinessException("该订单已经停用了");
+        }
+    }
+
+    @Override
+    public void queryRepurchase(String platformNickname) {
+        if(StringUtils.isEmpty(platformNickname)){
+            throw new BusinessException("买家昵称不为空");
+        }
+        List<SalesmanTaskDetail> salesmanTaskDetails = salesmanOrderMapper.selectSalesmanOrderListByPlatformNicknameWithRepurchase(platformNickname);
+        if(salesmanTaskDetails.size() > 0){
+            throw new BusinessException("该买家呢称在最近一个月内使用过，请更换！");
+        }
     }
 
     @Override
     public Set<Long> selectTaskIdsBySalesmanUserId(Long userId) {
         return salesmanTaskMapper.selectTaskIdsBySalesmanUserId(userId);
+    }
+
+    @Override
+    public int commitOrder(CommitOrder commitOrder) {
+        return salesmanOrderMapper.updateSalesmanOrder(commitOrder);
     }
 
     private void formatDto4SalesmanTaskRespDto(List<SalesmanTaskRespDto> resultList,

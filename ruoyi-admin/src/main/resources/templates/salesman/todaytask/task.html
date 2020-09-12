@@ -50,6 +50,11 @@
                     align: 'center'
                 },
                 {
+                    field: 'requiredCompletionDate',
+                    title: '任务日期',
+                    align: 'center'
+                },
+                {
                     field: 'taskNo',
                     title: '任务代号',
                     align: 'center',
@@ -59,7 +64,7 @@
                             if(i === 0){
                                 html = html + $.common.sprintf("<span>%s</span>", row.salesmanTaskDetailRespDtos[i].taskNo);
                             }else{
-                                html = html + $.common.sprintf("<span>,%s</span>", row.salesmanTaskDetailRespDtos[i].taskNo);
+                                html = html + $.common.sprintf("<span>、%s</span>", row.salesmanTaskDetailRespDtos[i].taskNo);
                             }
                         }
                         return html;

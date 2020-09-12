@@ -31,8 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="unitPrice"    column="unit_price"    />
         <result property="unitPriceRemark"    column="unit_price_remark"    />
         <result property="specialRemarks"    column="special_remarks"    />
-        <result property="keywork1"    column="keywork1"    />
-        <result property="keywork2"    column="keywork2"    />
+        <result property="keywork"    column="keywork"    />
         <result property="platformUrl" column="platform_url" />
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
@@ -47,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="SalesmanTaskRespDto" id="SalesmanTaskRespDtoResult">
         <result property="id"    column="id"    />
         <result property="deptId"    column="dept_id"    />
+        <result property="requiredCompletionDate"    column="required_completion_date"    />
         <result property="platformNickname" column="platform_nickname" />
         <result property="orderStatus"    column="order_status"    />
         <result property="groupAllocateTime"    column="group_allocate_time"    />
@@ -68,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSalesmanTaskVo">
-        select id, group_allocate_time, dept_id, order_status, allocate_time,completion_time, create_time from dt_business_task
+        select id, group_allocate_time,required_completion_date, dept_id, order_status, allocate_time,completion_time, create_time from dt_business_task
     </sql>
 
     <select id="selectSalesmanTaskList" parameterType="SalesmanTask" resultMap="SalesmanTaskResult">
@@ -176,6 +176,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="salesmanTaskReqDto.orderStatus != null and salesmanTaskReqDto.orderStatus != ''">and order_status = #{salesmanTaskReqDto.orderStatus}</if>
             <if test="salesmanTaskReqDto.requiredCompletionDate != null">and required_completion_date BETWEEN #{salesmanTaskReqDto.requiredCompletionDate} and  date_add(#{salesmanTaskReqDto.requiredCompletionDate},interval 1 day)</if>
         </where>
+    </select>
+    <select id="selectSalesmanTaskDetailById" parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        from dt_business_task_detail
+        where id = #{id}
     </select>
 
     <update id="updateSalesmanTask" parameterType="DtBusinessTask">

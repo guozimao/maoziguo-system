@@ -1,5 +1,7 @@
 package com.ruoyi.salesman.domain.reponse;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,9 @@ public class SalesmanTaskRespDto {
     private BigDecimal totalPrincipal;
     /** 实际总本金 */
     private BigDecimal actualTotalPrincipal;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date requiredCompletionDate;
 
     /** 订单状态（0 完成 1 待完成） */
     private String orderStatus;
@@ -115,6 +120,14 @@ public class SalesmanTaskRespDto {
 
     public void setGroupAllocateTime(Date groupAllocateTime) {
         this.groupAllocateTime = groupAllocateTime;
+    }
+
+    public Date getRequiredCompletionDate() {
+        return requiredCompletionDate;
+    }
+
+    public void setRequiredCompletionDate(Date requiredCompletionDate) {
+        this.requiredCompletionDate = requiredCompletionDate;
     }
 
     public List<SalesmanTaskDetailRespDto> getSalesmanTaskDetailRespDtos() {

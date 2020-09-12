@@ -2,6 +2,7 @@ package com.ruoyi.salesman.service;
 
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
+import com.ruoyi.salesman.domain.reponse.CommitOrder;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import com.ruoyi.system.domain.SysUser;
@@ -51,4 +52,10 @@ public interface ISalesmanTaskService
     int updateSalesmanTaskDetail(SalesmanTaskDetail dtBusinessTaskDetail);
 
     Set<Long> selectTaskIdsBySalesmanUserId(Long userId);
+
+    int commitOrder(CommitOrder commitOrder);
+
+    void queryRepurchase(String platformNickname);
+
+    void checkoutStatus(Long id);
 }

@@ -139,4 +139,7 @@ swagger:
 # oss配置
 oss:
   accessKeyId: LTAI4GDPSzeJWUP2w4UyTVty
-  enpoint: http://maoziguo.oss-cn-beijing.aliyuncs.com/
+  enpoint: oss-cn-beijing.aliyuncs.com
+  accessKeySecret: vJgV0AdcpzzLTB1ePvUyWxBCfx78MS
+  bucketName: maoziguo
+  folder: picture/

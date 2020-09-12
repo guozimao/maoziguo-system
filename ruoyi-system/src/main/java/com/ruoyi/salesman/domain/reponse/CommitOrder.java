@@ -1,5 +1,7 @@
 package com.ruoyi.salesman.domain.reponse;
 
+import java.math.BigDecimal;
+
 public class CommitOrder {
     private static final long serialVersionUID = 1L;
 
@@ -8,6 +10,8 @@ public class CommitOrder {
     private String promotersUnitPriceRemark;
 
     private String platformNickname;
+
+    private BigDecimal promotersModifyUnitPrice;
 
     private Long id;
 
@@ -41,5 +45,13 @@ public class CommitOrder {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public BigDecimal getPromotersModifyUnitPrice() {
+        return promotersModifyUnitPrice;
+    }
+
+    public void setPromotersModifyUnitPrice(BigDecimal promotersModifyUnitPrice) {
+        this.promotersModifyUnitPrice = promotersModifyUnitPrice;
     }
 }

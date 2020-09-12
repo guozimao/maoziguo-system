@@ -84,4 +84,6 @@ public interface SalesmanTaskMapper
     Set<Long> selectTaskIdsBySalesmanUserId(Long userId);
 
     List<SalesmanTaskRespDto> selectSalesmanTaskDtoListByIds(@Param("salesmanTaskReqDto") SalesmanTaskReqDto salesmanTaskReqDto,@Param("set") Set<Long> salesmanUserIds);
+
+    SalesmanTaskDetail selectSalesmanTaskDetailById(Long id);
 }
