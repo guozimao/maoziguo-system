@@ -3,6 +3,7 @@ package com.ruoyi.salesman.service;
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
 import com.ruoyi.salesman.domain.reponse.CommitOrder;
+import com.ruoyi.salesman.domain.reponse.CommitTask;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import com.ruoyi.system.domain.SysUser;
@@ -58,4 +59,10 @@ public interface ISalesmanTaskService
     void queryRepurchase(String platformNickname);
 
     void checkoutStatus(Long id);
+
+    void vaildateStatus(Long id);
+
+    int commitTask(CommitTask commitTask);
+
+    void vaildateFinishOrder(Long id);
 }

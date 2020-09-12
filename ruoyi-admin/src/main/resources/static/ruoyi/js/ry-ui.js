@@ -821,7 +821,7 @@ var table = {
         		}
             },
             // 弹出层全屏
-            openFull: function (title, url, width, height) {
+            openFull: function (title, url, width, height,endFun) {
             	//如果是移动端，就使用自适应大小弹窗
             	if ($.common.isMobile()) {
             	    width = 'auto';
@@ -839,6 +839,10 @@ var table = {
                 if ($.common.isEmpty(height)) {
                 	height = ($(window).height() - 50);
                 }
+				if ($.common.isEmpty(endFun)) {
+					endFun = function() {
+					}
+				}
                 var index = layer.open({
             		type: 2,
             		area: [width + 'px', height + 'px'],
@@ -854,10 +858,12 @@ var table = {
             		yes: function(index, layero) {
             	        var iframeWin = layero.find('iframe')[0];
             	        iframeWin.contentWindow.submitHandler(index, layero);
+            	        $.table.refresh();
             	    },
             	    cancel: function(index) {
             	        return true;
-            	    }
+            	    },
+					end: endFun
             	});
                 layer.full(index);
             },

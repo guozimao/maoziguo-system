@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
 import com.ruoyi.salesman.domain.reponse.CommitOrder;
+import com.ruoyi.salesman.domain.reponse.CommitTask;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskDetailRespDto;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
@@ -165,6 +166,29 @@ public class SalesmanTaskServiceImpl implements ISalesmanTaskService
         }
         if(salesmanTaskDetail.getStatus().equals("2")){
             throw new BusinessException("该订单已经停用了");
+        }
+    }
+
+    @Override
+    public void vaildateStatus(Long id) {
+        SalesmanTask task = salesmanTaskMapper.selectSalesmanTaskById(id);
+        if(task.getOrderStatus().equals("0")){
+            throw new BusinessException("此任务已经完成，无需再提交");
+        }
+    }
+
+    @Override
+    public int commitTask(CommitTask commitTask) {
+        return salesmanOrderMapper.updateSalesmanTask(commitTask);
+    }
+
+    @Override
+    public void vaildateFinishOrder(Long id) {
+        List<SalesmanTaskDetail> list = salesmanTaskMapper.selectSalesmanTaskDetailListByTaskId(id);
+        for(SalesmanTaskDetail detail : list){
+            if(detail.getStatus().equals("1")){
+                throw new BusinessException("还有未完成的订单，任务还不能提交");
+            }
         }
     }
 

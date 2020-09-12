@@ -57,6 +57,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+    <update id="updateSalesmanTask">
+        update dt_business_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="remark != null and remark!=''">remark = #{remark},</if>
+            <if test="feedbackPictureUrl1 != null and feedbackPictureUrl1 != ''">feedback_picture_url1 = #{feedbackPictureUrl1},</if>
+            <if test="feedbackPictureUrl2 != null and feedbackPictureUrl2 != ''">feedback_picture_url2 = #{feedbackPictureUrl2},</if>
+            <if test="feedbackPictureUrl3 != null and feedbackPictureUrl3 != ''">feedback_picture_url3 = #{feedbackPictureUrl3},</if>
+            <if test="feedbackPictureUrl4 != null and feedbackPictureUrl4 != ''">feedback_picture_url4 = #{feedbackPictureUrl4},</if>
+            <if test="feedbackPictureUrl5 != null and feedbackPictureUrl5 != ''">feedback_picture_url5 = #{feedbackPictureUrl5},</if>
+            completion_time = sysdate(),
+            order_status = '0',
+        </trim>
+        where id = #{id}
+    </update>
 
     <select id="selectSalesmanOrderList" parameterType="SalesmanOrderRespDto" resultMap="SalesmanOrderRespDtoResult">
         select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id

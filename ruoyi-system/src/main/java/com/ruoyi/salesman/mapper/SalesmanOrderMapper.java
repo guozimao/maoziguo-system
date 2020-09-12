@@ -3,6 +3,7 @@ package com.ruoyi.salesman.mapper;
 
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
 import com.ruoyi.salesman.domain.reponse.CommitOrder;
+import com.ruoyi.salesman.domain.reponse.CommitTask;
 import com.ruoyi.salesman.domain.reponse.SalesmanOrderRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanOrderReqDto;
 
@@ -21,4 +22,6 @@ public interface SalesmanOrderMapper
     List<SalesmanTaskDetail> selectSalesmanOrderListByPlatformNicknameWithRepurchase(String platformNickname);
 
     int updateSalesmanOrder(CommitOrder commitOrder);
+
+    int updateSalesmanTask(CommitTask commitTask);
 }

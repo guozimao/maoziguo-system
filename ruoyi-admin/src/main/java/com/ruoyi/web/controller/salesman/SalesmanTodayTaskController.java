@@ -13,6 +13,7 @@ import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
 import com.ruoyi.salesman.domain.reponse.CommitOrder;
+import com.ruoyi.salesman.domain.reponse.CommitTask;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
@@ -149,7 +150,7 @@ public class SalesmanTodayTaskController extends BaseController
     }
 
     /**
-     * 修改保存商业任务信息
+     * 订单提交信息
      */
     @PostMapping("/commitOrder")
     @ResponseBody
@@ -177,6 +178,41 @@ public class SalesmanTodayTaskController extends BaseController
         }
         salesmanTaskService.checkoutStatus(commitOrder.getId());
         salesmanTaskService.queryRepurchase(commitOrder.getPlatformNickname());
+    }
+
+    /**
+     * 修改保存商业任务信息
+     */
+    @PostMapping("/commitTask")
+    @ResponseBody
+    public AjaxResult commitTask(@RequestParam("taskfileinput") MultipartFile[] file, MultipartHttpServletRequest multipartHttpServletRequest) throws IOException {
+        CommitTask commitTask = new CommitTask();
+        commitTask.setId(Long.valueOf(multipartHttpServletRequest.getParameter("id")));
+        commitTask.setRemark(multipartHttpServletRequest.getParameter("remark"));
+        vaildateCommitTask(commitTask);
+        for(int i=1 ; i < file.length + 1;i++){
+            URL url = OssClientUtils.picOSS(file[i - 1].getBytes());
+            if(StringUtils.isNull(url)){
+                return error("上传图片失败");
+            }
+            if(i == 1){
+                commitTask.setFeedbackPictureUrl1(OssClientUtils.URL2OssParam(url));
+            }else if(i == 2){
+                commitTask.setFeedbackPictureUrl2(OssClientUtils.URL2OssParam(url));
+            }else if(i == 3){
+                commitTask.setFeedbackPictureUrl3(OssClientUtils.URL2OssParam(url));
+            }else if(i == 4){
+                commitTask.setFeedbackPictureUrl4(OssClientUtils.URL2OssParam(url));
+            }else if(i == 5){
+                commitTask.setFeedbackPictureUrl5(OssClientUtils.URL2OssParam(url));
+            }
+        }
+        return toAjax(salesmanTaskService.commitTask(commitTask));
+    }
+
+    private void vaildateCommitTask(CommitTask commitTask) {
+        salesmanTaskService.vaildateStatus(commitTask.getId());
+        salesmanTaskService.vaildateFinishOrder(commitTask.getId());
     }
 
 }

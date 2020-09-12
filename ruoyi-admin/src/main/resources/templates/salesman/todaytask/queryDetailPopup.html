@@ -32,39 +32,15 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">拍摄照片：</label>
                 <div class="col-sm-9">
-                    <div id="viewer" class="row">
-                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl1)}">
-                            <a href="javascript:void(0)" class="thumbnail">
-                                <img th:src="${salesmanTask.feedbackPictureUrl1}"  alt="缩略图">
-                            </a>
-                        </div>
-                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl2)}">
-                            <a href="javascript:void(0)" class="thumbnail">
-                                <img th:src="${salesmanTask.feedbackPictureUrl2}"  alt="缩略图">
-                            </a>
-                        </div>
-                        <div class="col-sm-3 col-md-3">
-                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl3)}">
-                                <img th:src="${salesmanTask.feedbackPictureUrl3}"  alt="缩略图">
-                            </a>
-                        </div>
-                        <div class="col-sm-3 col-md-3">
-                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl4)}">
-                                <img th:src="${salesmanTask.feedbackPictureUrl4}"  alt="缩略图">
-                            </a>
-                        </div>
-                        <div class="col-sm-3 col-md-3">
-                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl5)}">
-                                <img th:src="${salesmanTask.feedbackPictureUrl5}"  alt="缩略图">
-                            </a>
-                        </div>
+                    <div class="file-loading">
+                        <input id="taskfileinput" name="taskfileinput" type="file" multiple accept=".jpg,.png">
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">任务备注：</label>
                 <div class="col-sm-9">
-                    <textarea name="remark" th:text="${salesmanTask.remark}" class="form-control" rows="3" readonly="ture"></textarea>
+                    <textarea name="remark" id="remark" th:text="${salesmanTask.remark}" class="form-control" rows="3"></textarea>
                 </div>
             </div>
         </form>
@@ -115,13 +91,45 @@
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
 
-        var image = new Viewer(document.getElementById('viewer'),{
-            fullscreen:false
-        });
-
         $(function() {
             $('#myModal').on('hide.bs.modal', function () {
                 $(".fileinput-remove-button").click();
+            });
+
+            $("#taskfileinput").fileinput({
+                theme: 'explorer-fas',
+                uploadUrl: "/salesman/todaytask/commitTask",
+                overwriteInitial: false,
+                initialPreviewAsData: true,
+                uploadAsync: false,
+                showUpload: false,
+                dropZoneTitle:"可拖拽到此区域，最多支持5张图片,文件大小不超过1M",
+                showRemove: true,
+                showPreview: true,
+                maxFileCount: 1,
+                maxFileSize: 1024,
+                allowedFileExtensions: ['jpg', 'png'],
+                validateInitialCount:true,
+                enctype: 'multipart/form-data',
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+                uploadExtraData: function(previewId, index) {   //额外参数的关键点
+                    return {
+                        remark: $("#remark").val(),
+                        id: $("#id").val()
+                    };
+                }
+            }).on('filepreupload', function(event, data, previewId, index) {     //上传中
+                var form = data.form, files = data.files, extra = data.extra,
+                    response = data.response, reader = data.reader;
+                console.log('文件正在上传');
+            }).on("fileuploaded", function (event, data, previewId, index) {    //一个文件上传成功
+                console.log('文件上传成功！'+data.response.id);
+            }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
+                console.log('文件上传失败！'+data.id);
+            }).on('filebatchuploadsuccess', function(event,data,previewId,index) {//同步上传回调
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+                parent.layer.alert(data.response.msg);
             });
 
             $("#fileinput").fileinput({
@@ -136,6 +144,7 @@
                 showUpload: false,
                 showRemove: true,
                 showPreview: false,
+                maxFileSize: 1024,
                 dropZoneEnabled: false,
                 validateInitialCount:true,
                 msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
@@ -239,7 +248,7 @@
                     editable: true,
                     formatter: function(value, row, index) {
                         if(row.platformNickname === null){
-                            return "请点击编辑";
+                            return "";
                         }
                         return row.platformNickname;
                     }
@@ -258,11 +267,6 @@
                     }
                 },
                 {
-                    field: 'promotersUnitPriceRemark',
-                    align: 'center',
-                    title: '买家备注',
-                },
-                {
                     field: 'status',
                     align: 'center',
                     title: '订单状态',
@@ -271,11 +275,16 @@
                     }
                 },
                 {
+                    field: 'promotersUnitPriceRemark',
+                    align: 'center',
+                    title: '买家备注',
+                },
+                {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrderDialog(\'' + index + "\',\'" + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark  + "\',\'" + row.platformNickname + "\',\'" + row.id + "\',\'" + row.promotersModifyUnitPrice + '\')"><i class="fa fa-check mysubmit"></i>提交</a>');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrderDialog(\'' + index + "\',\'" + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark  + "\',\'" + row.platformNickname + "\',\'" + row.id + "\',\'" + row.promotersModifyUnitPrice + "\',\'" + row.status + '\')"><i class="fa fa-check mysubmit"></i>提交</a>');
                         return actions.join('');
                     }
                 }]
@@ -287,9 +296,17 @@
             $.operate.submit("/salesman/todaytask/detailEdit","post","json",row);
         }
 
-        function commitOrderDialog(index,salesmanCommitUrl,promotersUnitPriceRemark,platformNickname,id,promotersModifyUnitPrice) {
+        function commitOrderDialog(index,salesmanCommitUrl,promotersUnitPriceRemark,platformNickname,id,promotersModifyUnitPrice,status) {
+            if(status === '0'){
+                layer.alert("此订单已经提交，无需重复提交");
+                return;
+            }
+            if(promotersUnitPriceRemark === 'null'){
+                $("#promotersUnitPriceRemark").val('');
+            }else {
+                $("#promotersUnitPriceRemark").val(promotersUnitPriceRemark);
+            }
             $('#img').val(salesmanCommitUrl);
-            $("#promotersUnitPriceRemark").val(promotersUnitPriceRemark);
             $("#platformNickname").val(platformNickname);
             $("#orderId").val(id);
             $("#promotersModifyUnitPrice").val(promotersModifyUnitPrice);
@@ -297,6 +314,10 @@
             $("#myModal").css({'margin-top': trHtml.offset().top});
             $('#myModal').modal('show');
             $('.modal-open').find('.modal-backdrop').remove();
+        }
+
+        function submitHandler(index, layero) {
+            $("#taskfileinput").fileinput("upload");
         }
 
         function commitOrder() {

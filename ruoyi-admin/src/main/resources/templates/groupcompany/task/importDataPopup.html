@@ -41,8 +41,7 @@
                 var index = parent.layer.getFrameIndex(window.name);
                 parent.layer.close(index);
                 parent.layer.alert(data.response.msg);
-            })
-            ;
+            });
         });
         function importTemplate() {
             $.get("/groupcompany/task/importTemplate", function(result) {
