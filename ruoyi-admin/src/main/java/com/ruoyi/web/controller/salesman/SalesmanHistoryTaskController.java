@@ -7,13 +7,21 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
 import com.ruoyi.groupcompany.service.IDtBusinessTaskService;
+import com.ruoyi.salesman.domain.SalesmanTask;
+import com.ruoyi.salesman.domain.SalesmanTaskDetail;
+import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
+import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
+import com.ruoyi.salesman.service.ISalesmanTaskService;
+import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
 import com.ruoyi.system.domain.SysDept;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +31,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 商业任务信息Controller
@@ -41,7 +48,7 @@ public class SalesmanHistoryTaskController extends BaseController
     private String prefix = "/salesman/historytask";
 
     @Autowired
-    private IDtBusinessTaskService dtBusinessTaskService;
+    private ISalesmanTaskService salesmanTaskService;
 
     @Autowired
     private ISysDeptService sysDeptService;
@@ -59,138 +66,15 @@ public class SalesmanHistoryTaskController extends BaseController
     @RequiresPermissions("salesman:historytask:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(DtGroupBusinessTaskReqDto DtGroupBusinessTaskReqDto)
+    public TableDataInfo list(SalesmanTaskReqDto salesmanTaskReqDto)
     {
+        SysUser user = ShiroUtils.getSysUser();
+        Set<Long> ids = salesmanTaskService.selectTaskIdsBySalesmanUserIdAndDate(user.getUserId(),salesmanTaskReqDto.getRequiredCompletionDate());
         startPage();
-        List<DtGroupBusinessTaskRespDto> list = dtBusinessTaskService.selectGroupDtBusinessTaskDtoList(DtGroupBusinessTaskReqDto);
+        List<SalesmanTaskRespDto> list = salesmanTaskService.selectSalesmanTaskDtoList(salesmanTaskReqDto,user,ids);
         return getDataTable(list);
     }
 
-    /**
-     * 导出商业任务信息列表
-     */
-    @RequiresPermissions("salesman:historytask:export")
-    @Log(title = "商业任务信息", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    @ResponseBody
-    public AjaxResult export(DtBusinessTask dtBusinessTask)
-    {
-        List<DtBusinessTask> list = dtBusinessTaskService.selectDtBusinessTaskList(dtBusinessTask);
-        ExcelUtil<DtBusinessTask> util = new ExcelUtil<DtBusinessTask>(DtBusinessTask.class);
-        return util.exportExcel(list, "task");
-    }
-
-    /**
-     * 新增商业任务信息
-     */
-    @GetMapping("/add")
-    public String add()
-    {
-        return prefix + "/add";
-    }
-
-    /**
-     * 新增保存商业任务信息
-     */
-    @RequiresPermissions("salesman:historytask:add")
-    @Log(title = "商业任务信息", businessType = BusinessType.INSERT)
-    @PostMapping("/add")
-    @ResponseBody
-    public AjaxResult addSave(DtBusinessTask dtBusinessTask)
-    {
-        return toAjax(dtBusinessTaskService.insertDtBusinessTask(dtBusinessTask));
-    }
-
-    /**
-     * 修改商业任务信息
-     */
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, ModelMap mmap)
-    {
-        DtBusinessTask dtBusinessTask = dtBusinessTaskService.selectDtBusinessTaskById(id);
-        mmap.put("dtBusinessTask", dtBusinessTask);
-        return prefix + "/edit";
-    }
-
-    /**
-     * 修改商业任务明细信息
-     */
-    @PostMapping("/detailEdit")
-    @ResponseBody
-    public AjaxResult detailEdit(DtBusinessTaskDetail dtBusinessTaskDetail)
-    {
-        return toAjax(dtBusinessTaskService.updateDtBusinessTaskDetail(dtBusinessTaskDetail));
-    }
-
-    /**
-     * 修改保存商业任务信息
-     */
-    @RequiresPermissions("salesman:historytask:edit")
-    @Log(title = "商业任务信息", businessType = BusinessType.UPDATE)
-    @PostMapping("/edit")
-    @ResponseBody
-    public AjaxResult editSave(DtBusinessTask dtBusinessTask)
-    {
-        return toAjax(dtBusinessTaskService.updateDtBusinessTask(dtBusinessTask));
-    }
-
-    /**
-     * 删除商业任务信息
-     */
-    @RequiresPermissions("salesman:historytask:remove")
-    @Log(title = "商业任务信息", businessType = BusinessType.DELETE)
-    @PostMapping("/remove")
-    @ResponseBody
-    public AjaxResult remove(String ids)
-    {
-        return toAjax(dtBusinessTaskService.deleteDtBusinessTaskByIds(ids));
-    }
-
-    @PostMapping("/assgin")
-    @ResponseBody
-    public AjaxResult assgin(AssginReqDto assginReqDto){
-        return toAjax(dtBusinessTaskService.assginDept(assginReqDto));
-    }
-
-    @GetMapping("/importData")
-    public String importData(){
-        return prefix + "/importDataPopup";
-    }
-
-
-    @RequestMapping("/upload/insert")
-    @ResponseBody
-    public AjaxResult insert(@RequestParam("file") MultipartFile[] file) throws Exception{
-        ExcelUtil<DtBusinessTaskDetail> util = new ExcelUtil<DtBusinessTaskDetail>(DtBusinessTaskDetail.class);
-        List<List<DtBusinessTaskDetail>> list = new ArrayList<>();
-        List<DtBusinessTaskDetail> vaildList = new LinkedList<>();
-        for (MultipartFile f : file){
-            List<DtBusinessTaskDetail> businessTaskList = util.importExcel(f.getInputStream());
-            doProcessEmptyOrder4Excel(businessTaskList);
-            list.add(businessTaskList);
-            vaildList.addAll(businessTaskList);
-        }
-        String message = dtBusinessTaskService.batchInsertTask(list,vaildList);
-        return AjaxResult.success(message);
-    }
-
-    private void doProcessEmptyOrder4Excel(List<DtBusinessTaskDetail> businessTaskList) {
-        Iterator<DtBusinessTaskDetail> dtBusinessTaskDetailIterator = businessTaskList.iterator();
-        while (dtBusinessTaskDetailIterator.hasNext()){
-            DtBusinessTaskDetail detail = dtBusinessTaskDetailIterator.next();
-            if(StringUtils.isEmpty(detail.getTaskNo())){
-                dtBusinessTaskDetailIterator.remove();
-            }
-        }
-    }
-
-    @GetMapping("/importTemplate")
-    @ResponseBody
-    public AjaxResult importTemplate()
-    {
-        ExcelUtil<DtBusinessTaskDetail> util = new ExcelUtil<DtBusinessTaskDetail>(DtBusinessTaskDetail.class);
-        return util.importTemplateExcel("任务明细数据");
-    }
 
     /**
      * 查看任务信息明细
@@ -200,20 +84,19 @@ public class SalesmanHistoryTaskController extends BaseController
     {
         BigDecimal totalPrincipal = new BigDecimal(0);
         BigDecimal actualTotalPrincipal = new BigDecimal(0);
-        DtBusinessTask dtBusinessTask = dtBusinessTaskService.selectDtBusinessTaskById(id);
-        List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskService.selectDtBusinessTaskDetailList(id);
-
-        for(DtBusinessTaskDetail detail: dtBusinessTaskDetails){
-            totalPrincipal = totalPrincipal.add(detail.getUnitPrice());
-            actualTotalPrincipal = actualTotalPrincipal.add(detail.getPromotersModifyUnitPrice());
-        }
-        SysDept sysDept = sysDeptService.selectDeptById(dtBusinessTask.getDeptId());
+        SalesmanTask salesmanTask = salesmanTaskService.selectSalesmanTaskById(id);
+        List<SalesmanTaskDetail> salesmanTaskDetails = salesmanTaskService.selectSalesmanTaskDetailList(id);
+        SysDept sysDept = sysDeptService.selectDeptById(salesmanTask.getDeptId());
         if(StringUtils.isNotNull(sysDept)){
             mmap.put("deptName",sysDept.getDeptName());
         }
-        mmap.put("dtBusinessTask", dtBusinessTask);
-        mmap.put("dtBusinessTaskDetail", dtBusinessTaskDetails);
-        mmap.put("orderNumber",dtBusinessTaskDetails.size());
+        for(SalesmanTaskDetail detail: salesmanTaskDetails){
+            totalPrincipal = totalPrincipal.add(detail.getUnitPrice());
+            actualTotalPrincipal = actualTotalPrincipal.add(detail.getPromotersModifyUnitPrice());
+        }
+        mmap.put("salesmanTask", salesmanTask);
+        mmap.put("salesmanTaskDetail", salesmanTaskDetails);
+        mmap.put("orderNumber",salesmanTaskDetails.size());
         mmap.put("totalPrincipal", totalPrincipal);
         mmap.put("actualTotalPrincipal", actualTotalPrincipal);
         return prefix + "/queryDetailPopup";

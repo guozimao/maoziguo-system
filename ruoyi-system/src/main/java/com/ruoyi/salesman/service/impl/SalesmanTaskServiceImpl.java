@@ -193,6 +193,11 @@ public class SalesmanTaskServiceImpl implements ISalesmanTaskService
     }
 
     @Override
+    public Set<Long> selectTaskIdsBySalesmanUserIdAndDate(Long userId, Date requiredCompletionDate) {
+        return salesmanTaskMapper.selectTaskIdsBySalesmanUserIdAndDate(userId,requiredCompletionDate);
+    }
+
+    @Override
     public void queryRepurchase(String platformNickname) {
         if(StringUtils.isEmpty(platformNickname)){
             throw new BusinessException("买家昵称不为空");

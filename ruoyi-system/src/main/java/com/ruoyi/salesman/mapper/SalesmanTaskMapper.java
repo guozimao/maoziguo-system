@@ -7,6 +7,7 @@ import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -86,4 +87,6 @@ public interface SalesmanTaskMapper
     List<SalesmanTaskRespDto> selectSalesmanTaskDtoListByIds(@Param("salesmanTaskReqDto") SalesmanTaskReqDto salesmanTaskReqDto,@Param("set") Set<Long> salesmanUserIds);
 
     SalesmanTaskDetail selectSalesmanTaskDetailById(Long id);
+
+    Set<Long> selectTaskIdsBySalesmanUserIdAndDate(@Param("userId") Long userId, @Param("requiredCompletionDate")Date requiredCompletionDate);
 }

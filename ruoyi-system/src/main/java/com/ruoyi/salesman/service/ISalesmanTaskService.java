@@ -8,6 +8,7 @@ import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import com.ruoyi.system.domain.SysUser;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -65,4 +66,6 @@ public interface ISalesmanTaskService
     int commitTask(CommitTask commitTask);
 
     void vaildateFinishOrder(Long id);
+
+    Set<Long> selectTaskIdsBySalesmanUserIdAndDate(Long userId, Date requiredCompletionDate);
 }

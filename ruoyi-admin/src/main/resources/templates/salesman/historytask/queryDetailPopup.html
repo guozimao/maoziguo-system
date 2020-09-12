@@ -5,7 +5,7 @@
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-task-detail-query" th:object="${salesmanLeaderTask}">
+        <form class="form-horizontal m" id="form-task-detail-query" th:object="${salesmanTask}">
             <h4 class="form-header h4">订单信息</h4>
             <div class="row">
                 <div class="col-sm-12">
@@ -18,8 +18,8 @@
             <h4 class="form-header h4 mt20">任务信息</h4>
             <input name="id" th:field="*{id}" type="hidden">
             <div class="form-group">
-                <label class="col-sm-2 control-label" >任务编号：</label><label class="col-sm-2 mt5" th:text="${salesmanLeaderTask.id}"></label>
-                <label class="col-sm-2 control-label" >任务状态：</label><label class="col-sm-2 mt5" th:text="${@dict.getLabel('sys_order_status', salesmanLeaderTask.orderStatus)}"></label>
+                <label class="col-sm-2 control-label" >任务编号：</label><label class="col-sm-2 mt5" th:text="${salesmanTask.id}"></label>
+                <label class="col-sm-2 control-label" >任务状态：</label><label class="col-sm-2 mt5" th:text="${@dict.getLabel('sys_order_status', salesmanTask.orderStatus)}"></label>
                 <label class="col-sm-2 control-label" >所属团队：</label><label class="col-sm-2 mt5" th:text="${deptName}"></label>
             </div>
             <div class="form-group">
@@ -28,38 +28,38 @@
                 <label class="col-sm-2 control-label" >实际总本金：</label><label class="col-sm-2 mt5" th:text="${actualTotalPrincipal}"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label" >集团分配时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(salesmanLeaderTask.groupAllocateTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
-                <label class="col-sm-2 control-label" >业务组长分配时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(salesmanLeaderTask.allocateTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
-                <label class="col-sm-2 control-label" >完成时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(salesmanLeaderTask.completionTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
+                <label class="col-sm-2 control-label" >集团分配时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(salesmanTask.groupAllocateTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
+                <label class="col-sm-2 control-label" >业务组长分配时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(salesmanTask.allocateTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
+                <label class="col-sm-2 control-label" >完成时间：</label><label class="col-sm-2 mt5" th:text="${#dates.format(salesmanTask.completionTime, 'yyyy-MM-dd HH:mm:ss')}"></label>
             </div>
             <h4 class="form-header h4">任务资料</h4>
             <div class="form-group">
                 <label class="col-sm-2 control-label">拍摄照片：</label>
                 <div class="col-sm-9">
                     <div id="viewer" class="row">
-                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(salesmanLeaderTask.feedbackPictureUrl1)}">
+                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl1)}">
                             <a href="javascript:void(0)" class="thumbnail">
-                                <img th:src="${salesmanLeaderTask.feedbackPictureUrl1}"  alt="缩略图">
+                                <img th:src="${salesmanTask.feedbackPictureUrl1}"  alt="缩略图">
                             </a>
                         </div>
-                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(salesmanLeaderTask.feedbackPictureUrl2)}">
+                        <div class="col-sm-3 col-md-3" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl2)}">
                             <a href="javascript:void(0)" class="thumbnail">
-                                <img th:src="${salesmanLeaderTask.feedbackPictureUrl2}"  alt="缩略图">
+                                <img th:src="${salesmanTask.feedbackPictureUrl2}"  alt="缩略图">
                             </a>
                         </div>
                         <div class="col-sm-3 col-md-3">
-                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanLeaderTask.feedbackPictureUrl3)}">
-                                <img th:src="${salesmanLeaderTask.feedbackPictureUrl3}"  alt="缩略图">
+                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl3)}">
+                                <img th:src="${salesmanTask.feedbackPictureUrl3}"  alt="缩略图">
                             </a>
                         </div>
                         <div class="col-sm-3 col-md-3">
-                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanLeaderTask.feedbackPictureUrl4)}">
-                                <img th:src="${salesmanLeaderTask.feedbackPictureUrl4}"  alt="缩略图">
+                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl4)}">
+                                <img th:src="${salesmanTask.feedbackPictureUrl4}"  alt="缩略图">
                             </a>
                         </div>
                         <div class="col-sm-3 col-md-3">
-                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanLeaderTask.feedbackPictureUrl5)}">
-                                <img th:src="${salesmanLeaderTask.feedbackPictureUrl5}"  alt="缩略图">
+                            <a href="javascript:void(0)" class="thumbnail" th:if="${not #strings.isEmpty(salesmanTask.feedbackPictureUrl5)}">
+                                <img th:src="${salesmanTask.feedbackPictureUrl5}"  alt="缩略图">
                             </a>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">任务备注：</label>
                 <div class="col-sm-9">
-                    <textarea name="remark" th:text="${salesmanLeaderTask.remark}" class="form-control" rows="3" readonly="ture"></textarea>
+                    <textarea name="remark" th:text="${salesmanTask.remark}" class="form-control" rows="3" readonly="ture"></textarea>
                 </div>
             </div>
         </form>
@@ -83,7 +83,7 @@
 
         $(function() {
             var options = {
-                data: [[${salesmanLeaderTaskDetail}]],
+                data: [[${salesmanTaskDetail}]],
                 pagination: false,
                 showSearch: false,
                 showRefresh: false,
@@ -177,6 +177,7 @@
             };
             $.table.init(options);
         });
+
     </script>
 </body>
 </html>

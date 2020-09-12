@@ -174,13 +174,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </foreach>
             <if test="salesmanTaskReqDto.deptId != null and salesmanTaskReqDto.deptId != ''">and dept_id = #{salesmanTaskReqDto.deptId}</if>
             <if test="salesmanTaskReqDto.orderStatus != null and salesmanTaskReqDto.orderStatus != ''">and order_status = #{salesmanTaskReqDto.orderStatus}</if>
-            <if test="salesmanTaskReqDto.requiredCompletionDate != null">and required_completion_date BETWEEN #{salesmanTaskReqDto.requiredCompletionDate} and  date_add(#{salesmanTaskReqDto.requiredCompletionDate},interval 1 day)</if>
+            <if test="salesmanTaskReqDto.requiredCompletionDate != null">and required_completion_date = #{salesmanTaskReqDto.requiredCompletionDate}</if>
         </where>
     </select>
     <select id="selectSalesmanTaskDetailById" parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
         select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         where id = #{id}
+    </select>
+    <select id="selectTaskIdsBySalesmanUserIdAndDate" resultType="java.lang.Long">
+        select task_id  from dt_business_task_detail
+        where
+        salesman_user_id = #{userId}
+        and status != 2
+        <if test="requiredCompletionDate != null">and order_date = #{requiredCompletionDate}</if>
     </select>
 
     <update id="updateSalesmanTask" parameterType="DtBusinessTask">
