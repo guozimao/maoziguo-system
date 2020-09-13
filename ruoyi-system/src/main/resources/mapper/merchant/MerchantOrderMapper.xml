@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <select id="selectMerchantOrderList" parameterType="MerchantOrderRespDto" resultMap="MerchantOrderRespDtoResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>

@@ -13,6 +13,8 @@ public class MerchantOrderRespDto {
     /** id */
     private Long id;
 
+    private Long taskId;
+
     /** 任务编码 */
     @Excel(name = "任务代码")
     private String taskNo;
@@ -46,6 +48,10 @@ public class MerchantOrderRespDto {
     /** 关键字 */
     @Excel(name = "关键词")
     private String keyword;
+
+    private Date completionTime;
+
+    private Date createTime;
 
     /** 地推员修改的单价/元 */
     private BigDecimal promotersModifyUnitPrice;
@@ -216,5 +222,29 @@ public class MerchantOrderRespDto {
 
     public void setMerchantUserName(String merchantUserName) {
         this.merchantUserName = merchantUserName;
+    }
+
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
+
+    public Date getCompletionTime() {
+        return completionTime;
+    }
+
+    public void setCompletionTime(Date completionTime) {
+        this.completionTime = completionTime;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }
