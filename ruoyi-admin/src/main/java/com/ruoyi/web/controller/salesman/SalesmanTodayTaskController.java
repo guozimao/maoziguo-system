@@ -1,6 +1,5 @@
 package com.ruoyi.web.controller.salesman;
 
-import com.aliyun.oss.internal.OSSUtils;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;

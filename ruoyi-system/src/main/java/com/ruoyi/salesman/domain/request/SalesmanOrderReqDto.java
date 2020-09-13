@@ -14,10 +14,8 @@ public class SalesmanOrderReqDto {
     private String salesmanLeaderName;
     /** 地推员id */
     private Long salesmanLeaderUserId;
-    /** 商家 */
-    private String merchantName;
-    /** 商家id */
-    private Long merchantUserId;
+
+    private Long salesmanUserId;
 
     private String status;
 
@@ -61,6 +59,14 @@ public class SalesmanOrderReqDto {
         this.status = status;
     }
 
+    public Long getSalesmanUserId() {
+        return salesmanUserId;
+    }
+
+    public void setSalesmanUserId(Long salesmanUserId) {
+        this.salesmanUserId = salesmanUserId;
+    }
+
     public String getSalesmanLeaderName() {
         return salesmanLeaderName;
     }
@@ -75,21 +81,5 @@ public class SalesmanOrderReqDto {
 
     public void setSalesmanLeaderUserId(Long salesmanLeaderUserId) {
         this.salesmanLeaderUserId = salesmanLeaderUserId;
-    }
-
-    public String getMerchantName() {
-        return merchantName;
-    }
-
-    public void setMerchantName(String merchantName) {
-        this.merchantName = merchantName;
-    }
-
-    public Long getMerchantUserId() {
-        return merchantUserId;
-    }
-
-    public void setMerchantUserId(Long merchantUserId) {
-        this.merchantUserId = merchantUserId;
     }
 }

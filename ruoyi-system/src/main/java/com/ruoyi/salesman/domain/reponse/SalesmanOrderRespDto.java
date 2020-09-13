@@ -58,6 +58,8 @@ public class SalesmanOrderRespDto {
 
     private Long salesmanLeaderUserId;
 
+    private Long salesmanUserId;
+
     private String salesmanLeaderName;
 
     private Long merchantUserId;
@@ -216,5 +218,13 @@ public class SalesmanOrderRespDto {
 
     public void setMerchantUserName(String merchantUserName) {
         this.merchantUserName = merchantUserName;
+    }
+
+    public Long getSalesmanUserId() {
+        return salesmanUserId;
+    }
+
+    public void setSalesmanUserId(Long salesmanUserId) {
+        this.salesmanUserId = salesmanUserId;
     }
 }

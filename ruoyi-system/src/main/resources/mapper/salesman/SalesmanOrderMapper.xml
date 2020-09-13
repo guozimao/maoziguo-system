@@ -19,8 +19,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="platformNickname" column="platform_nickname" />
-        <result property="merchantUserId" column="merchant_user_id" />
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
+        <result property="salesmanUserId" column="salesman_user_id" />
         <result property="salesmanCommitUrl" column="salesman_commit_url"/>
         <result property="status" column="status" />
     </resultMap>
@@ -73,13 +73,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <select id="selectSalesmanOrderList" parameterType="SalesmanOrderRespDto" resultMap="SalesmanOrderRespDtoResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
             <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
             <if test="salesmanLeaderUserId != null">and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
-            <if test="merchantUserId != null">and merchant_user_id = #{merchantUserId}</if>
+            <if test="salesmanUserId != null">and salesman_user_id = #{salesmanUserId}</if>
             <if test="startDate!=null">
                 and order_date &gt;=  #{startDate}
             </if >

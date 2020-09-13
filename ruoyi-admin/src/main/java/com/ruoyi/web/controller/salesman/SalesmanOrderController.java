@@ -3,10 +3,16 @@ package com.ruoyi.web.controller.salesman;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
-import com.ruoyi.groupcompany.service.IGroupOrderService;
+import com.ruoyi.salesman.domain.SalesmanTask;
+import com.ruoyi.salesman.domain.SalesmanTaskDetail;
+import com.ruoyi.salesman.domain.reponse.SalesmanOrderRespDto;
+import com.ruoyi.salesman.domain.request.SalesmanOrderReqDto;
+import com.ruoyi.salesman.service.ISalesmanOrderService;
+import com.ruoyi.system.domain.SysUser;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +33,7 @@ import java.util.List;
 public class SalesmanOrderController extends BaseController {
 
     @Autowired
-    private IGroupOrderService groupOrderService;
+    private ISalesmanOrderService salesmanOrderService;
 
     private String prefix = "salesman/order";
 
@@ -44,40 +50,12 @@ public class SalesmanOrderController extends BaseController {
     @RequiresPermissions("salesman:order:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(GroupOrderReqDto groupOrderReqDto)
+    public TableDataInfo list(SalesmanOrderReqDto salesmanOrderReqDto)
     {
         startPage();
-        List<GroupOrderRespDto> list = groupOrderService.selectGroupDtBusinessTaskDtoList(groupOrderReqDto);
+        salesmanOrderReqDto.setSalesmanUserId(ShiroUtils.getSysUser().getUserId());
+        List<SalesmanOrderRespDto> list = salesmanOrderService.selectSalesmanTaskDtoList(salesmanOrderReqDto);
         return getDataTable(list);
     }
 
-    /**
-     * 修改商业任务明细信息
-     */
-    @PostMapping("/detailEdit")
-    @ResponseBody
-    public AjaxResult detailEdit(DtBusinessTaskDetail dtBusinessTaskDetail)
-    {
-        return toAjax(groupOrderService.updateDtBusinessTaskDetail(dtBusinessTaskDetail));
-    }
-
-    /**
-     * 停掉商业订单
-     */
-    @PostMapping("/stopOrder")
-    @ResponseBody
-    public AjaxResult stopOrder(String ids)
-    {
-        return toAjax(groupOrderService.stopOrder(ids));
-    }
-
-    /**
-     * 修复停掉的商业订单
-     */
-    @PostMapping("/recoverOrder")
-    @ResponseBody
-    public AjaxResult recoverOrder(String ids)
-    {
-        return toAjax(groupOrderService.recoverOrder(ids));
-    }
 }
