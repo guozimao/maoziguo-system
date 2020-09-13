@@ -1,6 +1,7 @@
 package com.ruoyi.merchant.service.impl;
 
 
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +44,9 @@ public class MerchantOrderServiceImpl implements IMerchantOrderService
     @Override
     public List<MerchantOrderRespDto> selectMerchantTaskDtoList(MerchantOrderReqDto merchantOrderReqDto) {
         List<MerchantOrderRespDto> orders = merchantOrderMapper.selectMerchantOrderList(merchantOrderReqDto);
+        if(orders.isEmpty()){
+            return Collections.emptyList();
+        }
         List<Long> taskIds = orders.stream().map(MerchantOrderRespDto::getTaskId).collect(Collectors.toSet()).stream().collect(Collectors.toList());
         List<DtBusinessTask> tasks = dtBusinessTaskMapper.selectDtBusinessTaskByIds(taskIds);
         Map<Long,DtBusinessTask> taskIdAndTaskMap = tasks.stream().collect(Collectors.toMap(DtBusinessTask::getId,a -> a, (k1,k2) -> k2));

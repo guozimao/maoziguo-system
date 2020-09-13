@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +44,9 @@ public class SalesmanOrderServiceImpl implements ISalesmanOrderService
     @Override
     public List<SalesmanOrderRespDto> selectSalesmanTaskDtoList(SalesmanOrderReqDto salesmanOrderReqDto) {
         List<SalesmanOrderRespDto> orders = salesmanOrderMapper.selectSalesmanOrderList(salesmanOrderReqDto);
+        if(orders.isEmpty()){
+            return Collections.emptyList();
+        }
         List<Long> userIds = orders.stream().map(SalesmanOrderRespDto::getSalesmanLeaderUserId).collect(Collectors.toList());
         userIds.addAll(orders.stream().map(SalesmanOrderRespDto::getMerchantUserId).collect(Collectors.toList()));
         List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(userIds);

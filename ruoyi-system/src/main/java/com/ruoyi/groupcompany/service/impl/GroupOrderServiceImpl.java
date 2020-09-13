@@ -53,6 +53,9 @@ public class GroupOrderServiceImpl implements IGroupOrderService
     @Override
     public List<GroupOrderRespDto> selectGroupDtBusinessTaskDtoList(GroupOrderReqDto groupOrderReqDto) {
         List<GroupOrderRespDto> orders = groupOrderMapper.selectGroupOrderList(groupOrderReqDto);
+        if(orders.isEmpty()){
+            return Collections.emptyList();
+        }
         List<Long> userIds = orders.stream().map(GroupOrderRespDto::getSalesmanLeaderUserId).collect(Collectors.toList());
         userIds.addAll(orders.stream().map(GroupOrderRespDto::getMerchantUserId).collect(Collectors.toList()));
         List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(userIds);
