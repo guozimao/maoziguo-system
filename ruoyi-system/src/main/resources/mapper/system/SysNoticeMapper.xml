@@ -40,8 +40,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND create_by like concat('%', #{createBy}, '%')
 			</if>
 		</where>
+		order by notice_id desc
     </select>
-    
+    <select id="selectNoticeListByIds" parameterType="SysNotice" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        where
+         notice_id in
+        <foreach item="noticeId" collection="list" open="(" separator="," close=")">
+            #{noticeId}
+        </foreach>
+    </select>
+    <select id="selectNoticeIdsList4Last" resultType="java.lang.Long">
+        SELECT
+            max(notice_id)
+        FROM
+            sys_notice
+        WHERE
+            status = 0
+        GROUP BY
+            notice_type
+    </select>
+
     <insert id="insertNotice" parameterType="SysNotice">
         insert into sys_notice (
 			<if test="noticeTitle != null and noticeTitle != '' ">notice_title, </if>

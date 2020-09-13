@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SysNotice;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 公告 数据层
@@ -49,4 +50,8 @@ public interface SysNoticeMapper
      * @return 结果
      */
     public int deleteNoticeByIds(String[] noticeIds);
+
+    List<SysNotice> selectNoticeListByIds(@Param("list") List<Long> ids);
+
+    List<Long> selectNoticeIdsList4Last();
 }

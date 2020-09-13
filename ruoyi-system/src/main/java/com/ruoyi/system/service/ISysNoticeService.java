@@ -49,4 +49,18 @@ public interface ISysNoticeService
      * @return 结果
      */
     public int deleteNoticeByIds(String ids);
+
+    /**
+     * 查询最新的通知或公告
+     *
+     * @return 结果
+     */
+    List<SysNotice> selectNoticeListByIds(List<Long> ids);
+
+    /**
+     * 查询最新的通知和公告的ids
+     *
+     * @return 结果
+     */
+    List<Long> selectNoticeIdsList4Last();
 }

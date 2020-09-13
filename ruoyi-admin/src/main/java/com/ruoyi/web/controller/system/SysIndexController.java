@@ -1,15 +1,15 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
 
 import com.ruoyi.businessteam.service.IDtSalesmanService;
 import com.ruoyi.common.constant.UserConstants;
-import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
-import com.ruoyi.system.domain.SysRole;
-import com.ruoyi.system.service.IDtMerchantService;
-import com.ruoyi.system.service.IDtSalesmanLeaderService;
+
+import com.ruoyi.system.domain.SysNotice;
+import com.ruoyi.system.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -19,8 +19,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.system.domain.SysMenu;
 import com.ruoyi.system.domain.SysUser;
-import com.ruoyi.system.service.ISysConfigService;
-import com.ruoyi.system.service.ISysMenuService;
 
 /**
  * 首页 业务处理
@@ -44,6 +42,9 @@ public class SysIndexController extends BaseController
 
     @Autowired
     private IDtMerchantService dtMerchantService;
+
+    @Autowired
+    private ISysNoticeService sysNoticeService;
 
     // 系统首页
     @GetMapping("/index")
@@ -84,7 +85,22 @@ public class SysIndexController extends BaseController
             Long merchantId =dtMerchantService.selectIdByUserId(user.getUserId());
             mmap.put("merchantId",merchantId);
         }
-        mmap.put("version", Global.getVersion());
+        List<Long> noticeIds = sysNoticeService.selectNoticeIdsList4Last();
+        List<SysNotice> sysNotices  = sysNoticeService.selectNoticeListByIds(noticeIds);
+        Map<String,SysNotice> typeAndNoticeMap = sysNotices.stream().collect(Collectors.toMap(SysNotice::getNoticeType,a -> a,(k1,k2) -> k2));
+        //mmap.put("version", Global.getVersion());
+        //最新通知
+        if(typeAndNoticeMap.containsKey("1")){
+            mmap.put("advise",typeAndNoticeMap.get("1"));
+        }else {
+            mmap.put("advise",new SysNotice());
+        }
+        //最新公告
+        if(typeAndNoticeMap.containsKey("2")){
+            mmap.put("announcement", typeAndNoticeMap.get("2"));
+        }else {
+            mmap.put("announcement",new SysNotice());
+        }
         mmap.put("user",user);
         return "main";
     }
