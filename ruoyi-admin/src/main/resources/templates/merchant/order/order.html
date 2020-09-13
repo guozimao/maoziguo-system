@@ -43,6 +43,11 @@
                     </div>
                 </form>
             </div>
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.table.exportExcel()" shiro:hasPermission="merchant:order:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
             <div class="col-sm-12 select-table table-hover">
                 <table id="bootstrap-table"></table>
             </div>
@@ -87,6 +92,7 @@
         $(function() {
             var options = {
                 url: prefix + "/list",
+                exportUrl: prefix + "/export",
                 modalName: "商业订单信息",
                 columns: [
                 {

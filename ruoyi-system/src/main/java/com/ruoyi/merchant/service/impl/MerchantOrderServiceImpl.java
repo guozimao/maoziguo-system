@@ -4,6 +4,7 @@ package com.ruoyi.merchant.service.impl;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
 import com.ruoyi.groupcompany.mapper.DtBusinessTaskMapper;
+import com.ruoyi.merchant.domain.MerchantOrder;
 import com.ruoyi.merchant.domain.reponse.MerchantOrderRespDto;
 import com.ruoyi.merchant.domain.request.MerchantOrderReqDto;
 import com.ruoyi.merchant.mapper.MerchantOrderMapper;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,20 @@ public class MerchantOrderServiceImpl implements IMerchantOrderService
             item.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(item.getPictureUrl()));
             item.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(item.getSalesmanCommitUrl()));
         }
+        return orders;
+    }
+
+    @Override
+    public List<MerchantOrder> selectMerchantOrder(MerchantOrderReqDto merchantOrderReqDto) {
+        List<MerchantOrder> orders = merchantOrderMapper.selectMerchantOrder(merchantOrderReqDto);
+        BigDecimal priceTotal = new BigDecimal(0);
+        for (MerchantOrder order : orders){
+            priceTotal = priceTotal.add(order.getPromotersModifyUnitPrice());
+        }
+        MerchantOrder merchantOrder = new MerchantOrder();
+        merchantOrder.setPlatformNickname("合计");
+        merchantOrder.setPromotersModifyUnitPrice(priceTotal);
+        orders.add(merchantOrder);
         return orders;
     }
 

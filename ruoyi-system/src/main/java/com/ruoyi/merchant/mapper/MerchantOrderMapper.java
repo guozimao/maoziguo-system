@@ -1,6 +1,7 @@
 package com.ruoyi.merchant.mapper;
 
 
+import com.ruoyi.merchant.domain.MerchantOrder;
 import com.ruoyi.merchant.domain.reponse.MerchantOrderRespDto;
 import com.ruoyi.merchant.domain.request.MerchantOrderReqDto;
 
@@ -15,4 +16,6 @@ import java.util.List;
 public interface MerchantOrderMapper
 {
     List<MerchantOrderRespDto> selectMerchantOrderList(MerchantOrderReqDto merchantOrderReqDto);
+
+    List<MerchantOrder> selectMerchantOrder(MerchantOrderReqDto merchantOrderReqDto);
 }
