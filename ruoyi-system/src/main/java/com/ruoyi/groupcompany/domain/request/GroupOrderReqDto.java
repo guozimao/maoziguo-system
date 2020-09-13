@@ -20,6 +20,8 @@ public class GroupOrderReqDto {
     private Long merchantUserId;
 
     private String status;
+    /** 00系统用户 01业务组长 02业务员 03商家 */
+    private String exportType;
 
     public Date getStartDate() {
         return startDate;
@@ -91,5 +93,13 @@ public class GroupOrderReqDto {
 
     public void setMerchantUserId(Long merchantUserId) {
         this.merchantUserId = merchantUserId;
+    }
+
+    public String getExportType() {
+        return exportType;
+    }
+
+    public void setExportType(String exportType) {
+        this.exportType = exportType;
     }
 }

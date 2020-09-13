@@ -3,6 +3,8 @@ package com.ruoyi.groupcompany.mapper;
 
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
+import com.ruoyi.merchant.domain.MerchantOrder;
+import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 
 import java.util.List;
 
@@ -15,4 +17,8 @@ import java.util.List;
 public interface GroupOrderMapper
 {
     List<GroupOrderRespDto> selectGroupOrderList(GroupOrderReqDto groupOrderReqDto);
+
+    List<MerchantOrder> getMerchantOrderList(GroupOrderReqDto groupOrderReqDto);
+
+    List<SalesmanLeaderOrder> selectSalesmanLeaderOrder(GroupOrderReqDto groupOrderReqDto);
 }

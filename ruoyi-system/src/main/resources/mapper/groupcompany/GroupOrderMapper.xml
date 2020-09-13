@@ -25,8 +25,65 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status" column="status" />
     </resultMap>
 
+    <resultMap type="MerchantOrder" id="MerchantOrderResult">
+        <result property="orderDate"    column="order_date"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
+        <result property="platformNickname" column="platform_nickname" />
+    </resultMap>
+
+    <resultMap type="SalesmanLeaderOrder" id="SalesmanLeaderOrderResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
+    </resultMap>
+
     <select id="selectGroupOrderList" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
         select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        from dt_business_task_detail
+        <where>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
+            <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="salesmanLeaderUserId != null">and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
+            <if test="merchantUserId != null">and merchant_user_id = #{merchantUserId}</if>
+            <if test="startDate!=null">
+                and order_date &gt;=  #{startDate}
+            </if >
+            <if test="endDate!=null">
+                and order_date &lt;=  #{endDate}
+            </if >
+            <if test="status!=null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="getMerchantOrderList" parameterType="MerchantOrder" resultMap="MerchantOrderResult">
+        select order_date,shop_name,unit_price,promoters_modify_unit_price,platform_nickname
+        from dt_business_task_detail
+        <where>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
+            <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="salesmanLeaderUserId != null">and salesman_leader_user_id = #{salesmanLeaderUserId}</if>
+            <if test="merchantUserId != null">and merchant_user_id = #{merchantUserId}</if>
+            <if test="startDate!=null">
+                and order_date &gt;=  #{startDate}
+            </if >
+            <if test="endDate!=null">
+                and order_date &lt;=  #{endDate}
+            </if >
+            <if test="status!=null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="selectSalesmanLeaderOrder" parameterType="SalesmanLeaderOrder" resultMap="SalesmanLeaderOrderResult">
+        select task_id,order_date,shop_name,unit_price,promoters_modify_unit_price,platform_nickname,salesman_leader_user_id
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>

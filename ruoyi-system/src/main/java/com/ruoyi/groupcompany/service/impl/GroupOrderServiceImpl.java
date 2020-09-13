@@ -17,6 +17,8 @@ import com.ruoyi.groupcompany.mapper.GroupOrderMapper;
 
 import com.ruoyi.groupcompany.service.IGroupOrderService;
 
+import com.ruoyi.merchant.domain.MerchantOrder;
+import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 import com.ruoyi.system.domain.SysUser;
 
 import com.ruoyi.system.mapper.SysUserMapper;
@@ -27,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -134,6 +136,43 @@ public class GroupOrderServiceImpl implements IGroupOrderService
                 groupOrderReqDto.setMerchantUserId(QueryParaConstants.PARAM_NULL);
             }
         }
+    }
+
+    @Override
+    public List<MerchantOrder> selectMerchantOrder(GroupOrderReqDto groupOrderReqDto) {
+        List<MerchantOrder> orders = groupOrderMapper.getMerchantOrderList(groupOrderReqDto);
+        BigDecimal priceTotal = new BigDecimal(0);
+        for (MerchantOrder order : orders){
+            priceTotal = priceTotal.add(order.getPromotersModifyUnitPrice());
+        }
+        MerchantOrder merchantOrder = new MerchantOrder();
+        merchantOrder.setPlatformNickname("合计");
+        merchantOrder.setPromotersModifyUnitPrice(priceTotal);
+        orders.add(merchantOrder);
+        return orders;
+    }
+
+    @Override
+    public List<SalesmanLeaderOrder> selectSalesmanLedaderOrder(GroupOrderReqDto groupOrderReqDto) {
+        List<SalesmanLeaderOrder> orders = groupOrderMapper.selectSalesmanLeaderOrder(groupOrderReqDto);
+        List<Long> salesmanLeaderuserIds = orders.stream().map(SalesmanLeaderOrder::getSalesmanLeaderUserId).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+        List<SysUser> users = sysUserMapper.selectUserListByIds(salesmanLeaderuserIds);
+        Map<Long,String> userIdAndNameMap = users.stream().collect(Collectors.toMap(SysUser::getUserId,SysUser::getUserName,(k1,k2) -> k2));
+        BigDecimal promotersModifyUnitPriceTotal = new BigDecimal(0);
+        BigDecimal unitPriceTotal = new BigDecimal(0);
+        for(SalesmanLeaderOrder order:orders){
+            order.setPriceDifferences(order.getPromotersModifyUnitPrice().subtract(order.getUnitPrice()));
+            order.setSalesmanLeaderUserName(userIdAndNameMap.get(order.getSalesmanLeaderUserId()));
+            order.setAmount(1);
+            promotersModifyUnitPriceTotal = promotersModifyUnitPriceTotal.add(order.getPromotersModifyUnitPrice());
+            unitPriceTotal = unitPriceTotal.add(order.getUnitPrice());
+        }
+        SalesmanLeaderOrder order = new SalesmanLeaderOrder();
+        order.setPlatformNickname("合计");
+        order.setPromotersModifyUnitPrice(promotersModifyUnitPriceTotal);
+        order.setUnitPrice(unitPriceTotal);
+        orders.add(order);
+        return orders;
     }
 
 }

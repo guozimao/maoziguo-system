@@ -11,6 +11,7 @@
                 <form id="formId">
                     <div class="select-list">
                         <ul>
+                            <input type="text" id="exportType" placeholder="导出类型" name="exportType" hidden="true"/>
                             <li>
                                 <label>编号：</label>
                                 <input type="text" id="id" placeholder="编号" name="id"/>
@@ -60,6 +61,12 @@
                 <a class="btn btn-success multiple disabled" onclick="batchCoverOrder()">
                     <i class="fa fa-level-up"></i> 修单
                 </a>
+                <a class="btn btn-success" onclick="merchantExport()" shiro:hasPermission="merchant:order:export">
+                    <i class="fa fa-download"></i> 商家导出
+                </a>
+                <a class="btn btn-success" onclick="salesmanLeaderExport()" shiro:hasPermission="merchant:order:export">
+                    <i class="fa fa-download"></i> 地推导出
+                </a>
             </div>
             <div class="col-sm-12 select-table table-hover">
                 <table id="bootstrap-table"></table>
@@ -106,6 +113,7 @@
         $(function() {
             var options = {
                 url: prefix + "/list",
+                exportUrl: prefix + "/export",
                 modalName: "商业订单信息",
                 onEditableSave:onEditableSave,
                 columns: [{
@@ -278,6 +286,14 @@
             fullscreen:false
         });
 
+        function merchantExport() {
+            $('#exportType').val("03");
+            $.table.exportExcel();
+        }
+        function salesmanLeaderExport() {
+            $('#exportType').val("01");
+            $.table.exportExcel();
+        }
     </script>
 </body>
 </html>
