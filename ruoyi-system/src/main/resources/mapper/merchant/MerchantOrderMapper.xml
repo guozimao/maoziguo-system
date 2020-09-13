@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.merchant.mapper.MerchantOrderMapper">
+
+    <resultMap type="MerchantOrderRespDto" id="MerchantOrderRespDtoResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="pictureUrl"    column="picture_url"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="unitPriceRemark"    column="unit_price_remark"    />
+        <result property="specialRemarks"    column="special_remarks"    />
+        <result property="keywork"    column="keywork"    />
+        <result property="platformUrl" column="platform_url" />
+        <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
+        <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
+        <result property="platformNickname" column="platform_nickname" />
+        <result property="merchantUserId" column="merchant_user_id" />
+        <result property="salesmanCommitUrl" column="salesman_commit_url"/>
+        <result property="status" column="status" />
+    </resultMap>
+
+    <select id="selectMerchantOrderList" parameterType="MerchantOrderRespDto" resultMap="MerchantOrderRespDtoResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        from dt_business_task_detail
+        <where>
+            <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
+            <if test="shopName != null and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="merchantUserId != null">and merchant_user_id = #{merchantUserId}</if>
+            <if test="startDate!=null">
+                and order_date &gt;=  #{startDate}
+            </if >
+            <if test="endDate!=null">
+                and order_date &lt;=  #{endDate}
+            </if >
+            <if test="status!=null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>
