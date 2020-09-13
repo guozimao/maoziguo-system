@@ -190,8 +190,12 @@
         });
 
         function searchOrderRemark(salesmanCommitUrl,promotersUnitPriceRemark) {
+            if(promotersUnitPriceRemark !== "null"){
+                $("#promotersUnitPriceRemark").val(promotersUnitPriceRemark);
+            }else {
+                $("#promotersUnitPriceRemark").val('');
+            }
             $('#img').attr('src',salesmanCommitUrl);
-            $("#promotersUnitPriceRemark").val(promotersUnitPriceRemark);
             $('#myModal').modal('show');
         }
         function closeWin() {
