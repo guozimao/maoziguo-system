@@ -2,7 +2,6 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('查看商业任务明细信息')" />
-    <th:block th:include="include :: bootstrap-editable-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -75,7 +74,6 @@
         </form>
     </div>
     <th:block th:include="include :: footer" />
-    <th:block th:include="include :: bootstrap-table-editable-js" />
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
 
@@ -92,7 +90,6 @@
                 showToggle: false,
                 showColumns: false,
                 sidePagination: "client",
-                onEditableSave: onEditableSave,
                 columns: [
                 {
                     field: 'index',
@@ -149,14 +146,12 @@
                 {
                     field: 'platformNickname',
                     align: 'center',
-                    title: '买家昵称',
-                    editable: true
+                    title: '买家昵称'
                 },
                 {
                     field: 'promotersModifyUnitPrice',
                     align: 'center',
-                    title: '实际单价/元',
-                    editable: true
+                    title: '实际单价/元'
                 },
                 {
                     field: 'salesmanCommitUrl',
@@ -182,10 +177,6 @@
             };
             $.table.init(options);
         });
-
-        function onEditableSave (field, row, oldValue, $el) {
-            $.operate.submit("/salesmanleader/todaytask/detailEdit","post","json",row);
-        }
     </script>
 </body>
 </html>

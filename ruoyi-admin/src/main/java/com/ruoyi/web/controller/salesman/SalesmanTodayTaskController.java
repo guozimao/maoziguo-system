@@ -73,8 +73,8 @@ public class SalesmanTodayTaskController extends BaseController
     public TableDataInfo list(SalesmanTaskReqDto salesmanTaskReqDto)
     {
         SysUser user = ShiroUtils.getSysUser();
-        Set<Long> ids = salesmanTaskService.selectTaskIdsBySalesmanUserId(user.getUserId());
         setTodayDate(salesmanTaskReqDto);
+        Set<Long> ids = salesmanTaskService.selectTaskIdsBySalesmanUserIdAndDate(user.getUserId(),salesmanTaskReqDto.getRequiredCompletionDate());
         startPage();
         List<SalesmanTaskRespDto> list = salesmanTaskService.selectSalesmanTaskDtoList(salesmanTaskReqDto,user,ids);
         return getDataTable(list);

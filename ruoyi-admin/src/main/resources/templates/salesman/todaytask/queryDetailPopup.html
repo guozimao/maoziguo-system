@@ -50,7 +50,7 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
                         </button>
-                        <h4 class="modal-title">提交订单</h4>
+                        <h4 class="modal-title">提交订单<span id="titleOrder"><span></span></h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -284,7 +284,7 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrderDialog(\'' + index + "\',\'" + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark  + "\',\'" + row.platformNickname + "\',\'" + row.id + "\',\'" + row.promotersModifyUnitPrice + "\',\'" + row.status + '\')"><i class="fa fa-check mysubmit"></i>提交</a>');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrderDialog(\'' + index + "\',\'" + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark  + "\',\'" + row.platformNickname + "\',\'" + row.id + "\',\'" + row.promotersModifyUnitPrice + "\',\'" + row.status  + "\',\'" + row.taskNo + "\',\'" + (index+1) + '\')"><i class="fa fa-check mysubmit"></i>提交</a>');
                         return actions.join('');
                     }
                 }]
@@ -296,11 +296,13 @@
             $.operate.submit("/salesman/todaytask/detailEdit","post","json",row);
         }
 
-        function commitOrderDialog(index,salesmanCommitUrl,promotersUnitPriceRemark,platformNickname,id,promotersModifyUnitPrice,status) {
+        function commitOrderDialog(index,salesmanCommitUrl,promotersUnitPriceRemark,platformNickname,id,promotersModifyUnitPrice,status,taskNo,rank) {
             if(status === '0'){
                 layer.alert("此订单已经提交，无需重复提交");
                 return;
             }
+            $("#titleOrder").html("-"+ rank + '-' + taskNo);
+
             if(promotersUnitPriceRemark === 'null'){
                 $("#promotersUnitPriceRemark").val('');
             }else {

@@ -99,6 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where platform_nickname = #{platformNickname}
         and status = '0'
         and order_date > date_sub(sysdate(),interval 1 month)
+        and order_date != CURDATE()
     </select>
 
 </mapper>
