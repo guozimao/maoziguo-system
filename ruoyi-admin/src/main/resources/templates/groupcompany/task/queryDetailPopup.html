@@ -172,7 +172,13 @@
                     field: 'platformNickname',
                     align: 'center',
                     title: '买家昵称',
-                    editable: true
+                    editable: true,
+                    formatter: function(value, row, index) {
+                        if(row.platformNickname === null){
+                            return "";
+                        }
+                        return row.platformNickname;
+                    }
                 },
                 {
                     field: 'promotersModifyUnitPrice',
@@ -192,6 +198,11 @@
                     field: 'promotersUnitPriceRemark',
                     align: 'center',
                     title: '买家备注'
+                },
+                {
+                    field: 'salesmanLeaderUserName',
+                    align: 'center',
+                    title: "地推人"
                 },
                 {
                     field: 'merchatUserName',

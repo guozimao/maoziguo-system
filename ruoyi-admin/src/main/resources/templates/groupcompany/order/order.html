@@ -193,7 +193,13 @@
                     title: '买家呢称',
                     align: 'center',
                     width: '70',
-                    editable: true
+                    editable: true,
+                    formatter: function(value, row, index) {
+                        if(row.platformNickname === null){
+                            return "";
+                        }
+                        return row.platformNickname;
+                    }
                 },
                 {
                     field: 'promotersModifyUnitPrice',

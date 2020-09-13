@@ -73,6 +73,8 @@ public class DtBusinessTaskDetail
 
     private Long salesmanLeaderUserId;
 
+    private String salesmanLeaderUserName;
+
     private Long merchantUserId;
 
     private String merchatUserName;
@@ -252,6 +254,14 @@ public class DtBusinessTaskDetail
 
     public void setMerchatUserName(String merchatUserName) {
         this.merchatUserName = merchatUserName;
+    }
+
+    public String getSalesmanLeaderUserName() {
+        return salesmanLeaderUserName;
+    }
+
+    public void setSalesmanLeaderUserName(String salesmanLeaderUserName) {
+        this.salesmanLeaderUserName = salesmanLeaderUserName;
     }
 
     @Override

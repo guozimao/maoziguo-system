@@ -227,10 +227,14 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
     @Override
     public List<DtBusinessTaskDetail> selectDtBusinessTaskDetailList(Long id) {
         List<DtBusinessTaskDetail> resultList = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskId(id);
-        List<Long> merchantUserIds = resultList.stream().map(DtBusinessTaskDetail::getMerchantUserId).collect(Collectors.toList());
-        List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(merchantUserIds);
+        Set<Long> merchantUserIds = resultList.stream().map(DtBusinessTaskDetail::getMerchantUserId).collect(Collectors.toSet());
+        Set<Long> salesmanUserIds = resultList.stream().map(DtBusinessTaskDetail::getSalesmanLeaderUserId).collect(Collectors.toSet());
+        salesmanUserIds.addAll(merchantUserIds);
+        List<Long> userIds = salesmanUserIds.stream().collect(Collectors.toList());
+        List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(userIds);
         Map<Long,String> userIdAndNameMap = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserId,SysUser::getUserName,(k1,k2) -> k2));
         for (DtBusinessTaskDetail detail:resultList){
+            detail.setSalesmanLeaderUserName(userIdAndNameMap.get(detail.getSalesmanLeaderUserId()));
             detail.setMerchatUserName(userIdAndNameMap.get(detail.getMerchantUserId()));
             detail.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(detail.getPictureUrl()));
             detail.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(detail.getSalesmanCommitUrl()));
