@@ -190,7 +190,7 @@ public class DtSalesmanController extends BaseController
         }else if(dtSalesmanService.hasNoNormalStatus(id)){
             return error("该业务员已被停用，是无法成功申请关联");
         }else if(dtSalesmanService.hasAssociationWithTeam(id,sysUser.getDeptId())){
-            return error("该业务员已经是有归属团队的，是无法成功申请关联");
+            return error("该业务员已经是有归属团队并且已关联，是无法成功申请关联");
         }else if(teamAssociationApplicationService.hasApplicationVaildedRecord(id,sysUser.getUserId(),sysUser.getDeptId())){
             return error("您已经申请了，无需重复申请");
         }

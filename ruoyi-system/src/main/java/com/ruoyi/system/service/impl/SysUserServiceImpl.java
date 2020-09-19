@@ -229,7 +229,7 @@ public class SysUserServiceImpl implements ISysUserService
             dtSalesmanLeader.setUserId(user.getUserId());
             dtSalesmanLeaderMapper.insertDtSalesmanLeader(dtSalesmanLeader);
         }else if(user.getUserType().equals(UserConstants.MERCHANT_USER_TYPE)){
-            roles = setDefaultRoleId4NewUser(user,RoleConstants.SALEMAN_LEADER_ROLE_NAME);
+            roles = setDefaultRoleId4NewUser(user,RoleConstants.MERCHANT_ROLE_NAME);
             DtMerchant dtMerchant = new DtMerchant();
             dtMerchant.setUserId(user.getUserId());
             dtMerchantMapper.insertDtMerchant(dtMerchant);

@@ -42,8 +42,7 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:merchant:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('system:merchant:remove')}]];
+        var editFlag = [[${@permission.hasPermi('businessteam:merchant:edit')}]];
         var prefix = ctx + "businessteam/merchant";
 
 

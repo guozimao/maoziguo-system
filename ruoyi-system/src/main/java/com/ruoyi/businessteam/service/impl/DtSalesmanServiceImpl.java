@@ -177,8 +177,16 @@ public class DtSalesmanServiceImpl implements IDtSalesmanService
     @Override
     public boolean hasAssociationWithTeam(Long id, Long deptId) {
         DtSalesman dtSalesman = dtSalesmanMapper.selectDtSalesmanWithNoDeleteById(id);
-        SysUser sysUser = sysUserMapper.selectUserById(dtSalesman.getUserId());
-        return StringUtils.isNotNull(sysUser.getDeptId());
+        SysUser sysUser = null;
+        if(dtSalesman.getAssociationStatus().equals("0")){
+            sysUser = sysUserMapper.selectUserById(dtSalesman.getUserId());
+        }
+        if(StringUtils.isNull(sysUser)){
+            return false;
+        }else{
+            return StringUtils.isNotNull(sysUser.getDeptId());
+        }
+
     }
 
     @Override
