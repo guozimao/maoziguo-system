@@ -1,25 +1,20 @@
 package com.ruoyi.web.controller.salesman;
 
-import com.ruoyi.common.annotation.Log;
+
 import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
+
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.enums.BusinessType;
+
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.poi.ExcelUtil;
+
 import com.ruoyi.framework.util.ShiroUtils;
-import com.ruoyi.groupcompany.domain.DtBusinessTask;
-import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
-import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
-import com.ruoyi.groupcompany.domain.request.AssginReqDto;
-import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
-import com.ruoyi.groupcompany.service.IDtBusinessTaskService;
+
 import com.ruoyi.salesman.domain.SalesmanTask;
 import com.ruoyi.salesman.domain.SalesmanTaskDetail;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
-import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
+
 import com.ruoyi.system.domain.SysDept;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysDeptService;
@@ -28,11 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.*;
 
 /**
@@ -45,7 +39,7 @@ import java.util.*;
 @RequestMapping("/salesman/historytask")
 public class SalesmanHistoryTaskController extends BaseController
 {
-    private String prefix = "/salesman/historytask";
+    private String prefix = "salesman/historytask";
 
     @Autowired
     private ISalesmanTaskService salesmanTaskService;
