@@ -350,7 +350,6 @@
         }
 
         function showPictureDialog(url,index,taskNo) {
-            console.log(index)
             $("#titlePicture").html("-"+ (parseInt(index) + 1) + '-' + taskNo);
             $('#goodsPicture').attr('src',url);
             var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]").find(".myPicture");
