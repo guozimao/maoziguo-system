@@ -241,9 +241,7 @@
                     align: 'center',
                     title: '商品主图',
                     formatter: function(value, row, index) {
-                        var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="showPictureDialog(\'' + row.pictureUrl + "\',\'" + index + "\',\'" + row.taskNo + '\')"><i class="fa fa-eye myPicture"></i>看图</a>');
-                        return actions.join('');
+                        return imageView(row.pictureUrl, index, row.taskNo);
                     }
 				},
                 {
@@ -352,12 +350,22 @@
         }
 
         function showPictureDialog(url,index,taskNo) {
+            console.log(index)
             $("#titlePicture").html("-"+ (parseInt(index) + 1) + '-' + taskNo);
             $('#goodsPicture').attr('src',url);
             var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]").find(".myPicture");
             $("#pictureModal").css({'margin-top': trHtml.offset().top});
             $('#pictureModal').modal('show');
             $('.modal-open').find('.modal-backdrop').remove();
+        }
+
+        // 图片预览
+        function imageView(url, index, taskNo) {
+            if ($.common.isNotEmpty(url)) {
+                return $.common.sprintf("<img class='img-circle img-xs myPicture' data-height='auto' data-width='auto'  src='%s' onclick='showPictureDialog(\"" + url + "\",\"" + index + "\",\"" + taskNo + "\")'/>", url);
+            } else {
+                return $.common.nullToStr(url);
+            }
         }
     </script>
 </body>
