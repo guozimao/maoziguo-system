@@ -44,13 +44,13 @@
                 </div>
             </div>
         </form>
-        <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal inmodal" id="orderModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated bounceInRight">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
                         </button>
-                        <h4 class="modal-title">提交订单<span id="titleOrder"><span></span></h4>
+                        <h4 class="modal-title">提交订单<span id="titleOrder"></span></h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -84,6 +84,29 @@
                 </div>
             </div>
         </div>
+        <div class="modal inmodal" id="pictureModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                        </button>
+                        <h4 class="modal-title">主图<span id="titlePicture"></span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-4 col-sm-offset-4" id="viewer">
+                                <a href="javascript:void(0)" class="thumbnail" onclick="closeWin()">
+                                    <img id="goodsPicture" src="#"  alt="缩略图">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <th:block th:include="include :: footer" />
     <th:block th:include="include :: bootstrap-table-editable-js" />
@@ -92,7 +115,7 @@
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
 
         $(function() {
-            $('#myModal').on('hide.bs.modal', function () {
+            $('#orderModal').on('hide.bs.modal', function () {
                 $(".fileinput-remove-button").click();
             });
 
@@ -106,7 +129,7 @@
                 dropZoneTitle:"可拖拽到此区域，最多支持5张图片,文件大小不超过1M",
                 showRemove: true,
                 showPreview: true,
-                maxFileCount: 1,
+                maxFileCount: 5,
                 maxFileSize: 1024,
                 allowedFileExtensions: ['jpg', 'png'],
                 validateInitialCount:true,
@@ -178,7 +201,7 @@
                 $("#platformNickname").val("");
                 $("#orderId").val("");
                 //隐藏模态框
-                $('#myModal').modal('hide');
+                $('#orderModal').modal('hide');
                 $.table.refresh();
             });
 
@@ -218,7 +241,9 @@
                     align: 'center',
                     title: '商品主图',
                     formatter: function(value, row, index) {
-                        return $.table.imageView(row.pictureUrl);
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="showPictureDialog(\'' + row.pictureUrl + "\',\'" + index + "\',\'" + row.taskNo + '\')"><i class="fa fa-eye myPicture"></i>看图</a>');
+                        return actions.join('');
                     }
 				},
                 {
@@ -257,14 +282,6 @@
                     field: 'promotersModifyUnitPrice',
                     align: 'center',
                     title: '实际单价/元'
-                },
-                {
-                    field: 'salesmanCommitUrl',
-                    align: 'center',
-                    title: '买家拍照',
-                    formatter: function(value, row, index) {
-                        return $.table.imageView(row.salesmanCommitUrl);
-                    }
                 },
                 {
                     field: 'status',
@@ -313,8 +330,8 @@
             $("#orderId").val(id);
             $("#promotersModifyUnitPrice").val(promotersModifyUnitPrice);
             var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]").find(".mysubmit");
-            $("#myModal").css({'margin-top': trHtml.offset().top});
-            $('#myModal').modal('show');
+            $("#orderModal").css({'margin-top': trHtml.offset().top});
+            $('#orderModal').modal('show');
             $('.modal-open').find('.modal-backdrop').remove();
         }
 
@@ -324,6 +341,23 @@
 
         function commitOrder() {
             $("#fileinput").fileinput("upload");
+        }
+
+        var image = new Viewer(document.getElementById('viewer'),{
+            fullscreen:false
+        });
+
+        function closeWin() {
+            $('#pictureModal').modal('hide');
+        }
+
+        function showPictureDialog(url,index,taskNo) {
+            $("#titlePicture").html("-"+ (parseInt(index) + 1) + '-' + taskNo);
+            $('#goodsPicture').attr('src',url);
+            var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]").find(".myPicture");
+            $("#pictureModal").css({'margin-top': trHtml.offset().top});
+            $('#pictureModal').modal('show');
+            $('.modal-open').find('.modal-backdrop').remove();
         }
     </script>
 </body>
