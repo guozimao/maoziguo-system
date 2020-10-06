@@ -42,6 +42,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
     </resultMap>
 
+    <update id="updateOrderPictureUrlById">
+        update dt_business_task_detail set picture_url = #{pictureUrl} where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
     <select id="selectGroupOrderList" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
         select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
         from dt_business_task_detail
@@ -101,6 +108,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
         </where>
         order by id desc
+    </select>
+    <select id="selectGroupOrderDtoById" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        from dt_business_task_detail
+        where id = #{id}
+    </select>
+    <select id="selectOrderWithTodayAndNoNFinishByPlatformUrl" resultType="java.lang.Long">
+        select id
+        from dt_business_task_detail
+        where
+            status != 0
+            and order_date = CURDATE()
+            and platform_url = #{platformUrl}
     </select>
 
 </mapper>

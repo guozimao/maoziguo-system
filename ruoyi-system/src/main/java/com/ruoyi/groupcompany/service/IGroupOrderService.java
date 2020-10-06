@@ -6,6 +6,7 @@ import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 import com.ruoyi.merchant.domain.MerchantOrder;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 
+import java.net.URL;
 import java.util.List;
 
 public interface IGroupOrderService {
@@ -23,4 +24,6 @@ public interface IGroupOrderService {
     List<MerchantOrder> selectMerchantOrder(GroupOrderReqDto groupOrderReqDto);
 
     List<SalesmanLeaderOrder> selectSalesmanLedaderOrder(GroupOrderReqDto groupOrderReqDto);
+
+    int editPicture(Long id, String ossParam);
 }

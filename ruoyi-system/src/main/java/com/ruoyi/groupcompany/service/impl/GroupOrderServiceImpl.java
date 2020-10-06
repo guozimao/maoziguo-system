@@ -4,6 +4,7 @@ package com.ruoyi.groupcompany.service.impl;
 import com.ruoyi.common.constant.QueryParaConstants;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
@@ -73,6 +74,9 @@ public class GroupOrderServiceImpl implements IGroupOrderService
 
     @Override
     public int updateDtBusinessTaskDetail(DtBusinessTaskDetail dtBusinessTaskDetail) {
+        if(!DateUtils.isSameDay(new Date(),dtBusinessTaskDetail.getOrderDate())){
+            throw new BusinessException("能操作的数据日期是" + DateUtils.getDate());
+        }
         return dtBusinessTaskMapper.updateDtBusinessTaskDetail(dtBusinessTaskDetail);
     }
 
@@ -173,6 +177,19 @@ public class GroupOrderServiceImpl implements IGroupOrderService
         order.setUnitPrice(unitPriceTotal);
         orders.add(order);
         return orders;
+    }
+
+    @Override
+    public int editPicture(Long id, String ossParam) {
+        GroupOrderRespDto dto = groupOrderMapper.selectGroupOrderDtoById(id);
+        if(StringUtils.isNull(dto)){
+            throw new BusinessException("此订单不存在");
+        }
+        if(!DateUtils.isSameDay(new Date(),dto.getOrderDate())){
+            throw new BusinessException("能操作的数据日期是" + DateUtils.getDate());
+        }
+        List<Long> orderIds = groupOrderMapper.selectOrderWithTodayAndNoNFinishByPlatformUrl(dto.getPlatformUrl());
+        return groupOrderMapper.updateOrderPictureUrlById(orderIds,ossParam);
     }
 
 }

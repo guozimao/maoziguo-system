@@ -5,6 +5,7 @@ import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 import com.ruoyi.merchant.domain.MerchantOrder;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,4 +22,10 @@ public interface GroupOrderMapper
     List<MerchantOrder> getMerchantOrderList(GroupOrderReqDto groupOrderReqDto);
 
     List<SalesmanLeaderOrder> selectSalesmanLeaderOrder(GroupOrderReqDto groupOrderReqDto);
+
+    GroupOrderRespDto selectGroupOrderDtoById(Long id);
+
+    List<Long> selectOrderWithTodayAndNoNFinishByPlatformUrl(String platformUrl);
+
+    int updateOrderPictureUrlById(@Param("list") List<Long> orderIds,@Param("pictureUrl") String ossParam);
 }

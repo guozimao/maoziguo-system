@@ -3,6 +3,7 @@
 <head>
     <th:block th:include="include :: header('商业订单信息列表')" />
     <th:block th:include="include :: bootstrap-editable-css" />
+    <th:block th:include="include :: bootstrap-fileinput-css" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -56,7 +57,7 @@
 
             <div class="btn-group-sm" id="toolbar" role="group">
                 <a class="btn btn-danger multiple disabled" onclick="batchStopOrder()">
-                    <i class="fa fa-hand-paper-o"></i> 坏单
+                    <i class="fa fa-hand-paper-o"></i> 停单
                 </a>
                 <a class="btn btn-success multiple disabled" onclick="batchCoverOrder()">
                     <i class="fa fa-level-up"></i> 修单
@@ -72,7 +73,7 @@
                 <table id="bootstrap-table"></table>
             </div>
         </div>
-         <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+         <div class="modal inmodal" id="remarkModal" tabindex="-1" role="dialog" aria-hidden="true">
              <div class="modal-dialog">
                  <div class="modal-content animated bounceInRight">
                      <div class="modal-header">
@@ -103,14 +104,84 @@
                  </div>
              </div>
          </div>
+         <div class="modal inmodal" id="pictureModal" tabindex="-1" role="dialog" aria-hidden="true">
+             <div class="modal-dialog">
+                 <div class="modal-content animated bounceInRight">
+                     <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                         </button>
+                         <h4 class="modal-title">修改主图<span id="titleOrder"></span></h4>
+                     </div>
+                     <div class="modal-body">
+                         <div class="row">
+                             <input id="orderId" name="orderId" type="text" hidden>
+                             <div class="file-loading">
+                                 <input id="fileinput" name="fileinput" type="file" multiple accept=".jpg,.png">
+                             </div>
+                         </div>
+                     </div>
+                     <div class="modal-footer">
+                         <button type="button" class="btn btn-success" onclick="alterPicture()">确定</button>
+                         <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                     </div>
+                 </div>
+             </div>
+         </div>
     </div>
     <th:block th:include="include :: footer" />
      <th:block th:include="include :: bootstrap-table-editable-js" />
+     <th:block th:include="include :: bootstrap-fileinput-js" />
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
         var prefix = ctx + "groupcompany/order";
         var selectedIds = '';
         $(function() {
+            $("#fileinput").fileinput({
+                theme: 'explorer-fas',
+                uploadUrl: "/groupcompany/order/editPicture",
+                overwriteInitial: false,
+                height: 100,
+                initialPreviewAsData: true,
+                uploadAsync: false,
+                allowedFileExtensions: ['jpg', 'png'],
+                enctype: 'multipart/form-data',
+                showUpload: false,
+                showRemove: true,
+                showPreview: false,
+                maxFileSize: 1024,
+                maxFileCount: 1,
+                dropZoneEnabled: false,
+                validateInitialCount:true,
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+                uploadExtraData: function(previewId, index) {   //额外参数的关键点
+                    return {
+                        id: $("#orderId").val(),
+                    };
+                }
+            }).on('filepreupload', function(event, data, previewId, index) {     //上传中
+                var form = data.form, files = data.files, extra = data.extra,
+                    response = data.response, reader = data.reader;
+                layer.alert('文件正在上传');
+            }).on("fileuploaded", function (event, data, previewId, index) {    //一个文件上传成功
+                layer.alert('文件上传成功！'+data.response.msg);
+            }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
+                layer.alert('文件上传失败！'+data.response.msg);
+            }).on('filebatchuploadsuccess', function(event,data,previewId,index) {//同步上传回调
+                layer.alert(data.response.msg);
+                //清空模态框里的所有值
+                $(event.target)
+                    .fileinput('clear')
+                    .fileinput('unlock');
+                $(event.target)
+                    .parent()
+                    .siblings('.fileinput-remove')
+                    .hide();
+                $("#orderId").val("");
+                //隐藏模态框
+                $('#orderModal').modal('hide');
+                $.table.refresh();
+            });
+
             var options = {
                 url: prefix + "/list",
                 exportUrl: prefix + "/export",
@@ -127,8 +198,7 @@
                 {
                     field: 'taskNo',
                     title: '任务代号',
-                    align: 'center',
-                    editable: true
+                    align: 'center'
                 },
                 {
                     field: 'pictureUrl',
@@ -175,14 +245,7 @@
                     field: 'orderDate',
                     title: '订单日期',
                     width: '95',
-                    align: 'center',
-                    editable : {
-                        type: 'date',
-                        clear: false,
-                        placement: 'left',//位置
-                        emptytext : "--",//默认值
-                        title: '请选择日期:'
-                    }
+                    align: 'center'
                 },
                 {
                     field: 'keyword',
@@ -233,9 +296,10 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="stopOrder(\'' + row.id + '\')"><i class="fa fa-hand-paper-o"></i>坏单</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="stopOrder(\'' + row.id + '\')"><i class="fa fa-hand-paper-o"></i>停单</a> ');
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="recoverOrder(\'' + row.id + '\')"><i class="fa fa-level-up"></i>修单</a> ');
                         actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="searchOrderRemark(\'' + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark + '\')"><i class="fa fa fa-search"></i>备注</a>');
+                        actions.push('<a class="btn btn-warning btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="editPicture(\'' + row.id + "\',\'" + row.status + '\')"><i class="fa fa fa-link"></i>改图</a>');
                         return actions.join('');
                     }
                 }]
@@ -276,10 +340,10 @@
                 $("#promotersUnitPriceRemark").val('');
             }
             $('#img').attr('src',salesmanCommitUrl);
-            $('#myModal').modal('show');
+            $('#remarkModal').modal('show');
         }
         function closeWin() {
-            $('#myModal').modal('hide');
+            $('#remarkModal').modal('hide');
         }
 
         var image = new Viewer(document.getElementById('viewer'),{
@@ -293,6 +357,17 @@
         function salesmanLeaderExport() {
             $('#exportType').val("01");
             $.table.exportExcel();
+        }
+        function editPicture(id,status) {
+            if(status === '0'){
+                layer.alert("此订单已经提交，无法修改主图");
+                return;
+            }
+            $('#orderId').val(id);
+            $('#pictureModal').modal('show');
+        }
+        function alterPicture() {
+            $("#fileinput").fileinput("upload");
         }
     </script>
 </body>

@@ -7,6 +7,7 @@ import java.util.*;
 import com.ruoyi.businessteam.domain.MerchantShopRelation;
 import com.ruoyi.businessteam.mapper.DtSalesmanMapper;
 import com.ruoyi.common.exception.BusinessException;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskDetailRespDto;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
@@ -244,6 +245,9 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
 
     @Override
     public int updateDtBusinessTaskDetail(DtBusinessTaskDetail dtBusinessTaskDetail) {
+        if(!DateUtils.isSameDay(new Date(),dtBusinessTaskDetail.getOrderDate())){
+            throw new BusinessException("能操作的数据日期是" + DateUtils.getDate());
+        }
         return dtBusinessTaskMapper.updateDtBusinessTaskDetail(dtBusinessTaskDetail);
     }
 
