@@ -120,7 +120,7 @@
                     align: 'center',
                     title: '商品主图',
                     formatter: function(value, row, index) {
-                        return $.table.imageView(row.pictureUrl);
+                        return $.table.imageView(row.pictureUrl,255,255);
                     }
 				},
                 {
@@ -158,7 +158,7 @@
                     align: 'center',
                     title: '买家拍照',
                     formatter: function(value, row, index) {
-                        return $.table.imageView(row.salesmanCommitUrl);
+                        return $.table.imageView(row.salesmanCommitUrl,255,255);
                     }
                 },
                 {

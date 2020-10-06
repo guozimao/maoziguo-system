@@ -67,6 +67,7 @@ public class MerchantOrderController extends BaseController {
     @ResponseBody
     public AjaxResult export(MerchantOrderReqDto merchantOrderReqDto)
     {
+        merchantOrderReqDto.setMerchantUserId(ShiroUtils.getSysUser().getUserId());
         List<MerchantOrder> list = merchantOrderService.selectMerchantOrder(merchantOrderReqDto);
         ExcelUtil<MerchantOrder> util = new ExcelUtil<MerchantOrder>(MerchantOrder.class);
         return util.exportExcel(list, "商家订单数据");
