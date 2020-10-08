@@ -124,7 +124,13 @@
                     field: 'callCenter',
                     align: 'center',
                     title: '客服',
-                    editable: true
+                    editable: true,
+                    formatter: function(value, row, index) {
+                        if(row.callCenter === null){
+                            return "";
+                        }
+                        return row.callCenter;
+                    }
                 },
                 {
                     field: 'pictureUrl',

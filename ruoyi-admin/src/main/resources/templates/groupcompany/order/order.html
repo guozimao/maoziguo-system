@@ -225,7 +225,13 @@
                     title: '客服',
                     width: '150',
                     align: 'center',
-                    editable: true
+                    editable: true,
+                    formatter: function(value, row, index) {
+                        if(row.callCenter === null){
+                            return "";
+                        }
+                        return row.callCenter;
+                    }
                 },
                 {
                     field: 'platformUrl',
