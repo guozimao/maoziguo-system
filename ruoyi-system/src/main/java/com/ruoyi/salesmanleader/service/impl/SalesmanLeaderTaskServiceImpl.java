@@ -52,7 +52,6 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
 
     @Autowired
     private SysUserMapper sysUserMapper;
-
     /**
      * 查询商业任务信息
      * 
@@ -197,8 +196,8 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
     }
 
     @Override
-    public int updateSalesmanLeaderTaskDetail(SalesmanLeaderTaskDetail dtBusinessTaskDetail) {
-        return salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(dtBusinessTaskDetail);
+    public int updateSalesmanLeaderTaskDetail(SalesmanLeaderTaskDetail salesmanLeaderTaskDetail) {
+        return salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(salesmanLeaderTaskDetail);
     }
 
     @Override

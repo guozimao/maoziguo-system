@@ -229,17 +229,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateSalesmanLeaderTaskDetail" parameterType="SalesmanLeaderTaskDetail">
         update dt_business_task_detail
         <trim prefix="SET" suffixOverrides=",">
-            <if test="taskNo != null and taskNo !=''">task_no = #{taskNo},</if>
-            <if test="orderDate != null">order_date = #{orderDate},</if>
-            <if test="shopName != null and shopName != ''">shop_name = #{shopName},</if>
-            <if test="unitPrice != null">unit_price = #{unitPrice},</if>
-            <if test="unitPriceRemark != null and unitPriceRemark!=''">unit_price_remark = #{unitPriceRemark},</if>
-            <if test="specialRemarks != null and specialRemarks != ''">special_remarks = #{specialRemarks},</if>
-            <if test="keyword != null and keyword != ''">keyword = #{keyword},</if>
             <if test="promotersModifyUnitPrice != null ">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
-            <if test="salesmanLeaderUserId != null">salesman_leader_user_id= #{salesmanLeaderUserId},</if>
-            <if test="status != null">status= #{status},</if>
         </trim>
         where id = #{id}
     </update>

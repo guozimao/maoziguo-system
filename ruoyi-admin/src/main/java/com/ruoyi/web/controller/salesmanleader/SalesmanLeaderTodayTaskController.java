@@ -9,6 +9,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
+import com.ruoyi.salesman.service.ISalesmanTaskService;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTask;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderTaskRespDto;
@@ -46,6 +47,9 @@ public class SalesmanLeaderTodayTaskController extends BaseController
 
     @Autowired
     private ISysDeptService sysDeptService;
+
+    @Autowired
+    private ISalesmanTaskService salesmanTaskService;
 
     @RequiresPermissions("salesmanleader:todaytask:view")
     @GetMapping()
@@ -106,6 +110,8 @@ public class SalesmanLeaderTodayTaskController extends BaseController
     @ResponseBody
     public AjaxResult detailEdit(SalesmanLeaderTaskDetail salesmanLeaderTaskDetail)
     {
+        //查复购
+        salesmanTaskService.queryRepurchase(salesmanLeaderTaskDetail.getPlatformNickname());
         return toAjax(salesmanLeaderTaskService.updateSalesmanLeaderTaskDetail(salesmanLeaderTaskDetail));
     }
 
