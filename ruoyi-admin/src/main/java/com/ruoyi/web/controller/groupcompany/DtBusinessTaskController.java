@@ -8,6 +8,8 @@ import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
+import com.ruoyi.groupcompany.service.IGroupOrderService;
+import com.ruoyi.salesman.service.ISalesmanTaskService;
 import com.ruoyi.system.domain.SysDept;
 import com.ruoyi.system.service.ISysDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -42,6 +44,12 @@ public class DtBusinessTaskController extends BaseController
 
     @Autowired
     private ISysDeptService sysDeptService;
+
+    @Autowired
+    private IGroupOrderService groupOrderService;
+
+    @Autowired
+    private ISalesmanTaskService salesmanTaskService;
 
     @RequiresPermissions("groupcompany:task:view")
     @GetMapping()
@@ -116,6 +124,10 @@ public class DtBusinessTaskController extends BaseController
     @ResponseBody
     public AjaxResult detailEdit(DtBusinessTaskDetail dtBusinessTaskDetail)
     {
+        if(groupOrderService.hasNoSamePlatformNickname4DB(dtBusinessTaskDetail)){
+            //查复购
+            salesmanTaskService.queryRepurchase(dtBusinessTaskDetail.getPlatformNickname());
+        }
         return toAjax(dtBusinessTaskService.updateDtBusinessTaskDetail(dtBusinessTaskDetail));
     }
 
