@@ -125,5 +125,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and order_date = CURDATE()
             and platform_url = #{platformUrl}
     </select>
+    <select id="selectSalesmanLeaderOrderById"
+            parameterType="SalesmanLeaderOrder" resultMap="SalesmanLeaderOrderResult">
+        select id,task_id,order_date,shop_name,unit_price,promoters_modify_unit_price,platform_nickname,salesman_leader_user_id,group_company_remark
+        from dt_business_task_detail
+        where
+            id = #{id}
+    </select>
 
 </mapper>

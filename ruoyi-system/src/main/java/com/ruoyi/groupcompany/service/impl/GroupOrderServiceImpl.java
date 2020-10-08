@@ -200,4 +200,19 @@ public class GroupOrderServiceImpl implements IGroupOrderService
         return groupOrderMapper.updateOrderPictureUrlById(orderIds,ossParam);
     }
 
+    @Override
+    public boolean hasNoSamePlatformNickname4DB(DtBusinessTaskDetail dtBusinessTaskDetail) {
+        if(StringUtils.isEmpty(dtBusinessTaskDetail.getPlatformNickname())){
+            return false;
+        }
+        SalesmanLeaderOrder order = groupOrderMapper.selectSalesmanLeaderOrderById(dtBusinessTaskDetail.getId());
+        if(StringUtils.isNull(order)){
+            throw new BusinessException("找不到订单");
+        }
+        if(StringUtils.isEmpty(order.getPlatformNickname())){
+            return true;
+        }
+        return !order.getPlatformNickname().equals(dtBusinessTaskDetail.getPlatformNickname());
+    }
+
 }

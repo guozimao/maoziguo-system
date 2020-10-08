@@ -26,4 +26,6 @@ public interface IGroupOrderService {
     List<SalesmanLeaderOrder> selectSalesmanLedaderOrder(GroupOrderReqDto groupOrderReqDto);
 
     int editPicture(Long id, String ossParam);
+
+    boolean hasNoSamePlatformNickname4DB(DtBusinessTaskDetail dtBusinessTaskDetail);
 }

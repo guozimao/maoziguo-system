@@ -28,4 +28,6 @@ public interface GroupOrderMapper
     List<Long> selectOrderWithTodayAndNoNFinishByPlatformUrl(String platformUrl);
 
     int updateOrderPictureUrlById(@Param("list") List<Long> orderIds,@Param("pictureUrl") String ossParam);
+
+    SalesmanLeaderOrder selectSalesmanLeaderOrderById(Long id);
 }

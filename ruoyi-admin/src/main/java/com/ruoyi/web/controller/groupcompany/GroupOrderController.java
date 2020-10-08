@@ -14,7 +14,7 @@ import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 import com.ruoyi.groupcompany.service.IGroupOrderService;
 import com.ruoyi.merchant.domain.MerchantOrder;
-import com.ruoyi.salesman.domain.reponse.CommitOrder;
+import com.ruoyi.salesman.service.ISalesmanTaskService;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
 
@@ -39,6 +38,8 @@ public class GroupOrderController extends BaseController {
 
     @Autowired
     private IGroupOrderService groupOrderService;
+    @Autowired
+    private ISalesmanTaskService salesmanTaskService;
 
     private String prefix = "groupcompany/order";
 
@@ -70,6 +71,10 @@ public class GroupOrderController extends BaseController {
     @ResponseBody
     public AjaxResult detailEdit(DtBusinessTaskDetail dtBusinessTaskDetail)
     {
+        if(groupOrderService.hasNoSamePlatformNickname4DB(dtBusinessTaskDetail)){
+            //查复购
+            salesmanTaskService.queryRepurchase(dtBusinessTaskDetail.getPlatformNickname());
+        }
         return toAjax(groupOrderService.updateDtBusinessTaskDetail(dtBusinessTaskDetail));
     }
 
