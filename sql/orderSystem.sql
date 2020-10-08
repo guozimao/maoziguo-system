@@ -40,6 +40,7 @@ CREATE TABLE `dt_business_task_detail` (
   `picture_url` varchar(128) NOT NULL COMMENT '图片(path,Expires,Signature)',
   `platform_url` varchar(512) NOT NULL COMMENT ' 链接',
   `shop_name` varchar(64) NOT NULL COMMENT '店铺名',
+  `call_center` varchar(64) DEFAULT NULL COMMENT '客服',
   `unit_price` decimal(11,2) DEFAULT '0.00' COMMENT '单价/元',
   `unit_price_remark` varchar(128) DEFAULT NULL COMMENT '备注',
   `special_remarks` varchar(128) DEFAULT NULL COMMENT '特殊备注',

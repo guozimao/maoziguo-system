@@ -20,8 +20,10 @@ public class DtGroupBusinessTaskDetailRespDto {
 
     private String platformUrl;
 
+    private String callCenter;
+
     /** 订单日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date orderDate;
 
     private BigDecimal unitPrice;
@@ -100,5 +102,13 @@ public class DtGroupBusinessTaskDetailRespDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCallCenter() {
+        return callCenter;
+    }
+
+    public void setCallCenter(String callCenter) {
+        this.callCenter = callCenter;
     }
 }

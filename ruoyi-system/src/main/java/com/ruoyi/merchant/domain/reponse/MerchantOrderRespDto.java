@@ -21,7 +21,7 @@ public class MerchantOrderRespDto {
 
     /** 订单日期 */
     @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date orderDate;
 
     /** 店铺名 */

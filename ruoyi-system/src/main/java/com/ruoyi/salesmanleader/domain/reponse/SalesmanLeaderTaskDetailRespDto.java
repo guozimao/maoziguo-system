@@ -19,7 +19,7 @@ public class SalesmanLeaderTaskDetailRespDto {
     private String platformUrl;
 
     /** 订单日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date orderDate;
 
     private BigDecimal unitPrice;

@@ -62,10 +62,10 @@
                 <a class="btn btn-success multiple disabled" onclick="batchCoverOrder()">
                     <i class="fa fa-level-up"></i> 修单
                 </a>
-                <a class="btn btn-success" onclick="merchantExport()" shiro:hasPermission="merchant:order:export">
+                <a class="btn btn-info" onclick="merchantExport()" shiro:hasPermission="groupcompany:order:export">
                     <i class="fa fa-download"></i> 商家导出
                 </a>
-                <a class="btn btn-success" onclick="salesmanLeaderExport()" shiro:hasPermission="merchant:order:export">
+                <a class="btn btn-info" onclick="salesmanLeaderExport()" shiro:hasPermission="groupcompany:order:export">
                     <i class="fa fa-download"></i> 地推导出
                 </a>
             </div>
@@ -122,7 +122,7 @@
                              </div>
                          </div>
                          <div class="row">
-                             <div class="alert alert-warning col-sm-8 col-sm-offset-2" role="alert">注意：修改本主图后，相关的主图都会同步修改，通过今天同个链接进行替换更新;若订单已经完成，则不会被修改主图;</div>
+                             <div class="alert alert-warning col-sm-10 col-sm-offset-1" role="alert">注意：修改本主图后，相关的主图都会同步修改，通过今天同个链接进行替换更新;若订单已经完成，则不会被修改主图;</div>
                          </div>
                      </div>
                      <div class="modal-footer">
@@ -216,6 +216,13 @@
                 {
                     field: 'shopName',
                     title: '店铺名',
+                    width: '150',
+                    align: 'center',
+                    editable: true
+                },
+                {
+                    field: 'callCenter',
+                    title: '客服',
                     width: '150',
                     align: 'center',
                     editable: true

@@ -24,7 +24,7 @@ public class SalesmanTaskRespDto {
     /** 实际总本金 */
     private BigDecimal actualTotalPrincipal;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date requiredCompletionDate;
 
     /** 订单状态（0 完成 1 待完成） */

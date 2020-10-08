@@ -31,7 +31,7 @@ public class DtBusinessTaskDetail
 
     /** 订单日期 */
     @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date orderDate;
 
     /** 图片url */
@@ -41,6 +41,10 @@ public class DtBusinessTaskDetail
     /** 店铺名 */
     @Excel(name = "店铺名称（非掌柜名）")
     private String shopName;
+
+    /** 客服 */
+    @Excel(name = "客服")
+    private String callCenter;
 
     @Excel(name = "链接")
     private String platformUrl;
@@ -262,6 +266,14 @@ public class DtBusinessTaskDetail
 
     public void setSalesmanLeaderUserName(String salesmanLeaderUserName) {
         this.salesmanLeaderUserName = salesmanLeaderUserName;
+    }
+
+    public String getCallCenter() {
+        return callCenter;
+    }
+
+    public void setCallCenter(String callCenter) {
+        this.callCenter = callCenter;
     }
 
     @Override

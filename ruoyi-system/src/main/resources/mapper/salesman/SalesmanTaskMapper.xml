@@ -28,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="orderDate"    column="order_date"    />
         <result property="pictureUrl"    column="picture_url"    />
         <result property="shopName"    column="shop_name"    />
+        <result property="callCenter"    column="call_center"    />
         <result property="unitPrice"    column="unit_price"    />
         <result property="unitPriceRemark"    column="unit_price_remark"    />
         <result property="specialRemarks"    column="special_remarks"    />
@@ -116,14 +117,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectSalesmanTaskDetailListByTaskId"
             parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
-        select id,task_id,task_no,platform_url,picture_url,unit_price_remark,special_remarks,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,salesman_commit_url,promoters_unit_price_remark,merchant_user_id
+        select id,task_id,task_no,platform_url,picture_url,unit_price_remark,special_remarks,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,salesman_commit_url,promoters_unit_price_remark,merchant_user_id
         from dt_business_task_detail
         where task_id = #{id}
         and status != '2'
     </select>
     <select id="selectSalesmanTaskDetailList"
             parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
@@ -142,7 +143,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectSalesmanTaskDetailListByIds"
             parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
@@ -179,7 +180,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by id desc
     </select>
     <select id="selectSalesmanTaskDetailById" parameterType="SalesmanTaskDetail" resultMap="SalesmanTaskDetailResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         where id = #{id}
     </select>

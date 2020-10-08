@@ -19,12 +19,14 @@ public class GroupOrderRespDto {
 
     /** 订单日期 */
     @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     private Date orderDate;
 
     /** 店铺名 */
     @Excel(name = "店铺名称（非掌柜名）")
     private String shopName;
+
+    private String callCenter;
 
     private String pictureUrl;
 
@@ -216,5 +218,13 @@ public class GroupOrderRespDto {
 
     public void setMerchantUserName(String merchantUserName) {
         this.merchantUserName = merchantUserName;
+    }
+
+    public String getCallCenter() {
+        return callCenter;
+    }
+
+    public void setCallCenter(String callCenter) {
+        this.callCenter = callCenter;
     }
 }

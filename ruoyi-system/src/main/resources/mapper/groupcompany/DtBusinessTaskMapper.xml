@@ -32,11 +32,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="orderDate"    column="order_date"    />
         <result property="pictureUrl"    column="picture_url"    />
         <result property="shopName"    column="shop_name"    />
+        <result property="callCenter"    column="call_center"    />
         <result property="unitPrice"    column="unit_price"    />
         <result property="unitPriceRemark"    column="unit_price_remark"    />
         <result property="specialRemarks"    column="special_remarks"    />
-        <result property="keywork1"    column="keywork1"    />
-        <result property="keywork2"    column="keywork2"    />
+        <result property="keywork"    column="keywork"    />
         <result property="platformUrl" column="platform_url" />
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
@@ -69,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskNo"    column="task_no"    />
         <result property="orderDate"    column="order_date"    />
         <result property="shopName"    column="shop_name"    />
+        <result property="callCenter"    column="call_center"    />
         <result property="unitPrice" column="unit_price" />
         <result property="promotersModifyUnitPrice" column="promoters_modify_unit_price" />
         <result property="keyword"    column="keyword"    />
@@ -123,7 +124,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectGroupBusinessTaskDetailDtoByTaskIds"
             parameterType="DtGroupBusinessTaskDetailRespDto" resultMap="DtGroupBusinessDetailTaskRespDtoResult">
-        select id,task_id,task_no,platform_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword
+        select id,task_id,task_no,platform_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword
         from dt_business_task_detail
         where
         status != '2'
@@ -134,14 +135,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectDtBusinessTaskDetailListByTaskId"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select id,task_id,task_no,platform_url,picture_url,unit_price_remark,special_remarks,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,salesman_commit_url,promoters_unit_price_remark,merchant_user_id
+        select id,task_id,task_no,platform_url,picture_url,unit_price_remark,special_remarks,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,salesman_commit_url,promoters_unit_price_remark,merchant_user_id
         from dt_business_task_detail
         where task_id = #{id}
         and status != '2'
     </select>
     <select id="selectDtBusinessTaskDetailListByTaskIds"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         where  status != '2'
         and task_id in
@@ -151,7 +152,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectDtBusinessTaskDetailList"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
@@ -170,7 +171,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectDtBusinessTaskDetailListByIds"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
         from dt_business_task_detail
         where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
@@ -250,6 +251,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
             <if test="salesmanLeaderUserId != null">salesman_leader_user_id= #{salesmanLeaderUserId},</if>
             <if test="status != null">status= #{status},</if>
+            <if test="callCenter != null and callCenter != ''">call_center = #{callCenter},</if>
         </trim>
         where id = #{id}
     </update>
@@ -283,9 +285,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
     <insert id="batchInsertDtBusinessTaskDetail">
-        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url ,platform_url, shop_name, unit_price, unit_price_remark, special_remarks, keyword, merchant_user_id) values
+        insert into dt_business_task_detail( id, task_id, task_no, order_date, picture_url ,platform_url, shop_name, call_center, unit_price, unit_price_remark, special_remarks, keyword, merchant_user_id) values
         <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl} ,#{item.platformUrl}, #{item.shopName}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword} , #{item.merchantUserId})
+            ( #{item.id}, #{taskId}, #{item.taskNo}, #{item.orderDate}, #{item.pictureUrl} ,#{item.platformUrl}, #{item.shopName}, #{item.callCenter}, #{item.unitPrice}, #{item.unitPriceRemark}, #{item.specialRemarks}, #{item.keyword} , #{item.merchantUserId})
         </foreach>
     </insert>
 
