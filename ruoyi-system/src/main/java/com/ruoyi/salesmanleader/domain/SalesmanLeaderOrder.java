@@ -21,7 +21,7 @@ public class SalesmanLeaderOrder {
     @Excel(name = "差价", type = Excel.Type.EXPORT)
     private BigDecimal priceDifferences;
     @Excel(name = "文字备注", type = Excel.Type.EXPORT)
-    private String remark;
+    private String groupCompanyRemark;
     @Excel(name = "每组应付金额", type = Excel.Type.EXPORT)
     private BigDecimal unitPrice;
     @Excel(name = "地推人员", type = Excel.Type.EXPORT)
@@ -84,12 +84,12 @@ public class SalesmanLeaderOrder {
         this.priceDifferences = priceDifferences;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getGroupCompanyRemark() {
+        return groupCompanyRemark;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setGroupCompanyRemark(String groupCompanyRemark) {
+        this.groupCompanyRemark = groupCompanyRemark;
     }
 
     public BigDecimal getUnitPrice() {

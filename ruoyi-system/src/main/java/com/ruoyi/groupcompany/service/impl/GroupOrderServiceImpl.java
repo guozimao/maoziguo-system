@@ -150,9 +150,11 @@ public class GroupOrderServiceImpl implements IGroupOrderService
             priceTotal = priceTotal.add(order.getPromotersModifyUnitPrice());
         }
         MerchantOrder merchantOrder = new MerchantOrder();
-        merchantOrder.setPlatformNickname("合计");
+        merchantOrder.setPlatformNickname("小计");
         merchantOrder.setPromotersModifyUnitPrice(priceTotal);
         orders.add(merchantOrder);
+        MerchantOrder merchantOrder2 = new MerchantOrder();
+        merchantOrder2.setPlatformNickname("合计");
         return orders;
     }
 
@@ -164,17 +166,23 @@ public class GroupOrderServiceImpl implements IGroupOrderService
         Map<Long,String> userIdAndNameMap = users.stream().collect(Collectors.toMap(SysUser::getUserId,SysUser::getUserName,(k1,k2) -> k2));
         BigDecimal promotersModifyUnitPriceTotal = new BigDecimal(0);
         BigDecimal unitPriceTotal = new BigDecimal(0);
+        BigDecimal priceDifferences4total = new BigDecimal(0);
+        Integer amount = 0;
         for(SalesmanLeaderOrder order:orders){
             order.setPriceDifferences(order.getPromotersModifyUnitPrice().subtract(order.getUnitPrice()));
             order.setSalesmanLeaderUserName(userIdAndNameMap.get(order.getSalesmanLeaderUserId()));
             order.setAmount(1);
             promotersModifyUnitPriceTotal = promotersModifyUnitPriceTotal.add(order.getPromotersModifyUnitPrice());
             unitPriceTotal = unitPriceTotal.add(order.getUnitPrice());
+            priceDifferences4total = priceDifferences4total.add(order.getPriceDifferences());
+            amount += order.getAmount();
         }
         SalesmanLeaderOrder order = new SalesmanLeaderOrder();
         order.setPlatformNickname("合计");
         order.setPromotersModifyUnitPrice(promotersModifyUnitPriceTotal);
         order.setUnitPrice(unitPriceTotal);
+        order.setAmount(amount);
+        order.setPriceDifferences(priceDifferences4total);
         orders.add(order);
         return orders;
     }

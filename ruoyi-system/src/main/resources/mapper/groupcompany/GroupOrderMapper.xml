@@ -38,6 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskId"    column="task_id"    />
         <result property="orderDate"    column="order_date"    />
         <result property="shopName"    column="shop_name"    />
+        <result property="groupCompanyRemark"    column="group_company_remark"    />
         <result property="unitPrice"    column="unit_price"    />
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="platformNickname" column="platform_nickname" />
@@ -92,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by id desc
     </select>
     <select id="selectSalesmanLeaderOrder" parameterType="SalesmanLeaderOrder" resultMap="SalesmanLeaderOrderResult">
-        select task_id,order_date,shop_name,unit_price,promoters_modify_unit_price,platform_nickname,salesman_leader_user_id
+        select task_id,order_date,shop_name,unit_price,promoters_modify_unit_price,platform_nickname,salesman_leader_user_id,group_company_remark
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
