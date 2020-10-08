@@ -101,6 +101,17 @@ public class SalesmanTodayTaskController extends BaseController
     }
 
     /**
+     * 修改商业任务明细信息
+     */
+    @GetMapping("/validateNickName/{nickName}")
+    @ResponseBody
+    public AjaxResult validateNickName(@PathVariable("nickName")String nickName)
+    {
+        salesmanTaskService.queryRepurchase(nickName);
+        return success("此买家昵称可用");
+    }
+
+    /**
      * 修改保存商业任务信息
      */
     @RequiresPermissions("salesman:todaytask:edit")
@@ -174,6 +185,9 @@ public class SalesmanTodayTaskController extends BaseController
         }
         if(StringUtils.isNull(commitOrder.getPromotersModifyUnitPrice())){
             throw new BusinessException("必须输入价格");
+        }
+        if(StringUtils.isNull(commitOrder.getPlatformNickname())){
+            throw new BusinessException("必须输入买家呢称");
         }
         salesmanTaskService.checkoutStatus(commitOrder.getId());
         salesmanTaskService.queryRepurchase(commitOrder.getPlatformNickname());
