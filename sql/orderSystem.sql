@@ -53,6 +53,7 @@ CREATE TABLE `dt_business_task_detail` (
   `salesman_leader_user_id` bigint(20) DEFAULT NULL COMMENT '业务组长的userid',
   `salesman_user_id` bigint(20) DEFAULT NULL COMMENT '业务员userid',
   `merchant_user_id` bigint(20) DEFAULT NULL COMMENT '商家userid',
+  `group_company_remark` varchar(128) DEFAULT NULL COMMENT '集团备注',
   `status` char(1) NOT NULL DEFAULT '1' COMMENT '订单状态 0 完成 1 待完成 2 停用',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8 COMMENT='商业任务信息明细表';

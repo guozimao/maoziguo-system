@@ -66,6 +66,8 @@ public class GroupOrderRespDto {
 
     private String merchantUserName;
 
+    private String groupCompanyRemark;
+
     private String status;
 
     public Long getId() {
@@ -226,5 +228,13 @@ public class GroupOrderRespDto {
 
     public void setCallCenter(String callCenter) {
         this.callCenter = callCenter;
+    }
+
+    public String getGroupCompanyRemark() {
+        return groupCompanyRemark;
+    }
+
+    public void setGroupCompanyRemark(String groupCompanyRemark) {
+        this.groupCompanyRemark = groupCompanyRemark;
     }
 }

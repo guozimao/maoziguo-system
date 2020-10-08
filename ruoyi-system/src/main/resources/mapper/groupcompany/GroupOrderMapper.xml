@@ -23,6 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="merchantUserId" column="merchant_user_id" />
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
         <result property="salesmanCommitUrl" column="salesman_commit_url"/>
+        <result property="groupCompanyRemark" column="group_company_remark"/>
         <result property="status" column="status" />
     </resultMap>
 
@@ -51,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <select id="selectGroupOrderList" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id,group_company_remark
         from dt_business_task_detail
         <where>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname like concat('%', #{platformNickname}, '%')</if>
@@ -111,7 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by id desc
     </select>
     <select id="selectGroupOrderDtoById" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id,group_company_remark
         from dt_business_task_detail
         where id = #{id}
     </select>

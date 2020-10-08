@@ -85,6 +85,8 @@ public class DtBusinessTaskDetail
 
     private String salesmanCommitUrl;
 
+    private String groupCompanyRemark;
+
     private String status;
 
     public void setId(Long id) 
@@ -274,6 +276,14 @@ public class DtBusinessTaskDetail
 
     public void setCallCenter(String callCenter) {
         this.callCenter = callCenter;
+    }
+
+    public String getGroupCompanyRemark() {
+        return groupCompanyRemark;
+    }
+
+    public void setGroupCompanyRemark(String groupCompanyRemark) {
+        this.groupCompanyRemark = groupCompanyRemark;
     }
 
     @Override

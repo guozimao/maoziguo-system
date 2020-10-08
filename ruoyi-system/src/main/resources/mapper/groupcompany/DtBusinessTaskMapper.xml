@@ -252,6 +252,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="salesmanLeaderUserId != null">salesman_leader_user_id= #{salesmanLeaderUserId},</if>
             <if test="status != null">status= #{status},</if>
             <if test="callCenter != null and callCenter != ''">call_center = #{callCenter},</if>
+            <if test="groupCompanyRemark != null and groupCompanyRemark != ''">group_company_remark = #{groupCompanyRemark},</if>
         </trim>
         where id = #{id}
     </update>
