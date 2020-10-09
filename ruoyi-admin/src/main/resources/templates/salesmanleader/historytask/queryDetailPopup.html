@@ -72,6 +72,52 @@
                 </div>
             </div>
         </form>
+        <div class="modal inmodal" id="goodsPictureModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                        </button>
+                        <h4 class="modal-title">主图<span id="titlePicture"></span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-4 col-sm-offset-4" id="viewer4GoodsPicture">
+                                <a href="javascript:void(0)" class="thumbnail" onclick="closeGoodsPictureWin()">
+                                    <img id="goodsPicture" src="#"  alt="缩略图">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal inmodal" id="buyerPictureModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                        </button>
+                        <h4 class="modal-title">买家拍照<span id="titlePicture4Buyer"></span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-4 col-sm-offset-4" id="viewer4BuyerPicture">
+                                <a href="javascript:void(0)" class="thumbnail" onclick="closeBuyerPictureWin()">
+                                    <img id="buyerPicture" src="#"  alt="缩略图">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
@@ -125,7 +171,7 @@
                     align: 'center',
                     title: '商品主图',
                     formatter: function(value, row, index) {
-                        return $.table.imageView(row.pictureUrl,255,255);
+                        return imageView(row.pictureUrl, index, row.taskNo);
                     }
 				},
                 {
@@ -163,7 +209,7 @@
                     align: 'center',
                     title: '买家拍照',
                     formatter: function(value, row, index) {
-                        return $.table.imageView(row.salesmanCommitUrl,255,255);
+                        return imageView4Buyer(row.salesmanCommitUrl, index, row.taskNo);
                     }
                 },
                 {
@@ -182,6 +228,58 @@
             };
             $.table.init(options);
         });
+
+        var viewer4GoodsPicture = new Viewer(document.getElementById('viewer4GoodsPicture'),{
+            fullscreen:false
+        });
+
+        function closeGoodsPictureWin() {
+            $('#goodsPictureModal').modal('hide');
+        }
+
+        function showPictureDialog(url,index,taskNo) {
+            $("#titlePicture").html("-"+ (parseInt(index) + 1) + '-' + taskNo);
+            $('#goodsPicture').attr('src',url);
+            var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]").find(".goodsPicture");
+            $("#goodsPictureModal").css({'margin-top': trHtml.offset().top});
+            $('#goodsPictureModal').modal('show');
+            $('.modal-open').find('.modal-backdrop').remove();
+        }
+
+        // 图片预览
+        function imageView(url, index, taskNo) {
+            if ($.common.isNotEmpty(url)) {
+                return $.common.sprintf("<img class='img-circle img-xs goodsPicture' data-height='auto' data-width='auto'  src='%s' onclick='showPictureDialog(\"" + url + "\",\"" + index + "\",\"" + taskNo + "\")'/>", url);
+            } else {
+                return $.common.nullToStr(url);
+            }
+        }
+
+        var viewer4BuyerPicture = new Viewer(document.getElementById('viewer4BuyerPicture'),{
+            fullscreen:false
+        });
+
+        function closeBuyerPictureWin() {
+            $('#buyerPictureModal').modal('hide');
+        }
+
+        function showPictureDialog4Buyer(url,index,taskNo) {
+            $("#titlePicture4Buyer").html("-"+ (parseInt(index) + 1) + '-' + taskNo);
+            $('#buyerPicture').attr('src',url);
+            var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]").find(".buyerPicture");
+            $("#buyerPictureModal").css({'margin-top': trHtml.offset().top});
+            $('#buyerPictureModal').modal('show');
+            $('.modal-open').find('.modal-backdrop').remove();
+        }
+
+        // 图片预览
+        function imageView4Buyer(url, index, taskNo) {
+            if ($.common.isNotEmpty(url)) {
+                return $.common.sprintf("<img class='img-circle img-xs buyerPicture' data-height='auto' data-width='auto'  src='%s' onclick='showPictureDialog4Buyer(\"" + url + "\",\"" + index + "\",\"" + taskNo + "\")'/>", url);
+            } else {
+                return $.common.nullToStr(url);
+            }
+        }
     </script>
 </body>
 </html>
