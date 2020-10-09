@@ -79,7 +79,30 @@
                  </div>
              </div>
          </div>
-    </div>
+         <div class="modal inmodal" id="pictureModal" tabindex="-1" role="dialog" aria-hidden="true">
+             <div class="modal-dialog">
+                 <div class="modal-content animated bounceInRight">
+                     <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                         </button>
+                         <h4 class="modal-title">商品主图<span id="titlePicture"></span></h4>
+                     </div>
+                     <div class="modal-body">
+                         <div class="row">
+                             <div class="col-sm-4 col-sm-offset-4" id="viewer4Pictrue">
+                                 <a href="javascript:void(0)" class="thumbnail" onclick="closeWin4Picture()">
+                                     <img id="goodsPicture" src="#"  alt="缩略图">
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="modal-footer">
+                         <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
@@ -105,7 +128,7 @@
                     align: 'center',
                     title: '商品主图',
                     formatter: function(value, row, index) {
-                        return $.table.imageView(row.pictureUrl,255,255);
+                        return imageView(row.pictureUrl);
                     }
                 },
                 {
@@ -200,6 +223,26 @@
             fullscreen:false
         });
 
+        function closeWin4Picture() {
+            $('#pictureModal').modal('hide');
+        }
+
+        var pictrue = new Viewer(document.getElementById('viewer4Pictrue'),{
+            fullscreen:false
+        });
+        function showPictureDialog(url) {
+            $('#goodsPicture').attr('src',url);
+            $('#pictureModal').modal('show');
+        }
+
+        // 图片预览
+        function imageView(url) {
+            if ($.common.isNotEmpty(url)) {
+                return $.common.sprintf("<img class='img-circle img-xs' data-height='auto' data-width='auto'  src='%s' onclick='showPictureDialog(\"" + url + "\")'/>", url);
+            } else {
+                return $.common.nullToStr(url);
+            }
+        }
     </script>
 </body>
 </html>
