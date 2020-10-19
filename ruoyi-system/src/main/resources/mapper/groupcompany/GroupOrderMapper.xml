@@ -44,6 +44,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="platformNickname" column="platform_nickname" />
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
     </resultMap>
+    <insert id="insertOrder" parameterType="GroupOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into dt_business_task_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="taskNo != null and taskNo != ''">task_no,</if>
+            <if test="orderDate != null">order_date,</if>
+            <if test="pictureUrl != null and pictureUrl != ''">picture_url,</if>
+            <if test="platformUrl != null and platformUrl != ''">platform_url,</if>
+            <if test="shopName != null and shopName != ''">shop_name,</if>
+            <if test="callCenter != null and callCenter != ''">call_center,</if>
+            <if test="unitPrice != null">unit_price,</if>
+            <if test="unitPriceRemark != null and unitPriceRemark != ''">unit_price_remark,</if>
+            <if test="specialRemarks != null and specialRemarks != ''">special_remarks,</if>
+            <if test="keyword != null and keyword != ''">keyword,</if>
+            <if test="merchantUserId != null">merchant_user_id</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="taskNo != null and taskNo != ''">#{taskNo},</if>
+            <if test="orderDate != null">#{orderDate},</if>
+            <if test="pictureUrl != null and pictureUrl != ''">#{pictureUrl},</if>
+            <if test="platformUrl != null and platformUrl != ''">#{platformUrl},</if>
+            <if test="shopName != null and shopName != ''">#{shopName},</if>
+            <if test="callCenter != null and callCenter != ''">#{callCenter},</if>
+            <if test="unitPrice != null">#{unitPrice},</if>
+            <if test="unitPriceRemark != null and unitPriceRemark != ''">#{unitPriceRemark},</if>
+            <if test="specialRemarks != null and specialRemarks != ''">#{specialRemarks},</if>
+            <if test="keyword != null and keyword != ''">#{keyword},</if>
+            <if test="merchantUserId != null">#{merchantUserId}</if>
+        </trim>
+    </insert>
 
     <update id="updateOrderPictureUrlById">
         update dt_business_task_detail set picture_url = #{pictureUrl} where id in

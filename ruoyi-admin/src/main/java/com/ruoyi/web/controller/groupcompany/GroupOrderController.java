@@ -10,10 +10,12 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
+import com.ruoyi.groupcompany.domain.GroupOrder;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 import com.ruoyi.groupcompany.service.IGroupOrderService;
 import com.ruoyi.merchant.domain.MerchantOrder;
+import com.ruoyi.repurchase.domain.MemberConsumptionTrack;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -133,5 +135,27 @@ public class GroupOrderController extends BaseController {
             return error("上传图片失败");
         }
         return toAjax(groupOrderService.editPicture(id,OssClientUtils.URL2OssParam(url)));
+    }
+
+    /**
+     * 补单数据导入
+     */
+    @Log(title = "复购管理", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    @ResponseBody
+    public AjaxResult importData(MultipartFile file) throws Exception
+    {
+        ExcelUtil<GroupOrder> util = new ExcelUtil<GroupOrder>(GroupOrder.class);
+        List<GroupOrder> orderList = util.importExcel(file.getInputStream());
+        String message = groupOrderService.importOrder(orderList);
+        return AjaxResult.success(message);
+    }
+
+    @GetMapping("/importTemplate")
+    @ResponseBody
+    public AjaxResult importTemplate()
+    {
+        ExcelUtil<GroupOrder> util = new ExcelUtil<GroupOrder>(GroupOrder.class);
+        return util.importTemplateExcel("补单数据");
     }
 }

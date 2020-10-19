@@ -1,6 +1,7 @@
 package com.ruoyi.groupcompany.mapper;
 
 
+import com.ruoyi.groupcompany.domain.GroupOrder;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 import com.ruoyi.merchant.domain.MerchantOrder;
@@ -30,4 +31,6 @@ public interface GroupOrderMapper
     int updateOrderPictureUrlById(@Param("list") List<Long> orderIds,@Param("pictureUrl") String ossParam);
 
     SalesmanLeaderOrder selectSalesmanLeaderOrderById(Long id);
+
+    Long insertOrder(GroupOrder order);
 }

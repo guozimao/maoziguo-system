@@ -1,6 +1,7 @@
 package com.ruoyi.groupcompany.service.impl;
 
 
+import com.ruoyi.businessteam.domain.MerchantShopRelation;
 import com.ruoyi.common.constant.QueryParaConstants;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
@@ -9,6 +10,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTask;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
+import com.ruoyi.groupcompany.domain.GroupOrder;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
@@ -19,9 +21,11 @@ import com.ruoyi.groupcompany.mapper.GroupOrderMapper;
 import com.ruoyi.groupcompany.service.IGroupOrderService;
 
 import com.ruoyi.merchant.domain.MerchantOrder;
+import com.ruoyi.repurchase.domain.MemberConsumptionTrack;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 import com.ruoyi.system.domain.SysUser;
 
+import com.ruoyi.system.mapper.DtMerchantMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
 
 import org.slf4j.Logger;
@@ -31,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +57,9 @@ public class GroupOrderServiceImpl implements IGroupOrderService
 
     @Autowired
     private DtBusinessTaskMapper dtBusinessTaskMapper;
+
+    @Autowired
+    private DtMerchantMapper dtMerchantMapper;
 
     @Override
     public List<GroupOrderRespDto> selectGroupDtBusinessTaskDtoList(GroupOrderReqDto groupOrderReqDto) {
@@ -213,6 +221,86 @@ public class GroupOrderServiceImpl implements IGroupOrderService
             return true;
         }
         return !order.getPlatformNickname().equals(dtBusinessTaskDetail.getPlatformNickname());
+    }
+
+    @Override
+    public String importOrder(List<GroupOrder> orderList) {
+        vaildBusinessTaskDetailList(orderList);
+        if (StringUtils.isNull(orderList) || orderList.size() == 0)
+        {
+            throw new BusinessException("导入订单不能为空！");
+        }
+        int successNum = 0;
+        int failureNum = 0;
+
+        StringBuilder successMsg = new StringBuilder();
+        StringBuilder failureMsg = new StringBuilder();
+        doProcessOrder4MerchantId(orderList);
+        for (GroupOrder order : orderList)
+        {
+            try
+            {
+                order.setOrderDate(new Date());
+                //设置未分配任务
+                order.setTaskId(0L);
+                groupOrderMapper.insertOrder(order);
+                successNum++;
+                successMsg.append("<br/>" + successNum + "、订单编号：" + order.getId() + " 店铺名称：" + order.getShopName() + " 导入成功");
+
+            }
+            catch (Exception e)
+            {
+                failureNum++;
+                String msg = "<br/>" + failureNum + "、订单编号：" + order.getId() + " 店铺名称：" + order.getShopName() + " 导入失败：";
+                failureMsg.append(msg + e.getMessage());
+                log.error(msg, e);
+            }
+        }
+        if (failureNum > 0)
+        {
+            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确，错误如下：");
+            throw new BusinessException(failureMsg.toString());
+        }
+        else
+        {
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
+        }
+        return successMsg.toString();
+    }
+
+    private void doProcessOrder4MerchantId(List<GroupOrder> orderList) {
+        Set<String> shopNames = orderList.stream().map(GroupOrder::getShopName).collect(Collectors.toSet());
+        List<MerchantShopRelation> merchantShopRelations = dtMerchantMapper.selectMerchantShopRelationByShopNames(shopNames);
+        if(shopNames.size() != merchantShopRelations.size()){
+            throw new BusinessException("<br/>存在导入的店铺名没有绑定商家，所以无法导入该任务");
+        }
+        Map<String,Long> shopnameAndMerchantUserIdMap = merchantShopRelations.stream().collect(Collectors.toMap(MerchantShopRelation::getShopName,MerchantShopRelation::getMerchantUserId,(k1,k2) -> k2));
+        for(GroupOrder order:orderList){
+            order.setMerchantUserId(shopnameAndMerchantUserIdMap.get(order.getShopName()));
+        }
+    }
+
+    private void vaildBusinessTaskDetailList(List<GroupOrder> vaildList) {
+        if (StringUtils.isNull(vaildList) || vaildList.size() == 0)
+        {
+            throw new BusinessException("导入的订单数据不能为空！");
+        }
+        StringBuffer vailedMsg = new StringBuffer();
+        for(GroupOrder groupOrder:vaildList){
+            if(StringUtils.isEmpty(groupOrder.getTaskNo())){
+                vailedMsg.append("<br/>" + groupOrder.getShopName()).append("任务代码不能为空");
+            }
+            if(StringUtils.isEmpty(groupOrder.getShopName())){
+                vailedMsg.append("<br/>" + groupOrder.getTaskNo()).append("店铺名不能为空");
+            }
+            if(StringUtils.isNull(groupOrder.getUnitPrice())){
+                vailedMsg.append("<br/>" + groupOrder.getShopName()).append("单价不能为空");
+            }
+        }
+        String msg = vailedMsg.toString();
+        if(StringUtils.isNotEmpty(msg)){
+            throw new BusinessException(msg);
+        }
     }
 
 }

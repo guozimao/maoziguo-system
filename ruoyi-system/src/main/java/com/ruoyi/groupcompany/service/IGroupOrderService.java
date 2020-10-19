@@ -1,6 +1,7 @@
 package com.ruoyi.groupcompany.service;
 
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
+import com.ruoyi.groupcompany.domain.GroupOrder;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 import com.ruoyi.merchant.domain.MerchantOrder;
@@ -28,4 +29,6 @@ public interface IGroupOrderService {
     int editPicture(Long id, String ossParam);
 
     boolean hasNoSamePlatformNickname4DB(DtBusinessTaskDetail dtBusinessTaskDetail);
+
+    String importOrder(List<GroupOrder> orderList);
 }
