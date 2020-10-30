@@ -336,6 +336,12 @@ public class GroupOrderServiceImpl implements IGroupOrderService
         if(dtBusinessTask.getOrderStatus().equals("0")){
             throw new BusinessException("任务已经完成，撤回不了订单");
         }
+        GroupOrderReqDto groupOrderReqDto = new GroupOrderReqDto();
+        groupOrderReqDto.setTaskId(dtBusinessTask.getId());
+        List<GroupOrderRespDto> groupOrderRespDtos = groupOrderMapper.selectGroupOrderList(groupOrderReqDto);
+        if(groupOrderRespDtos.size() <= 1){
+            throw new BusinessException("任务里至少要有一个订单，撤回不了订单");
+        }
         return groupOrderMapper.supplementOrder(groupOrderRespDto.getId(),0L);
     }
 
