@@ -93,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectDtBusinessTaskById" parameterType="Long" resultMap="DtBusinessTaskResult">
-        select a.id, a.group_allocate_time, a.dept_id, a.order_status, a.allocate_time, a.feedback_picture_url1, a.feedback_picture_url2, a.feedback_picture_url3, a.feedback_picture_url4, a.feedback_picture_url5, a.completion_time, a.create_time,a.remark
+        select a.id, a.group_allocate_time, a.dept_id, a.order_status, a.allocate_time, a.feedback_picture_url1, a.feedback_picture_url2, a.feedback_picture_url3, a.feedback_picture_url4, a.feedback_picture_url5, a.completion_time, a.create_time,a.remark,a.required_completion_date
         from dt_business_task a
         where a.id = #{id}
         and a.order_status != '2'
@@ -132,6 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="taskId" collection="array" open="(" separator="," close=")">
             #{taskId}
         </foreach>
+        order by id desc
     </select>
     <select id="selectDtBusinessTaskDetailListByTaskId"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
@@ -139,6 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from dt_business_task_detail
         where task_id = #{id}
         and status != '2'
+        order by id desc
     </select>
     <select id="selectDtBusinessTaskDetailListByTaskIds"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">

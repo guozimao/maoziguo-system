@@ -13,6 +13,8 @@ public class GroupOrderRespDto {
     /** id */
     private Long id;
 
+    private Long taskId;
+
     /** 任务编码 */
     @Excel(name = "任务代码")
     private String taskNo;
@@ -76,6 +78,14 @@ public class GroupOrderRespDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
     }
 
     public String getTaskNo() {

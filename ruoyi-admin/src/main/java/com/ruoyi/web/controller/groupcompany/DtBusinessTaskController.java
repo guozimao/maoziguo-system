@@ -4,13 +4,20 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
+import com.ruoyi.groupcompany.domain.GroupOrder;
 import com.ruoyi.groupcompany.domain.reponse.DtGroupBusinessTaskRespDto;
+import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.AssginReqDto;
 import com.ruoyi.groupcompany.domain.request.DtGroupBusinessTaskReqDto;
+import com.ruoyi.groupcompany.domain.request.SupplementOrderReqDto;
 import com.ruoyi.groupcompany.service.IGroupOrderService;
+import com.ruoyi.salesman.domain.SalesmanTaskDetail;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
+import com.ruoyi.salesmanleader.domain.request.AssginSalesmanReqDto;
 import com.ruoyi.system.domain.SysDept;
+import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,25 +214,60 @@ public class DtBusinessTaskController extends BaseController
     @GetMapping("/queryDetailPopup/{id}")
     public String queryDetail(@PathVariable("id") Long id, ModelMap mmap)
     {
-        BigDecimal totalPrincipal = new BigDecimal(0);
-        BigDecimal actualTotalPrincipal = new BigDecimal(0);
         DtBusinessTask dtBusinessTask = dtBusinessTaskService.selectDtBusinessTaskById(id);
-        List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskService.selectDtBusinessTaskDetailList(id);
 
-        for(DtBusinessTaskDetail detail: dtBusinessTaskDetails){
-            totalPrincipal = totalPrincipal.add(detail.getUnitPrice());
-            actualTotalPrincipal = actualTotalPrincipal.add(detail.getPromotersModifyUnitPrice());
-        }
         SysDept sysDept = sysDeptService.selectDeptById(dtBusinessTask.getDeptId());
         if(StringUtils.isNotNull(sysDept)){
             mmap.put("deptName",sysDept.getDeptName());
         }
         mmap.put("dtBusinessTask", dtBusinessTask);
-        mmap.put("dtBusinessTaskDetail", dtBusinessTaskDetails);
-        mmap.put("orderNumber",dtBusinessTaskDetails.size());
-        mmap.put("totalPrincipal", totalPrincipal);
-        mmap.put("actualTotalPrincipal", actualTotalPrincipal);
         return prefix + "/queryDetailPopup";
+    }
+
+    /**
+     * 撤单
+     */
+    @PostMapping( "/withdraw")
+    @ResponseBody
+    public AjaxResult withdraw(Long id)
+    {
+        return toAjax(groupOrderService.withdraw(id));
+    }
+
+    /**
+     * 查看任务信息明细
+     */
+    @GetMapping("/taskDetailByTaskId/{id}")
+    @ResponseBody
+    public TableDataInfo taskDetailByTaskId(@PathVariable("id") Long id)
+    {
+        startPage();
+        List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskService.selectDtBusinessTaskDetailList(id);
+        return getDataTable(dtBusinessTaskDetails);
+    }
+
+    /**
+     * 查询今日的补单列表
+     */
+    @PostMapping("/supplementOrderList")
+    @ResponseBody
+    public TableDataInfo supplementOrderList()
+    {
+        startPage();
+        List<GroupOrderRespDto> list = groupOrderService.selectGroupOrderRespDtoListWithSupplementOrder();
+        return getDataTable(list);
+    }
+
+    @GetMapping("/supplementOrderPopupList")
+    public String supplementOrderPopupList()
+    {
+        return prefix + "/supplementOrderPopup";
+    }
+
+    @PostMapping("/supplementOrder")
+    @ResponseBody
+    public AjaxResult supplementOrder(SupplementOrderReqDto supplementOrderReqDto){
+        return toAjax(groupOrderService.supplementOrder(supplementOrderReqDto));
     }
 
 }

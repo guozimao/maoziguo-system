@@ -140,7 +140,6 @@ public class GroupOrderController extends BaseController {
     /**
      * 补单数据导入
      */
-    @Log(title = "复购管理", businessType = BusinessType.IMPORT)
     @PostMapping("/importData")
     @ResponseBody
     public AjaxResult importData(MultipartFile file) throws Exception

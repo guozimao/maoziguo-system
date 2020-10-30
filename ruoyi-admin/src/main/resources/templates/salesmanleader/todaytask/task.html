@@ -199,7 +199,6 @@
             //当点击‘确定'按钮的时候，获取弹出层返回的值
             var res = window["layui-layer-iframe" + index].callbackdata();
             //打印返回的值，看是否有我们想返回的值。
-            console.log(res);
             if(res){
                 $.operate.submit(prefix + "/assgin","post","json",{ids:selectedIds,salesmanUserId:res[0].userId});
             }

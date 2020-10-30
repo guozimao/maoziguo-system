@@ -4,6 +4,7 @@ import com.ruoyi.groupcompany.domain.DtBusinessTaskDetail;
 import com.ruoyi.groupcompany.domain.GroupOrder;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
+import com.ruoyi.groupcompany.domain.request.SupplementOrderReqDto;
 import com.ruoyi.merchant.domain.MerchantOrder;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 
@@ -31,4 +32,10 @@ public interface IGroupOrderService {
     boolean hasNoSamePlatformNickname4DB(DtBusinessTaskDetail dtBusinessTaskDetail);
 
     String importOrder(List<GroupOrder> orderList);
+
+    List<GroupOrderRespDto> selectGroupOrderRespDtoListWithSupplementOrder();
+
+    int supplementOrder(SupplementOrderReqDto supplementOrderReqDto);
+
+    int withdraw(Long id);
 }

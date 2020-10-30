@@ -33,4 +33,8 @@ public interface GroupOrderMapper
     SalesmanLeaderOrder selectSalesmanLeaderOrderById(Long id);
 
     Long insertOrder(GroupOrder order);
+
+    List<GroupOrderRespDto> selectGroupOrderWithSupplementList();
+
+    int supplementOrder(@Param("id") Long orderId, @Param("taskId") Long taskId);
 }

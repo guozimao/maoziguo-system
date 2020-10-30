@@ -82,6 +82,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </update>
+    <update id="supplementOrder">
+        update dt_business_task_detail set  task_id = #{taskId}
+        where id = #{id}
+    </update>
 
     <select id="selectGroupOrderList" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
         select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id,group_company_remark
@@ -99,6 +103,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if >
             <if test="status!=null and status != ''">
                 and status = #{status}
+            </if>
+            <if test="taskId != null">
+                and task_id = #{taskId}
             </if>
         </where>
         order by id desc
@@ -144,7 +151,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by id desc
     </select>
     <select id="selectGroupOrderDtoById" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id,group_company_remark
+        select id,task_no,task_id,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id,group_company_remark
         from dt_business_task_detail
         where id = #{id}
     </select>
@@ -162,6 +169,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from dt_business_task_detail
         where
             id = #{id}
+    </select>
+
+    <select id="selectGroupOrderWithSupplementList" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
+        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id,group_company_remark
+        from dt_business_task_detail
+        where
+            order_date = CURDATE()
+            and task_id = 0
+        order by id desc
     </select>
 
 </mapper>

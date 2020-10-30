@@ -15,6 +15,7 @@ import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
 
+import com.ruoyi.groupcompany.domain.request.SupplementOrderReqDto;
 import com.ruoyi.groupcompany.mapper.DtBusinessTaskMapper;
 import com.ruoyi.groupcompany.mapper.GroupOrderMapper;
 
@@ -266,6 +267,76 @@ public class GroupOrderServiceImpl implements IGroupOrderService
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
         }
         return successMsg.toString();
+    }
+
+    @Override
+    public List<GroupOrderRespDto> selectGroupOrderRespDtoListWithSupplementOrder() {
+        List<GroupOrderRespDto> orders = groupOrderMapper.selectGroupOrderWithSupplementList();
+        if(orders.isEmpty()){
+            return Collections.emptyList();
+        }
+        List<Long> userIds = orders.stream().map(GroupOrderRespDto::getSalesmanLeaderUserId).collect(Collectors.toList());
+        userIds.addAll(orders.stream().map(GroupOrderRespDto::getMerchantUserId).collect(Collectors.toList()));
+        List<SysUser> sysUsers = sysUserMapper.selectUserListByIds(userIds);
+        Map<Long,String> userIdAndName = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserId, SysUser::getUserName, (key1, key2) -> key2));
+        for(GroupOrderRespDto item:orders){
+            item.setSalesmanLeaderName(userIdAndName.get(item.getSalesmanLeaderUserId()));
+            item.setMerchantUserName(userIdAndName.get(item.getMerchantUserId()));
+            item.setPictureUrl(OssClientUtils.getPictureUrlByOssParam(item.getPictureUrl()));
+            item.setSalesmanCommitUrl(OssClientUtils.getPictureUrlByOssParam(item.getSalesmanCommitUrl()));
+        }
+        return orders;
+    }
+
+    @Override
+    public int supplementOrder(SupplementOrderReqDto supplementOrderReqDto) {
+        if(StringUtils.isNull(supplementOrderReqDto.getOrderId())){
+            throw new BusinessException("订单id不能为空");
+        }else if(StringUtils.isNull(supplementOrderReqDto.getTaskId())){
+            throw new BusinessException("任务id不能为空");
+        }
+
+        DtBusinessTask dtBusinessTask = dtBusinessTaskMapper.selectDtBusinessTaskById(supplementOrderReqDto.getTaskId());
+        if(dtBusinessTask == null){
+            throw new BusinessException("查询不到任务信息");
+        }else if(!DateUtils.isSameDay(dtBusinessTask.getRequiredCompletionDate(),new Date())){
+            throw new BusinessException("任务日期不是当天的，不允许补单");
+        }else if(dtBusinessTask.getOrderStatus().equals("0")){
+            throw new BusinessException("任务已经完成了，不允许补单");
+        }
+
+        GroupOrderRespDto groupOrderRespDto = groupOrderMapper.selectGroupOrderDtoById(supplementOrderReqDto.getOrderId());
+        if(groupOrderRespDto == null){
+            throw new BusinessException("查询不到订单");
+        }else if(!DateUtils.isSameDay(groupOrderRespDto.getOrderDate(),new Date())){
+            throw new BusinessException("订单日期不是当天的，不允许补单");
+        }
+
+        GroupOrderReqDto groupOrderReqDto = new GroupOrderReqDto();
+        groupOrderReqDto.setTaskId(supplementOrderReqDto.getTaskId());
+        List<GroupOrderRespDto> groupOrderRespDtos = groupOrderMapper.selectGroupOrderList(groupOrderReqDto);
+        Set<String> taskNoSet = groupOrderRespDtos.stream().map(GroupOrderRespDto::getTaskNo).collect(Collectors.toSet());
+        if(taskNoSet.contains(groupOrderRespDto.getTaskNo())){
+            throw new BusinessException("任务代码有重复，不允许补单");
+        }
+
+        return groupOrderMapper.supplementOrder(supplementOrderReqDto.getOrderId(),supplementOrderReqDto.getTaskId());
+    }
+
+    @Override
+    public int withdraw(Long id) {
+
+        GroupOrderRespDto groupOrderRespDto = groupOrderMapper.selectGroupOrderDtoById(id);
+        if(groupOrderRespDto.getStatus().equals("0")){
+            throw new BusinessException("订单已经完成，撤回不了");
+        }else if(groupOrderRespDto.getTaskId().equals(0L)){
+            throw new BusinessException("订单已经撤回,无需再撤回");
+        }
+        DtBusinessTask dtBusinessTask = dtBusinessTaskMapper.selectDtBusinessTaskById(groupOrderRespDto.getTaskId());
+        if(dtBusinessTask.getOrderStatus().equals("0")){
+            throw new BusinessException("任务已经完成，撤回不了订单");
+        }
+        return groupOrderMapper.supplementOrder(groupOrderRespDto.getId(),0L);
     }
 
     private void doProcessOrder4MerchantId(List<GroupOrder> orderList) {

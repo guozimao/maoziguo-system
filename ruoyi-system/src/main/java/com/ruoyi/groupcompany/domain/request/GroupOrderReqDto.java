@@ -23,6 +23,8 @@ public class GroupOrderReqDto {
     /** 00系统用户 01业务组长 02业务员 03商家 */
     private String exportType;
 
+    private Long taskId;
+
     public Date getStartDate() {
         return startDate;
     }
@@ -101,5 +103,13 @@ public class GroupOrderReqDto {
 
     public void setExportType(String exportType) {
         this.exportType = exportType;
+    }
+
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
     }
 }

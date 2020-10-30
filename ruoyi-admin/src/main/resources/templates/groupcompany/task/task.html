@@ -60,6 +60,7 @@
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
         var prefix = ctx + "groupcompany/task";
         var selectedIds = '';
+        var selectedId = '';
         $(function() {
             var options = {
                 url: prefix + "/list",
@@ -222,6 +223,7 @@
                     formatter: function(value, row, index) {
                         var actions = [];
                         actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="assign(\'' + row.id + '\')"><i class="fa fa-at"></i>调配</a> ');
+                        actions.push('<a class="btn btn-warning btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="supplementOrder(\'' + row.id + '\')"><i class="fa fa-plus-square-o"></i>补单</a> ');
                         actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" style="margin-top: 5px" onclick="searchDetail(\'' + row.id + '\')"><i class="fa fa fa-search"></i>查看</a>');
                         actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" style="margin-top: 5px"  onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
@@ -288,6 +290,22 @@
 
         function searchDetail(id) {
             $.modal.openFullWithBlank("任务详情明细", prefix + "/queryDetailPopup/" + id);
+        }
+
+        function supplementOrder(id) {
+            selectedId = id;
+            $.modal.open("选择补单数据", prefix + "/supplementOrderPopupList",'','',yes);
+        }
+
+        var yes = function(index){
+            //当点击‘确定'按钮的时候，获取弹出层返回的值
+            var res = window["layui-layer-iframe" + index].callbackdata();
+            //打印返回的值，看是否有我们想返回的值。
+            if(res){
+                $.operate.submit(prefix + "/supplementOrder","post","json",{taskId:selectedId,OrderId:res[0].id});
+            }
+            //最后关闭弹出层
+            layer.close(index);
         }
     </script>
 </body>
