@@ -198,6 +198,14 @@ public class SalesmanTaskServiceImpl implements ISalesmanTaskService
     }
 
     @Override
+    public int nicknameVerification2PassAndSet(Long id,String nickname) {
+        if(StringUtils.isNull(id)){
+            throw new BusinessException("订单id为空");
+        }
+        return salesmanTaskMapper.nicknameVerification2PassAndSet(id, nickname);
+    }
+
+    @Override
     public void queryRepurchase(String platformNickname) {
         if(StringUtils.isEmpty(platformNickname)){
             throw new BusinessException("买家昵称不为空");

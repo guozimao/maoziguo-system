@@ -15,6 +15,7 @@ import com.ruoyi.salesman.domain.reponse.CommitOrder;
 import com.ruoyi.salesman.domain.reponse.CommitTask;
 import com.ruoyi.salesman.domain.reponse.SalesmanTaskRespDto;
 import com.ruoyi.salesman.domain.request.SalesmanTaskReqDto;
+import com.ruoyi.salesman.domain.request.validateNicknameReqDto;
 import com.ruoyi.salesman.service.ISalesmanTaskService;
 
 import com.ruoyi.system.domain.SysDept;
@@ -101,14 +102,14 @@ public class SalesmanTodayTaskController extends BaseController
     }
 
     /**
-     * 修改商业任务明细信息
+     * 验证昵称
      */
-    @GetMapping("/validateNickName/{nickName}")
+    @PostMapping("/validateNickName")
     @ResponseBody
-    public AjaxResult validateNickName(@PathVariable("nickName")String nickName)
+    public AjaxResult validateNickName(validateNicknameReqDto dto)
     {
-        salesmanTaskService.queryRepurchase(nickName);
-        return success("此买家昵称可用");
+        salesmanTaskService.queryRepurchase(dto.getPlatformNickname());
+        return toAjax(salesmanTaskService.nicknameVerification2PassAndSet(dto.getId(),dto.getPlatformNickname()));
     }
 
     /**
@@ -167,7 +168,6 @@ public class SalesmanTodayTaskController extends BaseController
     public AjaxResult commitOrder(@RequestParam("fileinput") MultipartFile[] file, MultipartHttpServletRequest multipartHttpServletRequest) throws IOException {
         CommitOrder commitOrder = new CommitOrder();
         commitOrder.setId(Long.valueOf(multipartHttpServletRequest.getParameter("id")));
-        commitOrder.setPlatformNickname(multipartHttpServletRequest.getParameter("platformNickname"));
         commitOrder.setPromotersUnitPriceRemark(multipartHttpServletRequest.getParameter("promotersUnitPriceRemark"));
         commitOrder.setPromotersModifyUnitPrice(new BigDecimal(multipartHttpServletRequest.getParameter("promotersModifyUnitPrice")));
         vaildateParam4CommitOrder(file.length,commitOrder);
@@ -186,11 +186,7 @@ public class SalesmanTodayTaskController extends BaseController
         if(StringUtils.isNull(commitOrder.getPromotersModifyUnitPrice())){
             throw new BusinessException("必须输入价格");
         }
-        if(StringUtils.isNull(commitOrder.getPlatformNickname())){
-            throw new BusinessException("必须输入买家呢称");
-        }
         salesmanTaskService.checkoutStatus(commitOrder.getId());
-        salesmanTaskService.queryRepurchase(commitOrder.getPlatformNickname());
     }
 
     /**

@@ -73,6 +73,8 @@ public class SalesmanTaskDetail
 
     private String platformNickname;
 
+    private String hasNicknameVerification;
+
     private Long salesmanLeaderUserId;
 
     private Long merchantUserId;
@@ -262,6 +264,14 @@ public class SalesmanTaskDetail
 
     public void setCallCenter(String callCenter) {
         this.callCenter = callCenter;
+    }
+
+    public String getHasNicknameVerification() {
+        return hasNicknameVerification;
+    }
+
+    public void setHasNicknameVerification(String hasNicknameVerification) {
+        this.hasNicknameVerification = hasNicknameVerification;
     }
 
     @Override

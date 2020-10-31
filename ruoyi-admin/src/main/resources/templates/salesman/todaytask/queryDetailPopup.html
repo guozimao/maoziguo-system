@@ -43,6 +43,30 @@
                 </div>
             </div>
         </form>
+        <div class="modal inmodal" id="gavelModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                        </button>
+                        <h4 class="modal-title">呢称验证<span id="titleGavel"></span></h4>
+                    </div>
+                    <div class="modal-body">
+                        <input id="gavelId" name="gavelId" type="text" hidden>
+                        <div class="row">
+                            <label class="col-sm-3 control-label"><span style="color:red">*</span>买家昵称：</label>
+                            <div class="col-sm-9">
+                                <input id="platformNickname" name="platformNickname" type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" onclick="validateNickName()">确定</button>
+                        <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal inmodal" id="orderModal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content animated bounceInRight">
@@ -53,12 +77,6 @@
                     </div>
                     <div class="modal-body">
                         <input id="orderId" name="orderId" type="text" hidden>
-                        <div class="row">
-                            <label class="col-sm-3 control-label"><span style="color:red">*</span>买家昵称：</label>
-                            <div class="col-sm-9">
-                                <input id="platformNickname" name="platformNickname" type="text" class="form-control">
-                            </div>
-                        </div>
                         <div class="row">
                             <label class="col-sm-3 control-label"><span style="color:red">*</span>拍摄照片：</label>
                             <div class="col-sm-9" >
@@ -81,7 +99,6 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-info" onclick="validateNickName()">校验昵称</button>
                         <button type="button" class="btn btn-success" onclick="commitOrder()">确定</button>
                         <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
                     </div>
@@ -139,6 +156,7 @@
     <th:block th:include="include :: bootstrap-fileinput-js" />
     <script th:inline="javascript">
         var orderStatusDatas = [[${@dict.getType('sys_order_status')}]];
+        var nicknameVerificationDatas = [[${@dict.getType('nickname_verification')}]];
 
         $(function() {
             $('#orderModal').on('hide.bs.modal', function () {
@@ -201,7 +219,6 @@
                 uploadExtraData: function(previewId, index) {   //额外参数的关键点
                     return {
                         promotersUnitPriceRemark: $("#promotersUnitPriceRemark").val(),
-                        platformNickname: $("#platformNickname").val(),
                         id: $("#orderId").val(),
                         promotersModifyUnitPrice: $("#promotersModifyUnitPrice").val()
                     };
@@ -250,67 +267,153 @@
                 {
                     field: 'taskNo',
                     align: 'center',
-                    title: '任务编码'
+                    title: '任务编码',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
 				},
                 {
                     field: 'orderDate',
                     align: 'center',
-                    title: '订单日期'
+                    title: '订单日期',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
 				},
                 {
                     field: 'shopName',
                     align: 'center',
-                    title: '店铺名'
+                    title: '店铺名',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'callCenter',
                     align: 'center',
-                    title: '客服'
+                    title: '客服',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'pictureUrl',
                     align: 'center',
                     title: '商品主图',
                     formatter: function(value, row, index) {
-                        return imageView(row.pictureUrl, index, row.taskNo);
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>请验证呢称</span>"
+                        }{
+                            return imageView(row.pictureUrl, index, row.taskNo);
+                        }
                     }
 				},
                 {
                     field: 'keyword',
                     align: 'center',
-                    title: '关键词'
+                    title: '关键词',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'unitPrice',
                     align: 'center',
-                    title: '单价/元'
+                    title: '单价/元',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
 				},
                 {
                     field: 'unitPriceRemark',
                     align: 'center',
-                    title: '单价备注'
+                    title: '单价备注',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'specialRemarks',
                     align: 'center',
-                    title: '特殊备注'
+                    title: '特殊备注',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'platformNickname',
                     align: 'center',
-                    title: '买家昵称'
+                    title: '买家昵称',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
+                },
+                {
+                    field: 'hasNicknameVerification',
+                    align: 'center',
+                    title: '昵称验证',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(nicknameVerificationDatas, value);
+                    }
                 },
                 {
                     field: 'promotersModifyUnitPrice',
                     align: 'center',
-                    title: '实际单价/元'
+                    title: '实际单价/元',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
                 },
                 {
                     field: 'salesmanCommitUrl',
                     align: 'center',
                     title: '买家拍照',
                     formatter: function(value, row, index) {
-                        return imageView4Buyer(row.salesmanCommitUrl, index, row.taskNo);
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>请验证呢称</span>"
+                        }else{
+                            return imageView4Buyer(row.salesmanCommitUrl, index, row.taskNo);
+                        }
                     }
                 },
                 {
@@ -325,19 +428,46 @@
                     field: 'promotersUnitPriceRemark',
                     align: 'center',
                     title: '买家备注',
+                    formatter: function(value, row, index) {
+                        if(row.hasNicknameVerification === "1"){
+                            return "<span class='mosaic'>" + value + "</span>";
+                        }else{
+                            return value;
+                        }
+                    }
                 },
                 {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
-                        var actions = [];
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrderDialog(\'' + index + "\',\'" + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark  +  "\',\'" + row.id + "\',\'" + row.promotersModifyUnitPrice + "\',\'" + row.status  + "\',\'" + row.taskNo + "\',\'" + (index+1) + '\')"><i class="fa fa-check mysubmit"></i>提交</a>');
-                        return actions.join('');
+                        if(row.hasNicknameVerification === "1"){
+                            var actions = [];
+                            actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="gavelDialog(\'' + index +  "\',\'" + row.id + "\',\'"  + row.taskNo + "\',\'" + (index+1) + '\')"><i class="fa fa-gavel myGavel"></i>昵称验证</a>');
+                            return actions.join('');
+                        }else{
+                            var actions = [];
+                            actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="commitOrderDialog(\'' + index + "\',\'" + row.salesmanCommitUrl + "\',\'" + row.promotersUnitPriceRemark  +  "\',\'" + row.id + "\',\'" + row.promotersModifyUnitPrice + "\',\'" + row.status  + "\',\'" + row.taskNo + "\',\'" + (index+1) + '\')"><i class="fa fa-check mysubmit"></i>提交</a>');
+                            return actions.join('');
+                        }
                     }
                 }]
             };
             $.table.init(options);
         });
+
+        function gavelDialog(index,id,taskNo,rank) {
+            if(status === '0'){
+                layer.alert("此订单已经提交，无需重复提交");
+                return;
+            }
+            $("#titleGavel").html("-"+ rank + '-' + taskNo);
+            $("#gavelId").val(id);
+
+            var trHtml = $("#form-task-detail-query").find("tr[data-index=" + index + "]").find(".myGavel");
+            $("#gavelModal").css({'margin-top': trHtml.offset().top});
+            $('#gavelModal').modal('show');
+            $('.modal-open').find('.modal-backdrop').remove();
+        }
 
         function commitOrderDialog(index,salesmanCommitUrl,promotersUnitPriceRemark,id,promotersModifyUnitPrice,status,taskNo,rank) {
             if(status === '0'){
@@ -366,12 +496,7 @@
 
         function commitOrder() {
             var promotersModifyUnitPriceReg = /(^[1-9]\d*(\.\d{1,2})?$)|(^0(\.\d{1,2})?$)/;
-            var platformNickname= $("#platformNickname").val();
             var promotersModifyUnitPrice = $("#promotersModifyUnitPrice").val();
-            if(platformNickname.trim() === ''){
-                layer.alert('买家昵称不能为空');
-                return;
-            }
             if(!promotersModifyUnitPriceReg.test(promotersModifyUnitPrice)){
                 layer.alert('请输入正确的产品价格:整数或者保留两位小数');
                 return;
@@ -380,12 +505,14 @@
         }
 
         function validateNickName() {
-            var platformNickname= $("#platformNickname").val();
+            var platformNickname = $("#platformNickname").val();
+            var gavelId = $("#gavelId").val();
             if(platformNickname.trim() === ''){
                 layer.alert('买家昵称不能为空');
                 return;
             }
-            $.operate.get("/salesman/todaytask/validateNickName/" + platformNickname.trim());
+            $.operate.submit("/salesman/todaytask/validateNickName","post","json",{id:gavelId , platformNickname:platformNickname.trim()});
+            $('#gavelModal').modal('hide');
         }
         var image = new Viewer(document.getElementById('viewer'),{
             fullscreen:false
@@ -439,5 +566,13 @@
             }
         }
     </script>
+    <style type="text/css">
+        span.mosaic {
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            filter: DXImageTransform.Microsoft.Blur(pixelradius=2);
+            zoom: 1;
+        }
+    </style>
 </body>
 </html>

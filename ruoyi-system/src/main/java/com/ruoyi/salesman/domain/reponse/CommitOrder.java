@@ -9,8 +9,6 @@ public class CommitOrder {
 
     private String promotersUnitPriceRemark;
 
-    private String platformNickname;
-
     private BigDecimal promotersModifyUnitPrice;
 
     private Long id;
@@ -29,14 +27,6 @@ public class CommitOrder {
 
     public void setPromotersUnitPriceRemark(String promotersUnitPriceRemark) {
         this.promotersUnitPriceRemark = promotersUnitPriceRemark;
-    }
-
-    public String getPlatformNickname() {
-        return platformNickname;
-    }
-
-    public void setPlatformNickname(String platformNickname) {
-        this.platformNickname = platformNickname;
     }
 
     public Long getId() {

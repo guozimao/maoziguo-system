@@ -68,4 +68,6 @@ public interface ISalesmanTaskService
     void vaildateFinishOrder(Long id);
 
     Set<Long> selectTaskIdsBySalesmanUserIdAndDate(Long userId, Date requiredCompletionDate);
+
+    int nicknameVerification2PassAndSet(Long id,String platformNickname);
 }

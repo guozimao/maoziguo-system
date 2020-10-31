@@ -49,6 +49,7 @@ CREATE TABLE `dt_business_task_detail` (
   `promoters_unit_price_remark` varchar(128) DEFAULT NULL COMMENT '地推员备注',
   `commission` decimal(9,2) DEFAULT '0.00' COMMENT '佣金',
   `platform_nickname` varchar(64) DEFAULT NULL COMMENT '平台昵称',
+  `has_nickname_verification` char(1) NOT NULL DEFAULT '1' COMMENT '昵称验证，0 已验证 1 未验证',
   `salesman_commit_url` varchar(128) DEFAULT NULL COMMENT '业务员提交图片ossparam((path,Expires,Signature))',
   `salesman_leader_user_id` bigint(20) DEFAULT NULL COMMENT '业务组长的userid',
   `salesman_user_id` bigint(20) DEFAULT NULL COMMENT '业务员userid',

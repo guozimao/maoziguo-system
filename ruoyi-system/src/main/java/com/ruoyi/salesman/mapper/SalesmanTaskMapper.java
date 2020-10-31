@@ -89,4 +89,6 @@ public interface SalesmanTaskMapper
     SalesmanTaskDetail selectSalesmanTaskDetailById(Long id);
 
     Set<Long> selectTaskIdsBySalesmanUserIdAndDate(@Param("userId") Long userId, @Param("requiredCompletionDate")Date requiredCompletionDate);
+
+    int nicknameVerification2PassAndSet(@Param("id") Long id,@Param("platformNickname") String nickname);
 }

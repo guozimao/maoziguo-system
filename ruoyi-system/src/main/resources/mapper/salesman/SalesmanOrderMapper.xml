@@ -53,7 +53,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="img != null and img != ''">salesman_commit_url = #{img},</if>
             <if test="promotersModifyUnitPrice != null">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
             <if test="promotersUnitPriceRemark != null and promotersUnitPriceRemark != ''">promoters_unit_price_remark = #{promotersUnitPriceRemark},</if>
-            <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
             status= 0
         </trim>
         where id = #{id}
