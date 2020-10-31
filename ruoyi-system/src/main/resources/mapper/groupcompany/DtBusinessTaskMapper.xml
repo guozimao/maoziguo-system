@@ -42,6 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="commission" column="commission" />
         <result property="platformNickname" column="platform_nickname" />
+        <result property="hasNicknameVerification" column="has_nickname_verification" />
         <result property="salesmanCommitUrl" column="salesman_commit_url"/>
         <result property="salesmanLeaderUserId" column="salesman_leader_user_id" />
         <result property="merchantUserId" column="merchant_user_id"/>
@@ -144,7 +145,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectDtBusinessTaskDetailListByTaskIds"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,has_nickname_verification
         from dt_business_task_detail
         where  status != '2'
         and task_id in
@@ -257,6 +258,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="groupCompanyRemark != null and groupCompanyRemark != ''">group_company_remark = #{groupCompanyRemark},</if>
         </trim>
         where id = #{id}
+    </update>
+    <update id="clearAllocateTimeByIds">
+        update dt_business_task set allocate_time = null
+        where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <update id="clearSalesmanInfo">
+        update dt_business_task_detail set salesman_user_id = null
+        where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </update>
 
     <delete id="deleteDtBusinessTaskById" parameterType="Long">

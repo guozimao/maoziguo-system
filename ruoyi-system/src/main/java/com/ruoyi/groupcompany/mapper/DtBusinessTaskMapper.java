@@ -115,4 +115,8 @@ public interface DtBusinessTaskMapper
     List<DtBusinessTaskDetail> selectDtBusinessTaskDetailListByIds(@Param("array") Long[] idlist);
 
     List<DtBusinessTask> selectDtBusinessTaskByIds(@Param("array") List<Long> taskIds);
+
+    int clearAllocateTimeByIds(@Param("list") List<Long> setNullTaskList);
+
+    int clearSalesmanInfo(@Param("list")List<Long> setNullTaskDetailList);
 }

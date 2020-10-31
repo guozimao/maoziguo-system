@@ -89,6 +89,8 @@ public class DtBusinessTaskDetail
 
     private String status;
 
+    private String hasNicknameVerification;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -284,6 +286,14 @@ public class DtBusinessTaskDetail
 
     public void setGroupCompanyRemark(String groupCompanyRemark) {
         this.groupCompanyRemark = groupCompanyRemark;
+    }
+
+    public String getHasNicknameVerification() {
+        return hasNicknameVerification;
+    }
+
+    public void setHasNicknameVerification(String hasNicknameVerification) {
+        this.hasNicknameVerification = hasNicknameVerification;
     }
 
     @Override

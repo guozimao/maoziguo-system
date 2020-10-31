@@ -147,11 +147,23 @@ public class DtBusinessTaskServiceImpl implements IDtBusinessTaskService
         if(StringUtils.isNull(dept.getLeaderId())){
             throw new BusinessException("该团队没组长，无法分配");
         }
+
+        List<DtBusinessTaskDetail> details = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskIds(taskIds);
+        List<DtBusinessTaskDetail> hasGavelTaskDetailList = details.stream().filter(t -> t.getHasNicknameVerification().equals("0")).collect(Collectors.toList());
+        if(hasGavelTaskDetailList.size() > 0){
+            throw new BusinessException("存在呢称验证完成的订单，无法重新调配任务");
+        }
+
+        //清空业务组长分配后的数据
         List<DtBusinessTask> dtBusinessTasks = dtBusinessTaskMapper.selectDtBusinessTaskListWithAllocateTimeByIds(taskIds);
         if(dtBusinessTasks.size() > 0){
-            throw new BusinessException("团队组长已经往下分配任务了，无法重新分配");
+            List<Long> setNullTaskList = dtBusinessTasks.stream().map(DtBusinessTask::getId).collect(Collectors.toList());
+            dtBusinessTaskMapper.clearAllocateTimeByIds(setNullTaskList);
+            List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskIds(setNullTaskList.toArray(new Long[setNullTaskList.size()]));
+            List<Long> setNullTaskDetailList = dtBusinessTaskDetails.stream().map(DtBusinessTaskDetail::getId).collect(Collectors.toList());
+            dtBusinessTaskMapper.clearSalesmanInfo(setNullTaskDetailList);
         }
-        List<DtBusinessTaskDetail> details = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByTaskIds(taskIds);
+
         for(DtBusinessTaskDetail detail: details){
             detail.setSalesmanLeaderUserId(dept.getLeaderId());
             dtBusinessTaskMapper.updateDtBusinessTaskDetail(detail);
