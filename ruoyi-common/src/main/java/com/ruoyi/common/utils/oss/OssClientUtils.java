@@ -4,12 +4,19 @@ import com.aliyun.oss.OSSClient;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.uuid.UUID;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
+import java.util.Random;
 
 @Component
 public class OssClientUtils {
@@ -67,7 +74,7 @@ public class OssClientUtils {
     }
 
     public static URL picOSS(byte buf[]) {
-        String fileName = UUID.randomUUID().toString()+ ".png";
+        String fileName = UUID.randomUUID().toString()+ ".jpg";
         String endpoint = OssClientUtils.enpoint;
         // 云账号AccessKey有所有API访问权限，建议遵循阿里云安全最佳实践，创建并使用RAM子账号进行API访问或日常运维，请登录
         // https://ram.console.aliyun.com 创建
@@ -92,5 +99,41 @@ public class OssClientUtils {
         String signature = org.apache.commons.lang3.StringUtils.substringBetween(queryParam + "&","Signature=","&");
         String ossPictureParam = org.apache.commons.lang3.StringUtils.joinWith(",",path,expires,signature);
         return ossPictureParam;
+    }
+
+    public static ByteArrayOutputStream compressPicture(MultipartFile file){
+        if (file.getSize() > 10 * 1024 * 1024) {
+            throw new BusinessException("上传图片大小不能超过10M！");
+        }
+        try {
+            InputStream inputStream = file.getInputStream();
+
+            // 把图片读入到内存中
+            BufferedImage bufImg = ImageIO.read(inputStream);
+            // 压缩代码
+            //设置初始化的压缩率为1
+            float ratio = 1f ;
+            //设置压缩后的图片宽度为80
+            float width = 256f;
+            //获取原图片的宽度、高度
+            float ImgWith=bufImg.getWidth();
+            //float ImgHight=bufImg.getHeight();
+            //根据原始图片宽度，与压缩图宽度重新计算压缩率
+            if (ImgWith>width) {
+                ratio=width/ImgWith;
+            }
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            //按压缩率进行压缩
+            bufImg = Thumbnails.of(bufImg).scale(ratio).asBufferedImage();
+            //防止图片变红
+            //BufferedImage newBufferedImage = new BufferedImage(bufImg.getWidth()-100, bufImg.getHeight()-100, BufferedImage.TYPE_INT_RGB);
+            //newBufferedImage.createGraphics().drawImage(bufImg, 0, 0, Color.WHITE, null);
+            //先转成jpg格式来压缩,然后在通过OSS来修改成源文件本来的后缀格式
+            ImageIO.write(bufImg,"jpg",bos);
+            return bos;
+        } catch (Exception e) {
+            throw new BusinessException("图片上传失败");
+        }
     }
 }

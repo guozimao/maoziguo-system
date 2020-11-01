@@ -81,7 +81,7 @@
                             <label class="col-sm-3 control-label"><span style="color:red">*</span>拍摄照片：</label>
                             <div class="col-sm-9" >
                                 <div class="file-loading">
-                                    <input id="fileinput" name="fileinput" type="file" multiple accept=".jpg,.png">
+                                    <input id="fileinput" name="fileinput" type="file" accept=".jpg,.png">
                                 </div>
                             </div>
                         </div>
@@ -170,11 +170,10 @@
                 initialPreviewAsData: true,
                 uploadAsync: false,
                 showUpload: false,
-                dropZoneTitle:"可拖拽到此区域，最多支持5张图片,文件大小不超过1M",
+                dropZoneTitle:"可拖拽到此区域，最多支持5张图片,文件大小不超过10M",
                 showRemove: true,
                 showPreview: true,
                 maxFileCount: 5,
-                maxFileSize: 1024,
                 allowedFileExtensions: ['jpg', 'png'],
                 validateInitialCount:true,
                 enctype: 'multipart/form-data',
@@ -212,7 +211,6 @@
                 showRemove: true,
                 showPreview: false,
                 maxFileCount: 1,
-                maxFileSize: 1024,
                 dropZoneEnabled: false,
                 validateInitialCount:true,
                 msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
@@ -563,6 +561,34 @@
                 return $.common.sprintf("<img class='img-circle img-xs buyerPicture' data-height='auto' data-width='auto'  src='%s' onclick='showPictureDialog4Buyer(\"" + url + "\",\"" + index + "\",\"" + taskNo + "\")'/>", url);
             } else {
                 return $.common.nullToStr(url);
+            }
+        }
+
+        // 对图片进行压缩
+        function compress() {
+            let fileObj = document.getElementById('fileinput').files[0] //上传文件的对象
+            console.log(fileObj)
+            let reader = new FileReader()
+            reader.readAsDataURL(fileObj)
+            reader.onload = function(e) {
+                let image = new Image() //新建一个img标签（还没嵌入DOM节点)
+                image.src = e.target.result
+                image.onload = function() {
+                    let canvas = document.createElement('canvas'),
+                        context = canvas.getContext('2d'),
+                        imageWidth = image.width / 2,    //压缩后图片的大小
+                        imageHeight = image.height / 2,
+                        data = ''
+
+                    canvas.width = imageWidth
+                    canvas.height = imageHeight
+
+                    context.drawImage(image, 0, 0, imageWidth, imageHeight)
+                    data = canvas.toDataURL('image/jpeg')
+                    console.log(data);
+                    //压缩完成
+                    document.getElementById('fileinput').src = data
+                }
             }
         }
     </script>

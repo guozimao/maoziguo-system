@@ -101,6 +101,13 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
+        <!-- 谷歌处理图片的开源工具类，可以对图片进行缩放，旋转，压缩，剪裁，添加水印，转换格式等 -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
+
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>

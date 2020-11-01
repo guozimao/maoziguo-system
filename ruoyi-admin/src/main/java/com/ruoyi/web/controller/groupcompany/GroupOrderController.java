@@ -130,7 +130,7 @@ public class GroupOrderController extends BaseController {
             throw new BusinessException("id不为空");
         }
         Long id = Long.valueOf(multipartHttpServletRequest.getParameter("id"));
-        URL url = OssClientUtils.picOSS(file[0].getBytes());
+        URL url = OssClientUtils.picOSS(OssClientUtils.compressPicture(file[0]).toByteArray());
         if(StringUtils.isNull(url)){
             return error("上传图片失败");
         }

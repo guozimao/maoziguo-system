@@ -30,7 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.ParseException;
@@ -171,7 +173,7 @@ public class SalesmanTodayTaskController extends BaseController
         commitOrder.setPromotersUnitPriceRemark(multipartHttpServletRequest.getParameter("promotersUnitPriceRemark"));
         commitOrder.setPromotersModifyUnitPrice(new BigDecimal(multipartHttpServletRequest.getParameter("promotersModifyUnitPrice")));
         vaildateParam4CommitOrder(file.length,commitOrder);
-        URL url = OssClientUtils.picOSS(file[0].getBytes());
+        URL url = OssClientUtils.picOSS(OssClientUtils.compressPicture(file[0]).toByteArray());
         if(StringUtils.isNull(url)){
             return error("上传图片失败");
         }
@@ -200,7 +202,7 @@ public class SalesmanTodayTaskController extends BaseController
         commitTask.setRemark(multipartHttpServletRequest.getParameter("remark"));
         vaildateCommitTask(commitTask);
         for(int i=1 ; i < file.length + 1;i++){
-            URL url = OssClientUtils.picOSS(file[i - 1].getBytes());
+            URL url = OssClientUtils.picOSS(OssClientUtils.compressPicture(file[i - 1]).toByteArray());
             if(StringUtils.isNull(url)){
                 return error("上传图片失败");
             }
