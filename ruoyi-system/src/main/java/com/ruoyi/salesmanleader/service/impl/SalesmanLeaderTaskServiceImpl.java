@@ -5,12 +5,15 @@ import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.exception.BusinessException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.oss.OssClientUtils;
+import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTask;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
+import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderOrderRespDto;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderTaskDetailRespDto;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderTaskRespDto;
 import com.ruoyi.salesmanleader.domain.request.AssginSalesmanReqDto;
 import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderTaskReqDto;
+import com.ruoyi.salesmanleader.mapper.SalesmanLeaderOrderMapper;
 import com.ruoyi.salesmanleader.mapper.SalesmanLeaderTaskMapper;
 import com.ruoyi.salesmanleader.service.ISalesmanLeaderTaskService;
 import com.ruoyi.system.domain.SysDept;
@@ -43,6 +46,9 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
     private static final Logger log = LoggerFactory.getLogger(SalesmanLeaderTaskServiceImpl.class);
     @Autowired
     private SalesmanLeaderTaskMapper salesmanLeaderTaskMapper;
+
+    @Autowired
+    private SalesmanLeaderOrderMapper salesmanLeaderOrderMapper;
 
     @Autowired
     private SysDeptMapper sysDeptMapper;
@@ -213,6 +219,11 @@ public class SalesmanLeaderTaskServiceImpl implements ISalesmanLeaderTaskService
         List<SalesmanLeaderTask> salesmanLeaderTasksWithFinishedStatus = salesmanLeaderTasks.stream().filter(item -> item.getOrderStatus().equals("0")).collect(Collectors.toList());
         if(salesmanLeaderTasksWithFinishedStatus.size() > 0){
             throw new BusinessException("存在任务是完成的，无法重新分配");
+        }
+        List<SalesmanLeaderOrderRespDto> salesmanLeaderOrders = salesmanLeaderOrderMapper.selectSalesmanLeaderOrderListByTaskId(Arrays.asList(taskIds));
+        List<SalesmanLeaderOrderRespDto> hasVaildOrders = salesmanLeaderOrders.stream().filter(o -> o.getHasNicknameVerification().equals("0")).collect(Collectors.toList());
+        if(hasVaildOrders.size() > 0){
+            throw new BusinessException("存在已经完成昵称验证的订单，无法重新分配");
         }
         salesmanLeaderTaskMapper.updateSalesmanLeaderTaskAllocateTimeByIds(taskIds);
         return salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetailByNameAndIds(assginReqDto.getSalesmanUserId(),taskIds);

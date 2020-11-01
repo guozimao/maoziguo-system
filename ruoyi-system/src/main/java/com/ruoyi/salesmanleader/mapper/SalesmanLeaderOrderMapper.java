@@ -1,6 +1,7 @@
 package com.ruoyi.salesmanleader.mapper;
 
 
+import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 import com.ruoyi.salesmanleader.domain.reponse.SalesmanLeaderOrderRespDto;
 import com.ruoyi.salesmanleader.domain.request.SalesmanLeaderOrderReqDto;
 
@@ -15,4 +16,6 @@ import java.util.List;
 public interface SalesmanLeaderOrderMapper
 {
     List<SalesmanLeaderOrderRespDto> selectSalesmanLeaderOrderList(SalesmanLeaderOrderReqDto groupOrderReqDto);
+
+    List<SalesmanLeaderOrderRespDto> selectSalesmanLeaderOrderListByTaskId(List<Long> asList);
 }

@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="promotersModifyUnitPrice"    column="promoters_modify_unit_price"    />
         <result property="promotersUnitPriceRemark"    column="promoters_unit_price_remark"    />
         <result property="platformNickname" column="platform_nickname" />
+        <result property="hasNicknameVerification" column="has_nickname_verification" />
         <result property="salesmanUserId" column="salesman_user_id" />
         <result property="salesmanCommitUrl" column="salesman_commit_url"/>
         <result property="status" column="status" />
@@ -44,6 +45,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
         </where>
         order by id desc
+    </select>
+    <select id="selectSalesmanLeaderOrderListByTaskId"
+            parameterType="SalesmanLeaderOrderRespDto" resultMap="SalesmanLeaderOrderRespDtoResult">
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_user_id,salesman_commit_url,status,promoters_unit_price_remark,has_nickname_verification
+        from dt_business_task_detail
+        where task_id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </select>
 
 </mapper>

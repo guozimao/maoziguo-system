@@ -55,6 +55,8 @@ public class SalesmanLeaderOrderRespDto {
 
     private String platformNickname;
 
+    private String hasNicknameVerification;
+
     private String promotersUnitPriceRemark;
 
     private String salesmanCommitUrl;
@@ -227,5 +229,13 @@ public class SalesmanLeaderOrderRespDto {
 
     public void setCallCenter(String callCenter) {
         this.callCenter = callCenter;
+    }
+
+    public String getHasNicknameVerification() {
+        return hasNicknameVerification;
+    }
+
+    public void setHasNicknameVerification(String hasNicknameVerification) {
+        this.hasNicknameVerification = hasNicknameVerification;
     }
 }

@@ -563,34 +563,6 @@
                 return $.common.nullToStr(url);
             }
         }
-
-        // 对图片进行压缩
-        function compress() {
-            let fileObj = document.getElementById('fileinput').files[0] //上传文件的对象
-            console.log(fileObj)
-            let reader = new FileReader()
-            reader.readAsDataURL(fileObj)
-            reader.onload = function(e) {
-                let image = new Image() //新建一个img标签（还没嵌入DOM节点)
-                image.src = e.target.result
-                image.onload = function() {
-                    let canvas = document.createElement('canvas'),
-                        context = canvas.getContext('2d'),
-                        imageWidth = image.width / 2,    //压缩后图片的大小
-                        imageHeight = image.height / 2,
-                        data = ''
-
-                    canvas.width = imageWidth
-                    canvas.height = imageHeight
-
-                    context.drawImage(image, 0, 0, imageWidth, imageHeight)
-                    data = canvas.toDataURL('image/jpeg')
-                    console.log(data);
-                    //压缩完成
-                    document.getElementById('fileinput').src = data
-                }
-            }
-        }
     </script>
     <style type="text/css">
         span.mosaic {
