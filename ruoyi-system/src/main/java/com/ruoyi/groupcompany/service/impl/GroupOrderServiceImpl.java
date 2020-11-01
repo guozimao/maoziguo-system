@@ -331,6 +331,8 @@ public class GroupOrderServiceImpl implements IGroupOrderService
             throw new BusinessException("订单已经完成，撤回不了");
         }else if(groupOrderRespDto.getTaskId().equals(0L)){
             throw new BusinessException("订单已经撤回,无需再撤回");
+        }else if(!DateUtils.isSameDay(groupOrderRespDto.getOrderDate(),new Date())){
+            throw new BusinessException("订单日期不是当天的,无法撤回");
         }
         DtBusinessTask dtBusinessTask = dtBusinessTaskMapper.selectDtBusinessTaskById(groupOrderRespDto.getTaskId());
         if(dtBusinessTask.getOrderStatus().equals("0")){
@@ -342,7 +344,33 @@ public class GroupOrderServiceImpl implements IGroupOrderService
         if(groupOrderRespDtos.size() <= 1){
             throw new BusinessException("任务里至少要有一个订单，撤回不了订单");
         }
-        return groupOrderMapper.supplementOrder(groupOrderRespDto.getId(),0L);
+        DtBusinessTaskDetail detail = new DtBusinessTaskDetail();
+        detail.setId(groupOrderRespDto.getId());
+        detail.setStatus("2");
+        detail.setTaskId(0L);
+        return dtBusinessTaskMapper.updateDtBusinessTaskDetail(detail);
+    }
+
+    @Override
+    public int retreatOrder(Long[] idlist) {
+        List<DtBusinessTaskDetail> dtBusinessTaskDetails = dtBusinessTaskMapper.selectDtBusinessTaskDetailListByIds(idlist);
+        List<String> hasVaildList = dtBusinessTaskDetails.stream().map(DtBusinessTaskDetail::getHasNicknameVerification).collect(Collectors.toList());
+        if(hasVaildList.contains("0")){
+            throw new BusinessException("存在已完成呢称验证的订单，撤不了单");
+        }
+        List<DtBusinessTaskDetail> noSameDayList = dtBusinessTaskDetails.stream().filter(t -> !DateUtils.isSameDay(t.getOrderDate(),new Date())).collect(Collectors.toList());
+        if(noSameDayList.size() > 0){
+            throw new BusinessException("存在日期非当天的订单，撤不了单");
+        }
+        Integer num = 0;
+        for(Long id : idlist){
+            DtBusinessTaskDetail detail = new DtBusinessTaskDetail();
+            detail.setId(id);
+            detail.setStatus("2");
+            detail.setTaskId(0L);
+            num = num + dtBusinessTaskMapper.updateDtBusinessTaskDetail(detail);
+        }
+        return num;
     }
 
     private void doProcessOrder4MerchantId(List<GroupOrder> orderList) {

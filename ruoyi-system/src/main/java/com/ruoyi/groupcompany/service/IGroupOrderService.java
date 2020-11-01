@@ -38,4 +38,6 @@ public interface IGroupOrderService {
     int supplementOrder(SupplementOrderReqDto supplementOrderReqDto);
 
     int withdraw(Long id);
+
+    int retreatOrder(Long[] toLongArray);
 }

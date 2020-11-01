@@ -18,4 +18,6 @@ public interface ISalesmanLeaderOrderService {
     int recoverOrder(String ids);
 
     SysUser getUserBySalesManUserName(String salesmanUserName);
+
+    int retreatOrder(Long[] toLongArray);
 }

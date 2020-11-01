@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,24 @@ public class SalesmanLeaderOrderServiceImpl implements ISalesmanLeaderOrderServi
     @Override
     public SysUser getUserBySalesManUserName(String salesmanUserName) {
         return sysUserMapper.selectUserByUserName(salesmanUserName);
+    }
+
+    @Override
+    public int retreatOrder(Long[] idlist) {
+        List<SalesmanLeaderOrderRespDto> dtBusinessTaskDetails = salesmanLeaderOrderMapper.selectSalesmanLeaderOrderListByTaskId(Arrays.asList(idlist));
+        List<String> statusList = dtBusinessTaskDetails.stream().map(SalesmanLeaderOrderRespDto::getHasNicknameVerification).collect(Collectors.toList());
+        if(statusList.contains("0")){
+            throw new BusinessException("存在已完成验证昵称的订单，撤不了单");
+        }
+        Integer num = 0;
+        for(Long id : idlist){
+            SalesmanLeaderTaskDetail detail = new SalesmanLeaderTaskDetail();
+            detail.setId(id);
+            detail.setStatus("2");
+            detail.setTaskId(0L);
+            num = num + salesmanLeaderTaskMapper.updateSalesmanLeaderTaskDetail(detail);
+        }
+        return num;
     }
 
     private void vaildSalesmanleader(SysUser user) {

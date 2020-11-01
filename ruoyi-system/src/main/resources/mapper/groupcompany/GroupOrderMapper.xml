@@ -83,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </update>
     <update id="supplementOrder">
-        update dt_business_task_detail set  task_id = #{taskId}
+        update dt_business_task_detail set  task_id = #{taskId},status = 1
         where id = #{id}
     </update>
 

@@ -4,6 +4,7 @@ import com.ruoyi.common.constant.QueryParaConstants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderTaskDetail;
@@ -81,20 +82,30 @@ public class SalesmanLeaderOrderController extends BaseController {
     /**
      * 停掉商业订单
      */
-    @PostMapping("/stopOrder")
+   /* @PostMapping("/stopOrder")
     @ResponseBody
     public AjaxResult stopOrder(String ids)
     {
         return toAjax(salesmanLeaderOrderService.stopOrder(ids));
-    }
+    }*/
 
     /**
      * 修复停掉的商业订单
      */
-    @PostMapping("/recoverOrder")
+    /*@PostMapping("/recoverOrder")
     @ResponseBody
     public AjaxResult recoverOrder(String ids)
     {
         return toAjax(salesmanLeaderOrderService.recoverOrder(ids));
-    }
+    }*/
+
+    /**
+     * 撤掉商业订单
+     */
+    /*@PostMapping("/retreatOrder")
+    @ResponseBody
+    public AjaxResult retreatOrder(String ids)
+    {
+        return toAjax(salesmanLeaderOrderService.retreatOrder(Convert.toLongArray(ids)));
+    }*/
 }

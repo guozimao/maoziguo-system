@@ -231,6 +231,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="promotersModifyUnitPrice != null ">promoters_modify_unit_price = #{promotersModifyUnitPrice},</if>
             <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
+            <if test="taskId != null ">task_id = #{taskId},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
         </trim>
         where id = #{id}
     </update>

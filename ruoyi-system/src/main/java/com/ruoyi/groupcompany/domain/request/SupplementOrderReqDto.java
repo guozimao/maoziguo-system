@@ -7,7 +7,7 @@ public class SupplementOrderReqDto {
 
     private Long taskId;
 
-    private Long OrderId;
+    private Long orderId;
 
     public Long getTaskId() {
         return taskId;
@@ -18,10 +18,10 @@ public class SupplementOrderReqDto {
     }
 
     public Long getOrderId() {
-        return OrderId;
+        return orderId;
     }
 
     public void setOrderId(Long orderId) {
-        OrderId = orderId;
+        this.orderId = orderId;
     }
 }

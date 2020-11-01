@@ -174,7 +174,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectDtBusinessTaskDetailListByIds"
             parameterType="DtBusinessTaskDetail" resultMap="DtBusinessTaskDetailResult">
-        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status
+        select id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price,promoters_modify_unit_price,keyword,commission,platform_nickname,salesman_leader_user_id,status,has_nickname_verification
         from dt_business_task_detail
         where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
@@ -254,6 +254,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="platformNickname != null and platformNickname != ''">platform_nickname = #{platformNickname},</if>
             <if test="salesmanLeaderUserId != null">salesman_leader_user_id= #{salesmanLeaderUserId},</if>
             <if test="status != null">status= #{status},</if>
+            <if test="taskId != null">task_id= #{taskId},</if>
             <if test="callCenter != null and callCenter != ''">call_center = #{callCenter},</if>
             <if test="groupCompanyRemark != null and groupCompanyRemark != ''">group_company_remark = #{groupCompanyRemark},</if>
         </trim>
