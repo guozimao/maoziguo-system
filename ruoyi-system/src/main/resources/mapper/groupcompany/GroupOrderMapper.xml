@@ -58,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unitPriceRemark != null and unitPriceRemark != ''">unit_price_remark,</if>
             <if test="specialRemarks != null and specialRemarks != ''">special_remarks,</if>
             <if test="keyword != null and keyword != ''">keyword,</if>
+            <if test="status != null and status != ''">status,</if>
             <if test="merchantUserId != null">merchant_user_id</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -72,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unitPriceRemark != null and unitPriceRemark != ''">#{unitPriceRemark},</if>
             <if test="specialRemarks != null and specialRemarks != ''">#{specialRemarks},</if>
             <if test="keyword != null and keyword != ''">#{keyword},</if>
+            <if test="status != null and status != ''">#{status},</if>
             <if test="merchantUserId != null">#{merchantUserId}</if>
         </trim>
     </insert>

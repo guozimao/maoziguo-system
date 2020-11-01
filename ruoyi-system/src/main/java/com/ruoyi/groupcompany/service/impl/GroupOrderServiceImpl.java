@@ -244,6 +244,7 @@ public class GroupOrderServiceImpl implements IGroupOrderService
                 order.setOrderDate(new Date());
                 //设置未分配任务
                 order.setTaskId(0L);
+                order.setStatus("2");
                 groupOrderMapper.insertOrder(order);
                 successNum++;
                 successMsg.append("<br/>" + successNum + "、订单编号：" + order.getId() + " 店铺名称：" + order.getShopName() + " 导入成功");
