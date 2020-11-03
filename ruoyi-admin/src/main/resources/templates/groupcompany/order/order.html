@@ -121,6 +121,7 @@
                      <div class="modal-body">
                          <div class="row">
                              <input id="orderId" name="orderId" type="text" hidden>
+                             <input id="editPicBase64" name="editPicBase64" type="text" hidden>
                              <div class="col-sm-10 col-sm-offset-1">
                                  <div class="file-loading">
                                      <input id="fileinput" name="fileinput" type="file" multiple accept=".jpg,.png">
@@ -174,7 +175,6 @@
                 theme: 'explorer-fas',
                 uploadUrl: "/groupcompany/order/editPicture",
                 overwriteInitial: false,
-                height: 100,
                 initialPreviewAsData: true,
                 uploadAsync: false,
                 allowedFileExtensions: ['jpg', 'png'],
@@ -189,16 +189,11 @@
                 uploadExtraData: function(previewId, index) {   //额外参数的关键点
                     return {
                         id: $("#orderId").val(),
+                        editPicBase64: $("#editPicBase64").val()
                     };
                 }
-            }).on('filepreupload', function(event, data, previewId, index) {     //上传中
-                var form = data.form, files = data.files, extra = data.extra,
-                    response = data.response, reader = data.reader;
-                layer.alert('文件正在上传');
-            }).on("fileuploaded", function (event, data, previewId, index) {    //一个文件上传成功
-                layer.alert('文件上传成功！'+data.response.msg);
-            }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
-                layer.alert('文件上传失败！'+data.response.msg);
+            }).on("filebatchselected", function(e, files) {
+                compress4EditPic(); //压缩图片为base64字符串
             }).on('filebatchuploadsuccess', function(event,data,previewId,index) {//同步上传回调
                 layer.alert(data.response.msg);
                 //清空模态框里的所有值
@@ -437,7 +432,7 @@
             $('#pictureModal').modal('show');
         }
         function alterPicture() {
-            $("#fileinput").fileinput("upload");
+            $("#fileinput").fileinput("clear").fileinput("unlock").fileinput("upload");
         }
         function closeWin4Picture() {
             $('#goodsPictureModal').modal('hide');
@@ -456,6 +451,44 @@
                 return $.common.sprintf("<img class='img-circle img-xs' data-height='auto' data-width='auto'  src='%s' onclick='showPictureDialog(\"" + url + "\")'/>", url);
             } else {
                 return $.common.nullToStr(url);
+            }
+        }
+
+        function compress4EditPic() {
+            $('#editPicBase64').val('');
+            let fileObj = document.getElementById('fileinput').files[0] //上传文件的对象
+            if(!fileObj){
+                return "";
+            }
+            let reader = new FileReader()
+            reader.readAsDataURL(fileObj)
+            reader.onload = function(e) {
+                let image = new Image() //新建一个img标签（还没嵌入DOM节点)
+                image.src = e.target.result
+                image.onload = function() {
+                    let canvas = document.createElement('canvas'),
+                        context = canvas.getContext('2d'),
+                        /*imageWidth = image.width / 2,    //压缩后图片的大小
+                        imageHeight = image.height / 2,*/
+                        width = 256, //压缩后图片的宽度
+                        imageWidth =  width,
+                        imageHeight = image.height * (width / image.width),
+                        data = ''
+
+                    if (imageWidth > image.width) {
+                        imageWidth = image.width;
+                        imageHeight = image.height;
+                    }
+
+                    canvas.width = imageWidth
+                    canvas.height = imageHeight
+
+
+                    context.drawImage(image, 0, 0, imageWidth, imageHeight)
+                    data = canvas.toDataURL('image/jpeg')
+                    //压缩完成
+                    $('#editPicBase64').val(data);
+                }
             }
         }
     </script>
