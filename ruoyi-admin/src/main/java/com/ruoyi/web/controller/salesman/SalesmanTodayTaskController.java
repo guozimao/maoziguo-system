@@ -172,8 +172,9 @@ public class SalesmanTodayTaskController extends BaseController
         commitOrder.setId(Long.valueOf(multipartHttpServletRequest.getParameter("id")));
         commitOrder.setPromotersUnitPriceRemark(multipartHttpServletRequest.getParameter("promotersUnitPriceRemark"));
         commitOrder.setPromotersModifyUnitPrice(new BigDecimal(multipartHttpServletRequest.getParameter("promotersModifyUnitPrice")));
-        vaildateParam4CommitOrder(file.length,commitOrder);
-        URL url = OssClientUtils.picOSS(OssClientUtils.compressPicture(file[0]).toByteArray());
+        commitOrder.setCommitOrderPicBase64(multipartHttpServletRequest.getParameter("commitOrderPicBase64"));
+        vaildateParam4CommitOrder(commitOrder);
+        URL url = OssClientUtils.picOSS(OssClientUtils.convertBase642Bytes(commitOrder.getCommitOrderPicBase64()));
         if(StringUtils.isNull(url)){
             return error("上传图片失败");
         }
@@ -181,8 +182,8 @@ public class SalesmanTodayTaskController extends BaseController
         return toAjax(salesmanTaskService.commitOrder(commitOrder));
     }
 
-    private void vaildateParam4CommitOrder(int length, CommitOrder commitOrder) {
-        if(length == 0){
+    private void vaildateParam4CommitOrder(CommitOrder commitOrder) {
+        if(StringUtils.isEmpty(commitOrder.getCommitOrderPicBase64())){
             throw new BusinessException("必须上传图片");
         }
         if(StringUtils.isNull(commitOrder.getPromotersModifyUnitPrice())){
@@ -200,25 +201,53 @@ public class SalesmanTodayTaskController extends BaseController
         CommitTask commitTask = new CommitTask();
         commitTask.setId(Long.valueOf(multipartHttpServletRequest.getParameter("id")));
         commitTask.setRemark(multipartHttpServletRequest.getParameter("remark"));
+        commitTask.setCommitTaskPic1Base64(multipartHttpServletRequest.getParameter("commitTaskPic1Base64"));
+        commitTask.setCommitTaskPic2Base64(multipartHttpServletRequest.getParameter("commitTaskPic2Base64"));
+        commitTask.setCommitTaskPic3Base64(multipartHttpServletRequest.getParameter("commitTaskPic3Base64"));
+        commitTask.setCommitTaskPic4Base64(multipartHttpServletRequest.getParameter("commitTaskPic4Base64"));
+        commitTask.setCommitTaskPic5Base64(multipartHttpServletRequest.getParameter("commitTaskPic5Base64"));
         vaildateCommitTask(commitTask);
-        for(int i=1 ; i < file.length + 1;i++){
-            URL url = OssClientUtils.picOSS(OssClientUtils.compressPicture(file[i - 1]).toByteArray());
-            if(StringUtils.isNull(url)){
-                return error("上传图片失败");
-            }
+        Integer pictureLength = getPictureLength4CommitTask(commitTask);
+        for(int i=1 ; i < pictureLength + 1;i++){
+            URL url = null;
             if(i == 1){
+                url = OssClientUtils.picOSS(OssClientUtils.convertBase642Bytes(commitTask.getCommitTaskPic1Base64()));
                 commitTask.setFeedbackPictureUrl1(OssClientUtils.URL2OssParam(url));
             }else if(i == 2){
+                url = OssClientUtils.picOSS(OssClientUtils.convertBase642Bytes(commitTask.getCommitTaskPic2Base64()));
                 commitTask.setFeedbackPictureUrl2(OssClientUtils.URL2OssParam(url));
             }else if(i == 3){
+                url = OssClientUtils.picOSS(OssClientUtils.convertBase642Bytes(commitTask.getCommitTaskPic3Base64()));
                 commitTask.setFeedbackPictureUrl3(OssClientUtils.URL2OssParam(url));
             }else if(i == 4){
+                url = OssClientUtils.picOSS(OssClientUtils.convertBase642Bytes(commitTask.getCommitTaskPic4Base64()));
                 commitTask.setFeedbackPictureUrl4(OssClientUtils.URL2OssParam(url));
             }else if(i == 5){
+                url = OssClientUtils.picOSS(OssClientUtils.convertBase642Bytes(commitTask.getCommitTaskPic5Base64()));
                 commitTask.setFeedbackPictureUrl5(OssClientUtils.URL2OssParam(url));
             }
         }
         return toAjax(salesmanTaskService.commitTask(commitTask));
+    }
+
+    private Integer getPictureLength4CommitTask(CommitTask commitTask) {
+        Integer count = 0;
+        if(StringUtils.isNotEmpty(commitTask.getCommitTaskPic1Base64())){
+            count ++;
+        }
+        if(StringUtils.isNotEmpty(commitTask.getCommitTaskPic2Base64())){
+            count ++;
+        }
+        if(StringUtils.isNotEmpty(commitTask.getCommitTaskPic3Base64())){
+            count ++;
+        }
+        if(StringUtils.isNotEmpty(commitTask.getCommitTaskPic4Base64())){
+            count ++;
+        }
+        if(StringUtils.isNotEmpty(commitTask.getCommitTaskPic5Base64())){
+            count ++;
+        }
+        return count;
     }
 
     private void vaildateCommitTask(CommitTask commitTask) {

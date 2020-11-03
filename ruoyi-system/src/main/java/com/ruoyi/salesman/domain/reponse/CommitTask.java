@@ -9,6 +9,12 @@ public class CommitTask {
     private String feedbackPictureUrl4;
     private String feedbackPictureUrl5;
 
+    private String commitTaskPic1Base64;
+    private String commitTaskPic2Base64;
+    private String commitTaskPic3Base64;
+    private String commitTaskPic4Base64;
+    private String commitTaskPic5Base64;
+
     public Long getId() {
         return id;
     }
@@ -63,5 +69,45 @@ public class CommitTask {
 
     public void setFeedbackPictureUrl5(String feedbackPictureUrl5) {
         this.feedbackPictureUrl5 = feedbackPictureUrl5;
+    }
+
+    public String getCommitTaskPic1Base64() {
+        return commitTaskPic1Base64;
+    }
+
+    public void setCommitTaskPic1Base64(String commitTaskPic1Base64) {
+        this.commitTaskPic1Base64 = commitTaskPic1Base64;
+    }
+
+    public String getCommitTaskPic2Base64() {
+        return commitTaskPic2Base64;
+    }
+
+    public void setCommitTaskPic2Base64(String commitTaskPic2Base64) {
+        this.commitTaskPic2Base64 = commitTaskPic2Base64;
+    }
+
+    public String getCommitTaskPic3Base64() {
+        return commitTaskPic3Base64;
+    }
+
+    public void setCommitTaskPic3Base64(String commitTaskPic3Base64) {
+        this.commitTaskPic3Base64 = commitTaskPic3Base64;
+    }
+
+    public String getCommitTaskPic4Base64() {
+        return commitTaskPic4Base64;
+    }
+
+    public void setCommitTaskPic4Base64(String commitTaskPic4Base64) {
+        this.commitTaskPic4Base64 = commitTaskPic4Base64;
+    }
+
+    public String getCommitTaskPic5Base64() {
+        return commitTaskPic5Base64;
+    }
+
+    public void setCommitTaskPic5Base64(String commitTaskPic5Base64) {
+        this.commitTaskPic5Base64 = commitTaskPic5Base64;
     }
 }

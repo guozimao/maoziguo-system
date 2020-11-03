@@ -8,11 +8,14 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Decoder;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
@@ -135,5 +138,20 @@ public class OssClientUtils {
         } catch (Exception e) {
             throw new BusinessException("图片上传失败");
         }
+    }
+
+    /**
+     * base64转字节
+     * @param fileBase64String base64码
+     */
+    public static byte[] convertBase642Bytes(String fileBase64String){
+        BASE64Decoder decoder = new BASE64Decoder();
+        byte[] bfile = null;
+        try {
+            bfile = decoder.decodeBuffer(fileBase64String.replace("data:image/jpeg;base64,", ""));
+        } catch (IOException e) {
+            throw new BusinessException("base64转字节失败");
+        }
+        return bfile;
     }
 }

@@ -30,6 +30,11 @@
             <h4 class="form-header h4">任务资料</h4>
             <div class="form-group">
                 <label class="col-sm-2 control-label">拍摄照片：</label>
+                <input id="commitTaskPic1Base64" name="commitTaskPicBase64" type="text" hidden>
+                <input id="commitTaskPic2Base64" name="commitTaskPic2Base64" type="text" hidden>
+                <input id="commitTaskPic3Base64" name="commitTaskPic3Base64" type="text" hidden>
+                <input id="commitTaskPic4Base64" name="commitTaskPic4Base64" type="text" hidden>
+                <input id="commitTaskPic5Base64" name="commitTaskPic5Base64" type="text" hidden>
                 <div class="col-sm-9">
                     <div class="file-loading">
                         <input id="taskfileinput" name="taskfileinput" type="file" multiple accept=".jpg,.png">
@@ -80,6 +85,7 @@
                         <div class="row">
                             <label class="col-sm-3 control-label"><span style="color:red">*</span>拍摄照片：</label>
                             <div class="col-sm-9" >
+                                <input id="commitOrderPicBase64" name="commitOrderPicBase64" type="text" hidden>
                                 <div class="file-loading">
                                     <input id="fileinput" name="fileinput" type="file" accept=".jpg,.png">
                                 </div>
@@ -182,17 +188,16 @@
                 uploadExtraData: function(previewId, index) {   //额外参数的关键点
                     return {
                         remark: $("#remark").val(),
-                        id: $("#id").val()
+                        id: $("#id").val(),
+                        commitTaskPic1Base64: $("#commitTaskPic1Base64").val(),
+                        commitTaskPic2Base64: $("#commitTaskPic2Base64").val(),
+                        commitTaskPic3Base64: $("#commitTaskPic3Base64").val(),
+                        commitTaskPic4Base64: $("#commitTaskPic4Base64").val(),
+                        commitTaskPic5Base64: $("#commitTaskPic5Base64").val()
                     };
                 }
-            }).on('filepreupload', function(event, data, previewId, index) {     //上传中
-                var form = data.form, files = data.files, extra = data.extra,
-                    response = data.response, reader = data.reader;
-                console.log('文件正在上传');
-            }).on("fileuploaded", function (event, data, previewId, index) {    //一个文件上传成功
-                console.log('文件上传成功！'+data.response.id);
-            }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
-                console.log('文件上传失败！'+data.id);
+            }).on("filebatchselected", function(e, files) {
+                compress4CommitTask(files)
             }).on('filebatchuploadsuccess', function(event,data,previewId,index) {//同步上传回调
                 var index = parent.layer.getFrameIndex(window.name);
                 parent.layer.close(index);
@@ -219,19 +224,13 @@
                     return {
                         promotersUnitPriceRemark: $("#promotersUnitPriceRemark").val(),
                         id: $("#orderId").val(),
-                        promotersModifyUnitPrice: $("#promotersModifyUnitPrice").val()
+                        promotersModifyUnitPrice: $("#promotersModifyUnitPrice").val(),
+                        commitOrderPicBase64: $("#commitOrderPicBase64").val(),
                     };
                 }
-            }).on('filepreupload', function(event, data, previewId, index) {     //上传中
-                var form = data.form, files = data.files, extra = data.extra,
-                    response = data.response, reader = data.reader;
-                layer.alert('文件正在上传');
-            }).on("fileuploaded", function (event, data, previewId, index) {    //一个文件上传成功
-                layer.alert('文件上传成功！'+data.response.msg);
-            }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
-                layer.alert('文件上传失败！'+data.response.msg);
+            }).on("filebatchselected", function(e, files) {
+                compress4CommitOrder(); //压缩图片为base64字符串
             }).on('filebatchuploadsuccess', function(event,data,previewId,index) {//同步上传回调
-                layer.alert(data.response.msg);
                 //清空模态框里的所有值
                 $(event.target)
                     .fileinput('clear')
@@ -490,7 +489,7 @@
         }
 
         function submitHandler(index, layero) {
-            $("#taskfileinput").fileinput("upload");
+            $("#taskfileinput").fileinput("clear").fileinput("unlock").fileinput("upload");
         }
 
         function commitOrder() {
@@ -500,7 +499,7 @@
                 layer.alert('请输入正确的产品价格:整数或者保留两位小数');
                 return;
             }
-            $("#fileinput").fileinput("upload");
+            $("#fileinput").fileinput("clear").fileinput("unlock").fileinput("upload");
         }
 
         function validateNickName() {
@@ -562,6 +561,101 @@
                 return $.common.sprintf("<img class='img-circle img-xs buyerPicture' data-height='auto' data-width='auto'  src='%s' onclick='showPictureDialog4Buyer(\"" + url + "\",\"" + index + "\",\"" + taskNo + "\")'/>", url);
             } else {
                 return $.common.nullToStr(url);
+            }
+        }
+
+        // 对"提交订单"的图片进行压缩
+        function compress4CommitOrder() {
+            $('#commitOrderPicBase64').val('');
+            let fileObj = document.getElementById('fileinput').files[0] //上传文件的对象
+            if(!fileObj){
+                return "";
+            }
+            let reader = new FileReader()
+            reader.readAsDataURL(fileObj)
+            reader.onload = function(e) {
+                let image = new Image() //新建一个img标签（还没嵌入DOM节点)
+                image.src = e.target.result
+                image.onload = function() {
+                    let canvas = document.createElement('canvas'),
+                        context = canvas.getContext('2d'),
+                        /*imageWidth = image.width / 2,    //压缩后图片的大小
+                        imageHeight = image.height / 2,*/
+                        width = 256, //压缩后图片的宽度
+                        imageWidth =  width,
+                        imageHeight = image.height * (width / image.width),
+                        data = ''
+
+                    if (imageWidth > image.width) {
+                        imageWidth = image.width;
+                        imageHeight = image.height;
+                    }
+
+                    canvas.width = imageWidth
+                    canvas.height = imageHeight
+
+
+                    context.drawImage(image, 0, 0, imageWidth, imageHeight)
+                    data = canvas.toDataURL('image/jpeg')
+                    //压缩完成
+                    $('#commitOrderPicBase64').val(data);
+                }
+            }
+        }
+
+        function compress4CommitTask(fileMap) {
+            for(let i = 0; i < 5; i++){
+                $('#commitTaskPic'+ (i + 1) +'Base64').val('');
+            }
+            let fileArr = [];
+            let files = document.getElementById('taskfileinput').files; //上传文件的对象
+            for(let key in fileMap){
+                fileArr.push(fileMap[key])
+            }
+            if(fileArr.length !== files.length){
+                $("#taskfileinput").fileinput("clear").fileinput("unlock");
+                for(let i = 0; i < 5; i++){
+                    $('#commitTaskPic'+ (i + 1) +'Base64').val('');
+                }
+                layer.alert("在选择图片时，请清空上次选择图片！<br/>已经清空，请重新选择图片!");
+                return ;
+            }
+
+            for(let i =0; i < files.length; i++){
+                let fileObj = files[i]; //上传文件的对象
+                if(!fileObj){
+                    return "";
+                }
+                let reader = new FileReader()
+                reader.readAsDataURL(fileObj)
+                reader.onload = function(e) {
+                    let image = new Image() //新建一个img标签（还没嵌入DOM节点)
+                    image.src = e.target.result
+                    image.onload = function() {
+                        let canvas = document.createElement('canvas'),
+                            context = canvas.getContext('2d'),
+                            /*imageWidth = image.width / 2,    //压缩后图片的大小
+                            imageHeight = image.height / 2,*/
+                            width = 256, //压缩后图片的宽度
+                            imageWidth =  width,
+                            imageHeight = image.height * (width / image.width),
+                            data = ''
+
+                        if (imageWidth > image.width) {
+                            imageWidth = image.width;
+                            imageHeight = image.height;
+                        }
+
+                        canvas.width = imageWidth
+                        canvas.height = imageHeight
+
+
+                        context.drawImage(image, 0, 0, imageWidth, imageHeight)
+                        data = canvas.toDataURL('image/jpeg')
+                        //压缩完成
+                        $('#commitTaskPic'+ (i + 1) +'Base64').val(data);
+                    }
+                }
             }
         }
     </script>

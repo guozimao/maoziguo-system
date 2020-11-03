@@ -13,6 +13,16 @@ public class CommitOrder {
 
     private Long id;
 
+    private String commitOrderPicBase64;
+
+    public String getCommitOrderPicBase64() {
+        return commitOrderPicBase64;
+    }
+
+    public void setCommitOrderPicBase64(String commitOrderPicBase64) {
+        this.commitOrderPicBase64 = commitOrderPicBase64;
+    }
+
     public String getImg() {
         return img;
     }
