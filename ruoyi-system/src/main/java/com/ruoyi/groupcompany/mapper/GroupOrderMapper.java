@@ -4,6 +4,7 @@ package com.ruoyi.groupcompany.mapper;
 import com.ruoyi.groupcompany.domain.GroupOrder;
 import com.ruoyi.groupcompany.domain.reponse.GroupOrderRespDto;
 import com.ruoyi.groupcompany.domain.request.GroupOrderReqDto;
+import com.ruoyi.groupcompany.domain.request.SupplementOrderReqDto;
 import com.ruoyi.merchant.domain.MerchantOrder;
 import com.ruoyi.salesmanleader.domain.SalesmanLeaderOrder;
 import org.apache.ibatis.annotations.Param;
@@ -34,7 +35,7 @@ public interface GroupOrderMapper
 
     Long insertOrder(GroupOrder order);
 
-    List<GroupOrderRespDto> selectGroupOrderWithSupplementList();
+    List<GroupOrderRespDto> selectGroupOrderWithSupplementList(SupplementOrderReqDto reqDto);
 
     int supplementOrder(@Param("id") Long orderId, @Param("taskId") Long taskId);
 }

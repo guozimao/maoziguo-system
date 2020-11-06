@@ -6,6 +6,34 @@
 <body class="gray-bg">
      <div class="container-div">
 		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="formId">
+					<div class="select-list">
+						<ul>
+							<li>
+								<label>编号：</label>
+								<input type="text" id="orderId" placeholder="编号" name="orderId"/>
+							</li>
+							<li>
+								<label>任务代号：</label>
+								<input type="text" id="taskNo" placeholder="任务代号" name="taskNo"/>
+							</li>
+							<li>
+								<label>店铺名称：</label>
+								<input type="text" id="shopName" placeholder="店铺名称" name="shopName"/>
+							</li>
+							<li>
+								<label>客服：</label>
+								<input type="text" id="callCenter" placeholder="客服" name="callCenter"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
 			<div class="col-sm-12 select-table table-striped">
 				<table id="bootstrap-table"></table>
 			</div>
@@ -31,7 +59,7 @@
 					},
 					{
 						field: 'taskNo',
-						title: '任务编码',
+						title: '任务代号',
 						align: 'center'
 					},
 					{

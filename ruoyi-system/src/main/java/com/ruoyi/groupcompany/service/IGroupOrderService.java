@@ -33,7 +33,7 @@ public interface IGroupOrderService {
 
     String importOrder(List<GroupOrder> orderList);
 
-    List<GroupOrderRespDto> selectGroupOrderRespDtoListWithSupplementOrder();
+    List<GroupOrderRespDto> selectGroupOrderRespDtoListWithSupplementOrder(SupplementOrderReqDto reqDto);
 
     int supplementOrder(SupplementOrderReqDto supplementOrderReqDto);
 

@@ -9,6 +9,12 @@ public class SupplementOrderReqDto {
 
     private Long orderId;
 
+    private String taskNo;
+
+    private String shopName;
+
+    private String callCenter;
+
     public Long getTaskId() {
         return taskId;
     }
@@ -23,5 +29,29 @@ public class SupplementOrderReqDto {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public String getCallCenter() {
+        return callCenter;
+    }
+
+    public void setCallCenter(String callCenter) {
+        this.callCenter = callCenter;
+    }
+
+    public String getTaskNo() {
+        return taskNo;
+    }
+
+    public void setTaskNo(String taskNo) {
+        this.taskNo = taskNo;
     }
 }

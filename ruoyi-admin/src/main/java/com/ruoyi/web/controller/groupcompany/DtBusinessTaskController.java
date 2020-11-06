@@ -251,10 +251,10 @@ public class DtBusinessTaskController extends BaseController
      */
     @PostMapping("/supplementOrderList")
     @ResponseBody
-    public TableDataInfo supplementOrderList()
+    public TableDataInfo supplementOrderList(SupplementOrderReqDto reqDto)
     {
         startPage();
-        List<GroupOrderRespDto> list = groupOrderService.selectGroupOrderRespDtoListWithSupplementOrder();
+        List<GroupOrderRespDto> list = groupOrderService.selectGroupOrderRespDtoListWithSupplementOrder(reqDto);
         return getDataTable(list);
     }
 

@@ -271,8 +271,8 @@ public class GroupOrderServiceImpl implements IGroupOrderService
     }
 
     @Override
-    public List<GroupOrderRespDto> selectGroupOrderRespDtoListWithSupplementOrder() {
-        List<GroupOrderRespDto> orders = groupOrderMapper.selectGroupOrderWithSupplementList();
+    public List<GroupOrderRespDto> selectGroupOrderRespDtoListWithSupplementOrder(SupplementOrderReqDto reqDto) {
+        List<GroupOrderRespDto> orders = groupOrderMapper.selectGroupOrderWithSupplementList(reqDto);
         if(orders.isEmpty()){
             return Collections.emptyList();
         }

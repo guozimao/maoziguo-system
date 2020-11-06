@@ -176,9 +176,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectGroupOrderWithSupplementList" parameterType="GroupOrderRespDto" resultMap="GroupOrderRespDtoResult">
         select id,task_id,task_no,platform_url,picture_url,order_date,shop_name,call_center,unit_price_remark,special_remarks,unit_price,promoters_modify_unit_price,keyword,platform_nickname,salesman_leader_user_id,salesman_commit_url,status,promoters_unit_price_remark,merchant_user_id,group_company_remark
         from dt_business_task_detail
-        where
-            order_date = CURDATE()
+        <where>
+            <if test="orderId != null">id = #{orderId}</if>
+            and order_date = CURDATE()
             and task_id = 0
+            <if test="taskNo != null and taskNo != ''">and task_no = #{taskNo}</if>
+            <if test="shopName != null and shopName != ''">and shop_name = #{shopName} </if>
+            <if test="callCenter != null and callCenter != ''">and call_center = #{callCenter}</if>
+        </where>
         order by id desc
     </select>
 
